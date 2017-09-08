@@ -1,9 +1,8 @@
 # My personal marketing page (reacjs)
 ## romwtb@gmail.com
 
-### Developing
-### CLI
-`npm start`
-`npm test`
-`npm run build`
-`npm run eject`
+### Developing - cli command <br>
+`npm start` <br>
+`npm test` <br>
+`npm run build` <br>
+`npm run eject` <br>
