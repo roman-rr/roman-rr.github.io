@@ -2,15 +2,15 @@
 
 }
 
-#About {
-  padding: 30px;
-  font-weight: bold;
-}
-#About.a {
+a {
   text-decoration:none;
   color:#000000;
 }
 
+#About {
+  padding: 30px;
+  font-weight: bold;
+}
 #Trigger {
   padding: 30px;
 }

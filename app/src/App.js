@@ -127,7 +127,7 @@ class App extends Component {
       <div className="App">
         <div id="About">
           Roman Antonov - romwtb@gmail.com <br />
-          Sofwtare developing - 70 us/hr
+          Sofwtare developing - 70 us/hr <br />
           <a href="https://upwork.com/fl/romanantonov" target="_blank">Upwork top rated programmer</a>
         </div>
         <div id="Trigger">
