@@ -126,10 +126,12 @@ class App extends Component {
     return (
       <div className="App">
         <div id="About">
-          Roman Antonov - Sofwtare developing - Upwork profile copy - 70 us/hr
+          Roman Antonov - romwtb@gmail.com <br />
+          Sofwtare developing - Upwork profile copy - 70 us/hr
         </div>
         <div id="Trigger">
-          What is your most actual technocal issues ? Let me solve it!
+          What is you most actual technical issue ? <br />
+          I'm ready to solve it. 
         </div>
         <div id="Chatbot">
           My chatbot in Facebook which can help you with almost of all frequently asked questions.
