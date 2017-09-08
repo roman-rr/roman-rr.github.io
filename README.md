@@ -1,11 +1,9 @@
-# My personal marketing page 
+# My personal marketing page (reacjs)
 ## romwtb@gmail.com
 
 ### Developing
-Made with reactjs
+### CLI
 `npm start`
 `npm test`
 `npm run build`
 `npm run eject`
-
-Note: this is a one-way operation. Once you `eject`, you can’t go back!
