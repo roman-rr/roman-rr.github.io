@@ -112,6 +112,7 @@ class App extends Component {
     this.state = {
       summary:[]
     };
+    //example bind event to elment
     this.onSummaryChange = this.onSummaryChange.bind(this);
   }
 
@@ -124,8 +125,52 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <div id="About">
+          Roman Antonov - Sofwtare developing - Upwork profile copy - 70 us/hr
+        </div>
+        <div id="Trigger">
+          What is your most actual technocal issues ? Let me solve it!
+        </div>
+        <div id="Chatbot">
+          My chatbot in Facebook which can help you with almost of all frequently asked questions.
+        </div>
+        <div id="Solutions">
+          Ready solutions cases : 
+          <br />
+          <ul>
+            <li>Parsing data: Alibaba products, Real Estate properties </li>
+            <li>Real estate web development</li>
+            <li>Pharmacy mobile application (iOS, Android)</li>
+            <li>Beauty salons mobile application (iOS, Android)</li>
+          </ul>
+        </div>
+        <div id="Popular">
+          Most popular services
+          <br />
+          <ul>
+            <li>Build cloud server architecture</li>
+            <li>Tinder-style swipe meeting people application</li>
+            <li>Real estate property management system, sync with airbnb, booking...</li>
+            <li>Push notifications for web/mobile applications</li>
+            <li>Hybrid application for Web/iOS/Android</li>
+          </ul>
+        </div>
+        <div id="Payments">
+          Payment accesabilities: For long-term colloboration i able to recieve payments and tacking my working time with modern software such as upwork.com and hubstaff.com
+          Fixed price deals can be covered by paypal transfers or swift transfer services.
+        </div>
+
         <Tech summary={this.state.summary} onSummaryChange={this.onSummaryChange} />
-        <Summary summary={this.state.summary} onSummaryChange={this.onSummaryChange} />
+        {/* <Summary summary={this.state.summary} onSummaryChange={this.onSummaryChange} /> */}
+        <div id="Contacts">
+          Feel free to ask questions, i will happy to consult you!
+          <br />
+          E-mail : romwtb@gmail.com
+          <br />
+          Skype: romwtb@gmail.com
+          <br />
+          Upwork: https://upwork.com/fl/romanantonov
+        </div>
       </div>
     );
   }
