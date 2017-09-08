@@ -2,9 +2,10 @@
 ## romwtb@gmail.com
 
 ### Developing
-**Made with reactjs**
+Made with reactjs
 `npm start`
 `npm test`
 `npm run build`
 `npm run eject`
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+
+Note: this is a one-way operation. Once you `eject`, you can’t go back!
