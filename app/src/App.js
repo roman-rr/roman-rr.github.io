@@ -127,7 +127,8 @@ class App extends Component {
       <div className="App">
         <div id="About">
           Roman Antonov - romwtb@gmail.com <br />
-          Sofwtare developing - Upwork profile copy - 70 us/hr
+          Sofwtare developing - 70 us/hr
+          <a href="https://upwork.com/fl/romanantonov" target="_blank">Upwork top rated programmer</a>
         </div>
         <div id="Trigger">
           What is you most actual technical issue ? <br />
@@ -171,7 +172,7 @@ class App extends Component {
           <br />
           Skype: romwtb@gmail.com
           <br />
-          Upwork: https://upwork.com/fl/romanantonov
+          Upwork: <a href="https://upwork.com/fl/romanantonov" target="_blank">https://upwork.com/fl/romanantonov</a>
         </div>
       </div>
     );

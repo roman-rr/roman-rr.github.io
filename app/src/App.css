@@ -6,6 +6,10 @@
   padding: 30px;
   font-weight: bold;
 }
+#About.a {
+  text-decoration:none;
+  color:#000000;
+}
 
 #Trigger {
   padding: 30px;
