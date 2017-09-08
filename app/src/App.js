@@ -131,7 +131,7 @@ class App extends Component {
         </div>
         <div id="Trigger">
           What is you most actual technical issue ? <br />
-          I'm ready to solve it. 
+          I'm ready to solve that. 
         </div>
         <div id="Chatbot">
           My chatbot in Facebook which can help you with almost of all frequently asked questions.
