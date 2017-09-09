@@ -127,18 +127,14 @@ class App extends Component {
       <div className="App">
         <div id="About">
           Roman Antonov - romwtb@gmail.com <br />
-          Sofwtare developing - 70 us/hr <br />
-          <a href="https://upwork.com/fl/romanantonov" target="_blank">Upwork top rated programmer</a>
+          Software developing - 70 US/hr <br />
+          <a href="https://upwork.com/fl/romanantonov" target="_blank">Upwork top rated</a>
         </div>
         <div id="Trigger">
-          What is you most actual technical issue ? <br />
-          I'm ready to solve that. 
-        </div>
-        <div id="Chatbot">
-          My chatbot in Facebook which can help you with almost of all frequently asked questions.
+          - What is you most actual technical issue ? I'm ready to solve that. 
         </div>
         <div id="Solutions">
-          Ready solutions cases : 
+          Ready solutions cases
           <br />
           <ul>
             <li>Parsing data: Alibaba products, Real Estate properties </li>
@@ -165,6 +161,9 @@ class App extends Component {
 
         <Tech summary={this.state.summary} onSummaryChange={this.onSummaryChange} />
         {/* <Summary summary={this.state.summary} onSummaryChange={this.onSummaryChange} /> */}
+        <div id="Chatbot">
+          My chatbot in Facebook which can help you with almost of all frequently asked questions.
+        </div>
         <div id="Contacts">
           Feel free to ask questions, i will happy to consult you!
           <br />
