@@ -126,9 +126,10 @@ class App extends Component {
     return (
       <div className="App">
         <div id="About">
-          Roman Antonov - romwtb@gmail.com <br />
-          Software developing - 70 US/hr <br />
-          <a href="https://upwork.com/fl/romanantonov" target="_blank">Upwork top rated</a>
+          <h1>Roman Antonov</h1>
+          <h2>Software developing - 70 us/hr </h2>
+          <h3><a href="https://upwork.com/fl/romanantonov" target="_blank">Upwork top rated</a></h3>
+          <h4>romwtb@gmail.com</h4>
         </div>
         <div id="Trigger">
           - What is you most actual technical issue ? I'm ready to solve that. 
@@ -161,11 +162,13 @@ class App extends Component {
 
         <Tech summary={this.state.summary} onSummaryChange={this.onSummaryChange} />
         {/* <Summary summary={this.state.summary} onSummaryChange={this.onSummaryChange} /> */}
-        <div id="Chatbot">
+        {/* <div id="Chatbot">
           My chatbot in Facebook which can help you with almost of all frequently asked questions.
-        </div>
+        </div> */}
         <div id="Contacts">
-          Feel free to ask questions, i will happy to consult you!
+          Feel free to ask questions.
+          <br />
+          I will happy to consult you!
           <br />
           E-mail : romwtb@gmail.com
           <br />
