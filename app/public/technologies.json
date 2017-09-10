@@ -1,7 +1,7 @@
 {
   "categories": [
-    { "title" : "Front End (Web/Mobile)", "id" : 0},
-    { "title" : "Front End (3D/AR/VR)", "id" : 1},
+    { "title" : "Web/Mobile", "id" : 0},
+    { "title" : "3D/AR/VR", "id" : 1},
     { "title" : "Back End", "id" : 2},
     { "title" : "Database", "id" : 3},
     { "title" : "Git", "id" : 4},
