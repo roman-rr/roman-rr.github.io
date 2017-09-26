@@ -127,31 +127,42 @@ class App extends Component {
       <div className="App">
         <div id="About">
           <h1>Roman Antonov</h1>
-          <h2>Software developing - 70 us/hr </h2>
-          <h3><a href="https://upwork.com/fl/romanantonov" target="_blank">Upwork top rated</a></h3>
+          <h2>Modern Software developing</h2>
+          <h3>
+            <a href="https://upwork.com/fl/romanantonov" target="_blank">
+              Upwork Top Rated
+            </a>
+          </h3>
+          <h3>
+            <a href="https://www.upwork.com/signup/create-account/client_contact_freelancer?ciphertext=~016b923b0158ef81ae&BYOC" target="_blank">
+              Hire me
+            </a>
+          </h3>
           <h4>romwtb@gmail.com</h4>
         </div>
         <div id="Trigger">
-          - What is you most actual technical issue ? I'm ready to solve that. 
+          <i> “What is you most actual technical issue ? I'm ready to solve that.‟</i>
         </div>
         <div id="Solutions">
           Ready solutions cases
           <br />
           <ul>
-            <li>Parsing data: Alibaba products, Real Estate properties </li>
-            <li>Real estate web development</li>
             <li>Pharmacy mobile application (iOS, Android)</li>
-            <li>Beauty salons mobile application (iOS, Android)</li>
+            <li>Real estate development (Web, iOS, Android)</li>
+            <li>Beauty salons mobile application (Web, iOS, Android)</li>
+            <li>Tinder-style card swipe application (iOS, Android)</li>
           </ul>
         </div>
         <div id="Popular">
           Most popular services
           <br />
           <ul>
+            <li>Code assessment and review</li>
             <li>Build cloud server architecture</li>
-            <li>Tinder-style swipe meeting people application</li>
-            <li>Real estate property management system, sync with airbnb, booking...</li>
-            <li>Push notifications for web/mobile applications</li>
+            <li>Real estate property management system, sync with airbnb</li>
+            <li>Parsing data: Alibaba products, Real Estate properties </li>
+            <li>People activity emulations</li>
+            <li>Push notifications for Web/Mobile applications</li>
             <li>Hybrid application for Web/iOS/Android</li>
           </ul>
         </div>
@@ -162,9 +173,6 @@ class App extends Component {
 
         <Tech summary={this.state.summary} onSummaryChange={this.onSummaryChange} />
         {/* <Summary summary={this.state.summary} onSummaryChange={this.onSummaryChange} /> */}
-        {/* <div id="Chatbot">
-          My chatbot in Facebook which can help you with almost of all frequently asked questions.
-        </div> */}
         <div id="Contacts">
           Feel free to ask questions.
           <br />
