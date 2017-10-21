@@ -79,24 +79,28 @@ class App extends Component {
     return (
       <div className="App">
         <div id="About">
-          <img alt="Roman Antonov" className="avatar" src="https://odesk-prod-portraits.s3.amazonaws.com/Users:withoutb:PortraitUrl_100?AWSAccessKeyId=1XVAX3FNQZAFC9GJCFR2&Expires=2147483647&Signature=vMLlACdKXb9cR1rFZvbjlJlc2jo%3D&1496145669596530&8flr8"/>
-          <h1>Roman Antonov</h1>
-          <h2>Modern Software developing</h2>
-          <h3>
-            <a href="https://upwork.com/fl/romanantonov" 
-               rel="noopener noreferrer" 
-               target="_blank">
-              Upwork Top Rated
-            </a>
-          </h3>
-          <h3>
-            <a href="https://www.upwork.com/signup/create-account/client_contact_freelancer?ciphertext=~016b923b0158ef81ae&BYOC"
-               target="_blank" 
-               rel="noopener noreferrer">
-              Hire me
-            </a>
-          </h3>
-          <h4>romwtb@gmail.com</h4>
+          <div className="avatar">
+            <img alt="Roman Antonov" className="avatar" src="/avatar.jpeg"/>
+          </div>
+          <div className="text">  
+            <h1>Roman Antonov</h1>
+            <h2>Modern Software developing</h2>
+            <h3>
+              <a href="https://upwork.com/fl/romanantonov" 
+                rel="noopener noreferrer" 
+                target="_blank">
+                Upwork Top Rated
+              </a>
+            </h3>
+            <h3>
+              <a href="https://www.upwork.com/signup/create-account/client_contact_freelancer?ciphertext=~016b923b0158ef81ae&BYOC"
+                target="_blank" 
+                rel="noopener noreferrer">
+                Hire me
+              </a>
+            </h3>
+            <h4>romwtb@gmail.com</h4>
+          </div>
         </div>
         <div id="Trigger">
           <i> “What is you most actual technical issue ? I'm ready to solve that.‟</i>
@@ -125,12 +129,13 @@ class App extends Component {
             <li>Hybrid application for Web/iOS/Android</li>
           </ul>
         </div>
+
+        <Tech />
+
         <div id="Payments">
           Payment accesabilities: For long-term colloboration i able to recieve payments and tacking my working time with modern software such as upwork.com and hubstaff.com
           Fixed price deals can be covered by paypal transfers or swift transfer services.
         </div>
-
-        <Tech />
 
         <div id="Contacts">
           E-mail : romwtb@gmail.com
@@ -143,6 +148,7 @@ class App extends Component {
                      https://upwork.com/fl/romanantonov
                   </a>
         </div>
+        
       </div>
     );
   }

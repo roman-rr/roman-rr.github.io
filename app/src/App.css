@@ -7,21 +7,33 @@ a {
 }
 
 #About {
-  padding: 30px;
+  padding: 20px 30px;
   background-color: #f9f9f9;
   color: #494949;
   border-bottom: 1px solid #e0e0e0;
+  display: flex;
 }
 
-#About > img.avatar {
+#About > div.avatar { 
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-right: 25px;
+}
+#About > div.avatar > img {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  float: left;
-  margin-right: 25px;
 }
 
-#About>h1, #About>h2, #About>h3, #About>h4 {
+#About > div.text > h1 {
+  font-weight: bold !important;
+}
+
+#About > div.text > h1,
+#About > div.text >h2, 
+#About > div.text >h3, 
+#About > div.text >h4 {
   font-size:15px;
   font-weight: normal;
   margin: 6px 6px;
