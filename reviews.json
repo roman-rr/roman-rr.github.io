@@ -1,0 +1,7 @@
+{
+  "reviews": [
+    { "text" : "Test", "id" : 0},
+    { "text" : "Test 2", "id" : 1},
+    { "text" : "Test 3", "id" : 2}
+  ]
+}

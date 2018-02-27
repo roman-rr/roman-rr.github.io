@@ -67,6 +67,8 @@
     { "title" : "Microsoft Azure", "img": "logos/azure.png", "category":6},
     { "title" : "Digital Ocean", "img": "logos/digitalocean.png", "category":6},
 
+    { "title" : "Asana", "img": "logos/asana.jpg", "category":7},
+    { "title" : "GitHub Projects", "img": "logos/github-projects.png", "category":7},
     { "title" : "JIRA", "img": "logos/jira.png", "category":7},
     { "title" : "Trello", "img": "logos/trello.png", "category":7},
     { "title" : "Slack", "img": "logos/slack.png", "category":7},

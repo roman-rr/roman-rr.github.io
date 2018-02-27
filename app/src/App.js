@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Slider from 'react-slick';
 
 import './App.css';
 
@@ -72,6 +73,45 @@ class Tech extends Component {
   }
 }
 
+class Reviews extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {reviews: []};
+  }
+
+  componentDidMount() {
+    var This = this
+    fetch('reviews.json').then(function(response) {
+      return response.json();
+    }).then(function(json){
+       This.setState({'reviews':json.reviews});
+    }).catch(function(error) {
+      console.log('parsing failed', error)
+    })
+  }
+
+  render () {
+    let settings = {
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1
+    };
+    const reviews = this.state.reviews;
+    return (
+      <div id="Reviews" className="Reviews">
+        <Slider {...settings}>
+          {
+            reviews.map((review) =>
+              <div key={review.id}><h3>{review.text}</h3></div>
+            )
+          }
+        </Slider>
+      </div>
+    );
+  }
+}
 
 class App extends Component {
 
@@ -86,7 +126,7 @@ class App extends Component {
             <h1>Roman Antonov</h1>
             <h2>Modern Software developing</h2>
             <h3>
-              <a href="https://upwork.com/fl/romanantonov" 
+              <a href="https://www.upwork.com/freelancers/~016b923b0158ef81ae" 
                 rel="noopener noreferrer" 
                 target="_blank">
                 Upwork Top Rated
@@ -131,6 +171,8 @@ class App extends Component {
         </div>
 
         <Tech />
+        
+        <Reviews />
 
         <div id="Payments">
           Payment accesabilities: For long-term colloboration i able to recieve payments and tacking my working time with modern software such as upwork.com and hubstaff.com
@@ -142,7 +184,7 @@ class App extends Component {
           <br />
           Skype: romwtb@gmail.com
           <br />
-          Upwork: <a href="https://upwork.com/fl/romanantonov" 
+          Upwork: <a href="https://www.upwork.com/freelancers/~016b923b0158ef81ae" 
                      rel="noopener noreferrer"
                      target="_blank">
                      https://upwork.com/fl/romanantonov
