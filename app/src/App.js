@@ -172,7 +172,7 @@ class App extends Component {
 
         <Tech />
         
-        <Reviews />
+        {/* <Reviews /> */}
 
         <div id="Payments">
           Payment accesabilities: For long-term colloboration i able to recieve payments and tacking my working time with modern software such as upwork.com and hubstaff.com
