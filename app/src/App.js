@@ -145,28 +145,31 @@ class App extends Component {
         <div id="Trigger">
           <i> “What is you most actual technical issue ? I'm ready to solve that.‟</i>
         </div>
+        <div id="Popular">
+          <span role="img" aria-label="triumph">🏆</span> Most popular services
+          <br />
+          <ul>
+            <li>Free consulting</li>
+            <li>Facebook messenger chat bot</li>
+            <li>Build cloud server architecture</li>
+            <li>Code assessment and review</li>
+            <li>Real estate property management system, sync with airbnb</li>
+            <li>Parsing data: Alibaba products, Real Estate properties </li>
+            <li>People activity emulations</li>
+            <li>Push notifications for Web/Mobile applications</li>
+            <li>Hybrid application for Web/iOS/Android</li>
+            <li>Sketch to latest Angular / Ionic</li>
+            <li>Migrate to latest Angular / Ionic</li>
+          </ul>
+        </div>
         <div id="Solutions">
-          Ready solutions cases
+          <span role="img" aria-label="triumph">📁</span> Ready solutions cases
           <br />
           <ul>
             <li>Pharmacy mobile application (iOS, Android)</li>
             <li>Real estate development (Web, iOS, Android)</li>
             <li>Beauty salons mobile application (Web, iOS, Android)</li>
             <li>Tinder-style card swipe application (iOS, Android)</li>
-          </ul>
-        </div>
-        <div id="Popular">
-          Most popular services
-          <br />
-          <ul>
-            <li>Facebook messenger chat bot</li>
-            <li>Code assessment and review</li>
-            <li>Build cloud server architecture</li>
-            <li>Real estate property management system, sync with airbnb</li>
-            <li>Parsing data: Alibaba products, Real Estate properties </li>
-            <li>People activity emulations</li>
-            <li>Push notifications for Web/Mobile applications</li>
-            <li>Hybrid application for Web/iOS/Android</li>
           </ul>
         </div>
 
