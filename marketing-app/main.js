@@ -1026,6 +1026,7 @@ var HomePage = /** @class */ (function () {
         this.activatedRoute.queryParams.subscribe(function (params) {
             _this.id = params['id'] || 1;
         });
+        alert('NEW');
     }
     HomePage.prototype.goNext = function () {
         // if (!this.goalReached) {
