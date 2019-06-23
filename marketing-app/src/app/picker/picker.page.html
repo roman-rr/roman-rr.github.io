@@ -1,0 +1,53 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-title>Капитанский Комплект</ion-title>
+      <ion-buttons slot="start">
+        <ion-back-button text="" icon="back-custom"></ion-back-button>
+      </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <!-- items list -->
+    <div class="content">
+      <ion-list class="items-list">
+          <!-- <ion-item-sliding disabled="true" 
+                            (ionDrag)="$event.preventDefault();$event.stopPropagation();"
+                            *ngFor="let item of items" 
+                            (click)="$event.preventDefault();$event.stopPropagation();item.disabled = !item.disabled"> -->
+              <ion-item *ngFor="let item of items" 
+                        (click)="$event.preventDefault();$event.stopPropagation();item.disabled = !item.disabled" 
+                        [ngClass]="{'disabled': item.disabled === true}">
+                <div class="item-body">
+                  <div class="img" [ngStyle]="{'background-image': 'url(' + item.photo +')', 
+                                                'background-size': item.background_size,
+                                                'background-position-x': item.position_x,
+                                                'background-position-y': item.position_y }">
+                  </div>
+                  <div class="label">
+                    <div class="title">
+                      {{item.title}}
+                    </div>
+                    <div class="props">
+                      <span>{{item.include[0]}} | {{item.include[1]}}</span>
+                    </div>
+                    <div class="status">
+                        <div class="dot" [ngClass]="{'green' : !item.disabled, 'red' : item.disabled}"></div>
+                        <span *ngIf="!item.disabled">Выбрано</span>
+                        <span *ngIf="item.disabled">Не выбрано</span>
+                    </div>
+                  </div>
+                </div>
+              </ion-item>
+            <!-- </ion-item-sliding> -->
+      </ion-list>
+
+    <!-- Action -->
+    <ion-button color="tertiary" 
+                [disabled]="goalReached" 
+                (click)="goNext();" 
+                expand="block">
+                Продолжить
+    </ion-button>
+  </div>
+</ion-content>
