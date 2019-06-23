@@ -1,7 +1,0 @@
-{
-  "name": "11Friends",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular"
-}
