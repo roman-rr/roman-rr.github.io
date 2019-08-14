@@ -4,66 +4,42 @@ import './App.scss';
 class Tech extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    this.state = {categories: [], technologies: [], currentCategory: 0, active_item: []};
-    //handle Clicks
-    this.chooseCategory = this.chooseCategory.bind(this);
+    this.state = {technologies: []};
   }
   
   componentDidMount() {
-    var This = this
-    fetch('technologies.json').then(function(response) {
-      return response.json();
-    }).then(function(json){
-       let items = []
-       for (var i = 0; i < json.categories.length; i ++) {
-         items.push(false)
-       }
-       items[0] = true
-       This.setState({'categories':json.categories,'technologies':json.technologies, active_item: items});
-    }).catch(function(error) {
-      console.log('parsing failed', error)
-    })
-  }
-
-  chooseCategory(id: number) {
-    let items = []
-    for (var i = 0; i < this.state.active_item.length; i ++) {
-      items.push(false)
-    }
-    items[id] = true
-    this.setState({currentCategory:id, active_item:items})
+    this.setState({
+      technologies: [
+        { name: 'React', logo: '/logo/react.png' },
+        { name: 'Angular', logo: '/logo/angular.svg' },
+        { name: 'Ionic Framework', logo: '/logo/ionic.png' },
+        { name: 'Django Framework', logo: '/logo/django.png' }
+      ]
+    });
   }
 
   render () {
-    const categories = this.state.categories;
     const technologies = this.state.technologies;
     return (
-      <div className="Tech">
-          <div className="Categories">
-            {
-              categories.map((category: any) =>
-              <div onClick={() => this.chooseCategory(category.id)} 
-                   className="category" 
-                   key={category.id}>
-                <span className={this.state.active_item[category.id] ? 'active': undefined} >
-                  {category.title}
-                </span>
-              </div>)
-            }
-          </div>
-          <div className="Technologies">
+      <div className="Tech" id="Tech">
+          <div className="technologies">
               {
-                technologies.map((technology: any) =>
-                (technology.category === this.state.currentCategory) ? (
-                <div className="Technology" key={technology.title}>
-                  <div className="tech-image">
-                    <img src={technology.img} alt=""/>
+                technologies.map((item: any) =>
+                  <div className="item" key={item.name}>
+                    <div className="image" style={{backgroundImage: 'url(' + item.logo + ')'}}></div>
+                    <div className="label">
+                      <div className="title">{item.name}</div>
+                      <div className="status">
+                        <div className="dot"></div>
+                        Release: 8.2.1
+                        <span className="date">(1 day ago)</span>
+                      </div>
+                    </div>
+                    <a target="_blank" href="https://link" className="linked">
+                      <img src="/link.svg" />
+                    </a>
                   </div>
-                  <div className="title">
-                    {technology.title}
-                  </div>
-                </div>):null)
-                
+                )
               }
           </div>
       </div>
@@ -135,19 +111,6 @@ class App extends React.Component {
           Payment accesabilities: For long-term colloboration i able to recieve payments and tacking my working time with modern software such as upwork.com and hubstaff.com
           Fixed price deals can be covered by paypal transfers or swift transfer services.
         </div>
-
-        <div id="Contacts">
-          E-mail : romwtb@gmail.com
-          <br />
-          Skype: romwtb@gmail.com
-          <br />
-          Upwork: <a href="https://www.upwork.com/freelancers/~016b923b0158ef81ae" 
-                     rel="noopener noreferrer"
-                     target="_blank">
-                     https://upwork.com/fl/romanantonov
-                  </a>
-        </div>
-        
       </div>
     );
   }
