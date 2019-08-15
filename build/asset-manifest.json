@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/marketing-app/static/css/main.0949a7b5.chunk.css",
-    "main.js": "/marketing-app/static/js/main.312e53d2.chunk.js",
-    "main.js.map": "/marketing-app/static/js/main.312e53d2.chunk.js.map",
-    "runtime~main.js": "/marketing-app/static/js/runtime~main.4aecb56a.js",
-    "runtime~main.js.map": "/marketing-app/static/js/runtime~main.4aecb56a.js.map",
-    "static/js/2.d6992a11.chunk.js": "/marketing-app/static/js/2.d6992a11.chunk.js",
-    "static/js/2.d6992a11.chunk.js.map": "/marketing-app/static/js/2.d6992a11.chunk.js.map",
-    "index.html": "/marketing-app/index.html",
-    "precache-manifest.e055072def22dcb966235e098f0ffbd9.js": "/marketing-app/precache-manifest.e055072def22dcb966235e098f0ffbd9.js",
-    "service-worker.js": "/marketing-app/service-worker.js",
-    "static/css/main.0949a7b5.chunk.css.map": "/marketing-app/static/css/main.0949a7b5.chunk.css.map"
+    "main.css": "/static/css/main.03e13846.chunk.css",
+    "main.js": "/static/js/main.047f1b93.chunk.js",
+    "main.js.map": "/static/js/main.047f1b93.chunk.js.map",
+    "runtime~main.js": "/static/js/runtime~main.37144203.js",
+    "runtime~main.js.map": "/static/js/runtime~main.37144203.js.map",
+    "static/js/2.2cb797d9.chunk.js": "/static/js/2.2cb797d9.chunk.js",
+    "static/js/2.2cb797d9.chunk.js.map": "/static/js/2.2cb797d9.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.085586391c2c6a492f42a80c86cba729.js": "/precache-manifest.085586391c2c6a492f42a80c86cba729.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.03e13846.chunk.css.map": "/static/css/main.03e13846.chunk.css.map"
   }
 }

@@ -4,18 +4,36 @@ import './App.scss';
 class Tech extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    this.state = {technologies: []};
+    this.state = {
+      technologies: [
+        { name: 'React', logo: '/logo/react.png', 
+          url: 'facebook/react/'},
+        { name: 'Angular', logo: '/logo/angular.svg', 
+          url: 'angular/angular/' },
+        { name: 'Ionic Framework', logo: '/logo/ionic.png', 
+          url: 'ionic-team/ionic/' },
+        { name: 'Django Framework', logo: '/logo/django.png', 
+          url: 'django/django/' }
+      ]
+    };
   }
   
   componentDidMount() {
-    this.setState({
-      technologies: [
-        { name: 'React', logo: '/logo/react.png' },
-        { name: 'Angular', logo: '/logo/angular.svg' },
-        { name: 'Ionic Framework', logo: '/logo/ionic.png' },
-        { name: 'Django Framework', logo: '/logo/django.png' }
-      ]
+    // https://api.github.com/repos/angular/angular/tags
+    // this.setState({
+    //   technologies
+    // });
+
+    this.state.technologies.forEach((item: any) => {
+      fetch('https://api.github.com/repos/' + item.url + 'tags')
+      .then(data => data.json())
+      .then(res => {
+        console.log(res);
+        item.release = res[0].name;
+        this.setState({technologies: this.state.technologies});
+      });
     });
+    // this.setState({technologies: this.state.technologies});
   }
 
   render () {
@@ -31,12 +49,18 @@ class Tech extends React.Component<any, any> {
                       <div className="title">{item.name}</div>
                       <div className="status">
                         <div className="dot"></div>
-                        Release: 8.2.1
-                        <span className="date">(1 day ago)</span>
+                        Release: {item.release ? item.release :
+                          <svg className="spinner" viewBox="0 0 50 50">
+                            <circle className="path" cx="25" cy="25" r="20" 
+                                    fill="none" stroke-width="5"></circle>
+                          </svg>
+                        }
+                        {/* <span className="date">(1 day ago)</span> */}
                       </div>
                     </div>
-                    <a target="_blank" href="https://link" className="linked">
-                      <img src="/link.svg" />
+                    <a target="_blank" rel="noopener noreferrer" 
+                        href={'https://github.com/' + item.url} className="linked">
+                      <img src="/link.svg" alt="icon" />
                     </a>
                   </div>
                 )
