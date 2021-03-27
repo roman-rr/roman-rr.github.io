@@ -78,7 +78,7 @@ class App extends React.Component {
       <div className="App">
         <div id="About">
           <div className="avatar">
-            <img alt="Roman Antonov" className="avatar" src="/avatar.jpeg"/>
+            <img alt="Roman Antonov" className="avatar" src="/avatar.png"/>
           </div>
           <div className="text">  
             <h1>Roman Antonov</h1>
@@ -110,14 +110,13 @@ class App extends React.Component {
             <li>Free consulting</li>
             <li>User Interfaces</li>
             <li>Cloud architecture</li>
-            <li>Facebook messenger chat bot</li>
-            <li>Build cloud server architecture</li>
             <li>Code assessment and review</li>
             <li>Real estate property management system, sync with airbnb</li>
             <li>Parsing data: Alibaba products, Real Estate properties </li>
             <li>People activity emulations</li>
             <li>Push notifications for Web/Mobile applications</li>
             <li>Hybrid application for Web/iOS/Android</li>
+            <li>Facebook messenger chat bot</li>
             <li>Sketch to latest Angular / Ionic</li>
             <li>Migrate to latest Angular / Ionic</li>
           </ul>
