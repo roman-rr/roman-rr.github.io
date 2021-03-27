@@ -126,7 +126,7 @@ class App extends React.Component {
           <span role="img" aria-label="triumph">📁</span> Ready solutions cases
           <br />
           <ul>
-            <li><a href="https://github.com/roman-rr/" 
+            <li><a href="https://github.com/roman-rr/cupertino-pane/" 
                 rel="noopener noreferrer" 
                 target="_blank">Cupertino-Panes</a></li>
             <li>Pharmacy mobile application (iOS, Android)</li>
