@@ -52,7 +52,7 @@ class Tech extends React.Component<any, any> {
                         Release: {item.release ? item.release :
                           <svg className="spinner" viewBox="0 0 50 50">
                             <circle className="path" cx="25" cy="25" r="20" 
-                                    fill="none" stroke-width="5"></circle>
+                                    fill="none" strokeWidth="5"></circle>
                           </svg>
                         }
                         {/* <span className="date">(1 day ago)</span> */}
@@ -84,19 +84,19 @@ class App extends React.Component {
             <h1>Roman Antonov</h1>
             <h2>Modern Software developing</h2>
             <h3>
-              <a href="https://www.upwork.com/freelancers/~016b923b0158ef81ae" 
+              <a href="https://github.com/roman-rr/" 
                 rel="noopener noreferrer" 
                 target="_blank">
-                Upwork Top Rated
+                Github projects
               </a>
             </h3>
-            <h3>
+            {/* <h3>
               <a href="https://www.upwork.com/signup/create-account/client_contact_freelancer?ciphertext=~016b923b0158ef81ae&BYOC"
                 target="_blank" 
                 rel="noopener noreferrer">
                 Hire me
               </a>
-            </h3>
+            </h3> */}
             <h4>romwtb@gmail.com</h4>
           </div>
         </div>
@@ -108,6 +108,9 @@ class App extends React.Component {
           <br />
           <ul>
             <li>Free consulting</li>
+            <li>Complex and Futuristic Interfaces</li>
+            <li>Cloud architecture</li>
+            <li>Open-Source management</li>
             <li>Facebook messenger chat bot</li>
             <li>Build cloud server architecture</li>
             <li>Code assessment and review</li>
@@ -124,6 +127,9 @@ class App extends React.Component {
           <span role="img" aria-label="triumph">📁</span> Ready solutions cases
           <br />
           <ul>
+            <li><a href="https://github.com/roman-rr/" 
+                rel="noopener noreferrer" 
+                target="_blank">Cupertino-Panes</a></li>
             <li>Pharmacy mobile application (iOS, Android)</li>
             <li>Real estate development (Web, iOS, Android)</li>
             <li>Beauty salons mobile application (Web, iOS, Android)</li>
