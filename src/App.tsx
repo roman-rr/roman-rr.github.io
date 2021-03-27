@@ -108,9 +108,8 @@ class App extends React.Component {
           <br />
           <ul>
             <li>Free consulting</li>
-            <li>Complex and Futuristic Interfaces</li>
+            <li>User Interfaces</li>
             <li>Cloud architecture</li>
-            <li>Open-Source management</li>
             <li>Facebook messenger chat bot</li>
             <li>Build cloud server architecture</li>
             <li>Code assessment and review</li>
