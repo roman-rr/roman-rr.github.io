@@ -49,7 +49,7 @@ function App() {
               <h1 className="text-xl font-semibold text-[#333] mb-1">Roman Antonoff</h1>
               <p className="text-gray-600">AI Developer & Solutions Architect</p>
               <p className="text-gray-600">B.Sc. Science of Digital Business</p>
-              <p className="text-gray-600">romwtb@gmail.com</p>
+              <p className="text-gray-600">romwtb@gmail.com test</p>
             </div>
           </div>
           
