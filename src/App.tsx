@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar'
 import { useEffect } from 'react'
 import LaurelBadge from './components/LaurelBadge'
-import { Users, Award, BarChart, Zap, Code, DollarSign, Star, CheckCircle } from 'lucide-react'
+// import { Users, Award, BarChart, Zap, Code, DollarSign, Star, CheckCircle } from 'lucide-react'
 
 function App() {
   useEffect(() => {
