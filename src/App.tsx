@@ -46,9 +46,9 @@ function App() {
             </Avatar>
             
             <div>
-              <h1 className="text-2xl font-semibold text-[#333] mb-1">Roman Antonoff</h1>
-              <p className="text-gray-600 mb-2">AI Developer & Solution Architect</p>
-              <p className="text-gray-600 mb-2">B.Sc. Science of Digital Business</p>
+              <h1 className="text-xl font-semibold text-[#333] mb-1">Roman Antonoff</h1>
+              <p className="text-gray-600">AI Developer & Solutions Architect</p>
+              <p className="text-gray-600">B.Sc. Science of Digital Business</p>
               <p className="text-gray-600">romwtb@gmail.com</p>
             </div>
           </div>
