@@ -94,7 +94,7 @@ function App() {
         <div className="w-full bg-[#222] mb-8">
           <div className="max-w-4xl mx-auto">
             {/* Multiple Badges in Responsive Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 divide-x divide-[#444444] border-x border-[#444444]">
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 divide-x divide-[#333] border-x border-[#333]">
               <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
                 <LaurelBadge 
                   primaryText="20+ years" 
