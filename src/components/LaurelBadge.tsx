@@ -13,7 +13,7 @@ const LaurelBadge: React.FC<LaurelBadgeProps> = ({ primaryText, secondaryText, i
   const marginLeftRight = '0px';
   
   return (
-    <div style={{ backgroundColor: '#222', padding: '0 0' }}>
+    <div className="w-full">
       <div className="badge-container" style={{ display: 'flex', justifyContent: 'center' }}>
         <div className="flex-container" style={{ display: 'flex', alignItems: 'center' }}>
           <svg className="svg-left" width="25" height="51" fill="none" viewBox="0 0 25 51" style={{ marginRight: marginLeftRight }}>

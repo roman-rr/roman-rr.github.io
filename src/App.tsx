@@ -1,7 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar'
 import { useEffect } from 'react'
 import LaurelBadge from './components/LaurelBadge'
-// import { Users, Award, BarChart, Zap, Code, DollarSign, Star, CheckCircle } from 'lucide-react'
+import { Badge } from './components/ui/badge'
+import { ExternalLink } from 'lucide-react'
 
 function App() {
   useEffect(() => {
@@ -48,10 +49,11 @@ function App() {
             </Avatar>
             
             <div>
+
               <h1 className="text-xl font-semibold text-[#333] mb-1">Roman Antonoff</h1>
-              <p className="text-gray-600">AI Developer & Solutions Architect</p>
+              <Badge variant="subtle" className="mb-2">AI Developer & Solutions Architect</Badge>
               <p className="text-gray-600">B.Sc. Science of Digital Business</p>
-              <p className="text-gray-600">romwtb@gmail.com</p>
+              <p className="text-gray-600">Creator of <a href="https://panejs.com/" target="_blank" rel="noopener noreferrer" className="font-semibold">Panes <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a> and <a href="https://github.com/roman-rr/llm-toolchain" target="_blank" rel="noopener noreferrer" className="font-semibold">LLM-toolchain <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a></p>
             </div>
           </div>
           
@@ -83,36 +85,44 @@ function App() {
             
             {/* Quote */}
             <p className="text-center text-gray-700 max-w-2xl">
-              20+ years full-stack expertise, $300k earned on Upwork in Laravel, LangChain, Python & OpenAI API. Transforming businesses with cutting-edge AI solutions.
+              20+ years full-stack expertise, $300k earned on Upwork in Laravel, TypeScriprt, LangChain, Python & OpenAI API. Currently focusing on Agentic AI, Digital Workers and LLM development.
             </p>
           </div>
         </div>
 
-        {/* Technologies Section - Full Width */}
+        {/* Achievements Section - Full Width */}
         <div className="w-full bg-[#222] mb-8">
           <div className="max-w-4xl mx-auto">
             {/* Multiple Badges in Responsive Grid */}
-            <div className="flex flex-wrap justify-center gap-y-5 gap-x-5 px-3 py-7">
-              <LaurelBadge 
-                primaryText="20+ years" 
-                secondaryText="Full-stack expertise" 
-                // icon={Award} 
-              />
-              <LaurelBadge 
-                primaryText="$300k+" 
-                secondaryText="Upwork earned" 
-                // icon={DollarSign} 
-              />
-              <LaurelBadge 
-                primaryText="1k+ starred" 
-                secondaryText="on GitHub" 
-                // icon={Star} 
-              />
-              <LaurelBadge 
-                primaryText="100+ projects" 
-                secondaryText="Completed" 
-                // icon={CheckCircle} 
-              />
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 divide-x divide-[#444444] border-x border-[#444444]">
+              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
+                <LaurelBadge 
+                  primaryText="20+ years" 
+                  secondaryText="Full-stack expertise" 
+                  // icon={Award} 
+                />
+              </div>
+              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
+                <LaurelBadge 
+                  primaryText="$300k+" 
+                  secondaryText="Upwork earned" 
+                  // icon={DollarSign} 
+                />
+              </div>
+              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
+                <LaurelBadge 
+                  primaryText="1k+ starred" 
+                  secondaryText="on GitHub" 
+                  // icon={Star} 
+                />
+              </div>
+              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
+                <LaurelBadge 
+                  primaryText="100+ projects" 
+                  secondaryText="Completed" 
+                  // icon={CheckCircle} 
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -279,12 +289,91 @@ function App() {
           </div>
 
           {/* Payment Section */}
-          <div className="py-8">
+          <div className="py-8 border-b border-[#e0e0e0]">
             <p className="text-gray-700">
               Payment accesabilities: For long-term colloboration i able to recieve payments and 
               tacking my working time with modern software such as upwork.com and hubstaff.com Fixed 
               price deals can be covered by paypal transfers or swift transfer services.
             </p>
+          </div>
+
+          {/* Scientific Researches Section */}
+          <div className="py-8 border-b border-[#e0e0e0]">
+            <h2 className="text-xl font-bold mb-4 flex items-center text-[#333]">
+              Scientific Researches <span className="text-gray-500 ml-2 text-sm font-normal">(Academic commitments)</span>
+            </h2>
+            <div className="space-y-6">
+              {/* First Research Paper (AI Tools) */}
+              <div className="bg-[#f5f5f5] p-5 border border-[#e0e0e0] transition-all hover:shadow-md">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 bg-[#222] text-white p-3 rounded-md flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <line x1="10" y1="9" x2="8" y2="9"></line>
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between mb-1">
+                      <div className="flex items-center">
+                        <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800">December 2023</span>
+                        <span className="ml-2 text-red-500">🔥</span>
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-[#333] mb-2">The Impact of AI Tools on Content Marketing: A Comparative Analysis of Performance Across Ad Systems and Formats</h3>
+                    <p className="text-gray-600 text-sm mb-3">This research examines the integration of advanced AI technologies, including GPT-4 Alpha, DALL-E 3, MidJourney, and Stable Diffusion, within content marketing strategies.</p>
+                    <a 
+                      href="https://www.researchgate.net/publication/376169888_The_Impact_of_AI_Tools_on_Content_Marketing_A_Comparative_Analysis_of_Performance_Across_Ad_Systems_and_Formats" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center"
+                    >
+                      View on ResearchGate
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Second Research Paper (Cryptocurrency) */}
+              <div className="bg-[#f5f5f5] p-5 border border-[#e0e0e0] transition-all hover:shadow-md">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 bg-[#222] text-white p-3 rounded-md flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <line x1="10" y1="9" x2="8" y2="9"></line>
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800">January 2023</span>
+                    </div>
+                    <h3 className="font-semibold text-[#333] mb-2">RESEARCH OF KEY FACTORS THAT INFLUENCE THE ADOPTION AND USAGE OF CRYPTOCURRENCY</h3>
+                    <p className="text-gray-600 text-sm mb-3">The main objective of the research is to determine the most significant negative and positive drivers for cryptocurrency mass usage and adoption.</p>
+                    <a 
+                      href="https://www.researchgate.net/publication/373994991_RESEARCH_OF_KEY_FACTORS_THAT_INFLUENCE_THE_ADOPTION_AND_USAGE_OF_CRYPTOCURRENCY" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center"
+                    >
+                      View on ResearchGate
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -293,7 +382,7 @@ function App() {
       <footer className="w-full bg-[#222] mt-10">
         <div className="max-w-4xl mx-auto px-[30px] py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-white text-lg font-medium">Connect with me:</div>
+            <div className="text-white text-lg font-medium">Connect with me: <p className="text-gray-600">romwtb@gmail.com</p></div>
             <div className="flex flex-wrap gap-6">
               <a 
                 href="https://upwork.com/freelancers/~016b923b0158ef81ae" 
