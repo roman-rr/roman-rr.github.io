@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar'
 import { useEffect } from 'react'
 import LaurelBadge from './components/LaurelBadge'
 import { Badge } from './components/ui/badge'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, FileText, Pin } from 'lucide-react'
 
 function App() {
   useEffect(() => {
@@ -53,7 +53,7 @@ function App() {
               <h1 className="text-xl font-semibold text-[#333] mb-1">Roman Antonoff</h1>
               <Badge variant="subtle" className="mb-2">AI Developer & Solutions Architect</Badge>
               <p className="text-gray-600">B.Sc. Science of Digital Business</p>
-              <p className="text-gray-600">Creator of <a href="https://panejs.com/" target="_blank" rel="noopener noreferrer" className="font-semibold">Panes <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a> and <a href="https://github.com/roman-rr/llm-toolchain" target="_blank" rel="noopener noreferrer" className="font-semibold">LLM-toolchain <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a></p>
+              <p className="text-gray-600 text-sm mt-1">Creator of <a href="https://panejs.com/" target="_blank" rel="noopener noreferrer" className="font-semibold ">Panes <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a> and <a href="https://github.com/roman-rr/llm-toolchain" target="_blank" rel="noopener noreferrer" className="font-semibold font-sm">LLM-toolchain <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a></p>
             </div>
           </div>
           
@@ -63,23 +63,19 @@ function App() {
               <a 
                 href="#" 
                 onClick={openCalendly}
-                className="px-4 py-2 bg-[#222] text-white text-sm font-medium rounded hover:bg-[#333] transition-colors flex items-center justify-center"
+                className="h-[40px] ps-6 w-[320px] bg-[#222] text-white text-sm font-medium rounded hover:bg-[#333] transition-colors flex justify-start relative"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                Book a 30-minute strategy call
-              </a>
-              <a 
-                href="https://upwork.com/freelancers/~016b923b0158ef81ae" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="px-4 py-2 bg-transparent text-[#555] border border-[#555] text-sm font-medium rounded hover:bg-[#555] hover:text-white transition-colors flex items-center justify-center"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.546-1.405 0-2.543-1.14-2.543-2.546v-7.112H0v7.112c0 2.915 2.371 5.302 5.282 5.302 2.913 0 5.283-2.387 5.283-5.302v-1.192c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z"/>
-                </svg>
-                View my Upwork profile
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Book a 30-minute strategy call
+                </div>
+                <div className="absolute right-[5px] top-[5px] bg-white/10 w-[30px] h-[30px] rounded-[4px] flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
               </a>
             </div>
             
@@ -95,28 +91,28 @@ function App() {
           <div className="max-w-4xl mx-auto">
             {/* Multiple Badges in Responsive Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 divide-x divide-[#333] border-x border-[#333]">
-              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
+              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#222]">
                 <LaurelBadge 
                   primaryText="20+ years" 
                   secondaryText="Full-stack expertise" 
                   // icon={Award} 
                 />
               </div>
-              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
+              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#222]">
                 <LaurelBadge 
                   primaryText="$300k+" 
                   secondaryText="Upwork earned" 
                   // icon={DollarSign} 
                 />
               </div>
-              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
+              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#222]">
                 <LaurelBadge 
                   primaryText="1k+ starred" 
                   secondaryText="on GitHub" 
                   // icon={Star} 
                 />
               </div>
-              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#262626]">
+              <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#222]">
                 <LaurelBadge 
                   primaryText="100+ projects" 
                   secondaryText="Completed" 
@@ -288,8 +284,25 @@ function App() {
             </div>
           </div>
 
+          {/* Action Buttons - Centered */}
+          <div className="flex flex-col items-center my-10">
+            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+              <a 
+                href="https://upwork.com/freelancers/~016b923b0158ef81ae" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-transparent text-[#555] border border-[#555] text-sm font-medium rounded hover:bg-[#555] hover:text-white transition-colors flex items-center justify-center"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.546-1.405 0-2.543-1.14-2.543-2.546v-7.112H0v7.112c0 2.915 2.371 5.302 5.282 5.302 2.913 0 5.283-2.387 5.283-5.302v-1.192c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z"/>
+                </svg>
+                View my Upwork profile
+              </a>
+            </div>
+          </div>
+
           {/* Payment Section */}
-          <div className="py-8 border-b border-[#e0e0e0]">
+          <div className="pt-0 pb-8 border-b border-[#e0e0e0]">
             <p className="text-gray-700">
               Payment accesabilities: For long-term colloboration i able to recieve payments and 
               tacking my working time with modern software such as upwork.com and hubstaff.com Fixed 
@@ -297,23 +310,101 @@ function App() {
             </p>
           </div>
 
+          {/* Open-Source Commitments Section */}
+          <div className="py-8 border-b border-[#e0e0e0]">
+            <h2 className="text-xl font-bold mb-4 flex items-center text-[#333]">
+              Open-Source Commitments
+            </h2>
+            
+            {/* GitHub Stats */}
+            <div className="mb-6">
+              <img 
+                src="https://ghchart.rshah.org/roman-rr" 
+                alt="GitHub Contributions Chart"
+                className="w-full rounded-lg border border-[#e0e0e0]"
+              />
+              <p className="text-center text-sm text-gray-600 mt-2">My GitHub contribution activity</p>
+            </div>
+
+            {/* Projects Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              {/* Panes Project */}
+              <a 
+                href="https://github.com/tech-systems/panes" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-[#f5f5f5] p-5 border border-[#e0e0e0] rounded-lg transition-all hover:bg-[#f8f8f8] relative"
+              >
+                <Pin className="absolute top-3 right-3 w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-[#333]">Panes</h3>
+                  <span className="text-amber-500 text-xs font-semibold flex items-center">
+                    <svg className="w-4 h-4 mr-1" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
+                    </svg>
+                    <span className="text-gray-700">700+</span>
+                  </span>
+                </div>
+                <p className="text-gray-600 text-sm">Create dynamic modals, cards, panes for your applications in few steps. One instance – Thousands solutions.</p>
+              </a>
+
+              {/* LLM-toolchain Project */}
+              <a 
+                href="https://github.com/roman-rr/LLM-toolchain" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-[#f5f5f5] p-5 border border-[#e0e0e0] rounded-lg transition-all hover:bg-[#f8f8f8] relative"
+              >
+                <Pin className="absolute top-3 right-3 w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-[#333]">LLM-toolchain</h3>
+                  <span className="text-red-500">🔥</span>
+                </div>
+                <p className="text-gray-600 text-sm">Toolchain for LLMs built on LangChain, providing a flexible framework for document processing and RAG.</p>
+              </a>
+
+              {/* Focused Project */}
+              <a 
+                href="https://github.com/roman-rr/focused" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-[#f5f5f5] p-5 border border-[#e0e0e0] rounded-lg transition-all hover:bg-[#f8f8f8] relative"
+              >
+                <Pin className="absolute top-3 right-3 w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-[#333]">Focused</h3>
+                </div>
+                <p className="text-gray-600 text-sm">Open-source project focused on productivity and task management.</p>
+              </a>
+            </div>
+
+            {/* GitHub Profile Button */}
+            <div className="flex justify-center">
+              <a 
+                href="https://github.com/roman-rr" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-transparent text-[#555] border border-[#555] text-sm font-medium rounded hover:bg-[#555] hover:text-white transition-colors flex items-center justify-center"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                View my GitHub profile
+              </a>
+            </div>
+          </div>
+
           {/* Scientific Researches Section */}
           <div className="py-8 border-b border-[#e0e0e0]">
             <h2 className="text-xl font-bold mb-4 flex items-center text-[#333]">
-              Scientific Researches <span className="text-gray-500 ml-2 text-sm font-normal">(Academic commitments)</span>
+              Scientific Researches
             </h2>
             <div className="space-y-6">
               {/* First Research Paper (AI Tools) */}
               <div className="bg-[#f5f5f5] p-5 border border-[#e0e0e0] transition-all hover:shadow-md">
                 <div className="flex gap-4">
                   <div className="flex-shrink-0 bg-[#222] text-white p-3 rounded-md flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="16" y1="13" x2="8" y2="13"></line>
-                      <line x1="16" y1="17" x2="8" y2="17"></line>
-                      <line x1="10" y1="9" x2="8" y2="9"></line>
-                    </svg>
+                    <FileText stroke="#ccc" fill="none" size={20} strokeWidth={2} />
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between mb-1">
@@ -344,13 +435,7 @@ function App() {
               <div className="bg-[#f5f5f5] p-5 border border-[#e0e0e0] transition-all hover:shadow-md">
                 <div className="flex gap-4">
                   <div className="flex-shrink-0 bg-[#222] text-white p-3 rounded-md flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="16" y1="13" x2="8" y2="13"></line>
-                      <line x1="16" y1="17" x2="8" y2="17"></line>
-                      <line x1="10" y1="9" x2="8" y2="9"></line>
-                    </svg>
+                    <FileText stroke="#ccc" fill="none" size={20} strokeWidth={2} />
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between mb-1">
