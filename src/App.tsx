@@ -63,7 +63,7 @@ function App() {
               <a 
                 href="#" 
                 onClick={openCalendly}
-                className="h-[40px] ps-6 w-[320px] bg-[#222] text-white text-sm font-medium rounded hover:bg-[#333] transition-colors flex justify-start relative"
+                className="h-[40px] ps-4 w-[320px] bg-[#222] text-white text-sm font-medium rounded hover:bg-[#333] transition-colors flex justify-start relative"
               >
                 <div className="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -71,7 +71,7 @@ function App() {
                   </svg>
                   Book a 30-minute strategy call
                 </div>
-                <div className="absolute right-[5px] top-[5px] bg-white/10 w-[30px] h-[30px] rounded-[4px] flex items-center justify-center">
+                <div className="absolute right-[8px] top-[5px] bg-white/20 w-[30px] h-[30px] rounded-[4px] flex items-center justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -283,6 +283,31 @@ function App() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Company Logos section - Full Width */}
+        <div className="w-full bg-[#222] mb-8 overflow-hidden">
+          <div className="py-6">
+            <div className="relative flex">
+              {/* First set of logos */}
+              <div className="flex animate-slide-left">
+                <img src="/logos/hugging-face.avif" alt="HuggingFace" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+                <img src="/logos/langchain.avif" alt="LangChain" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+                <img src="/logos/docker.avif" alt="Docker" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+                <img src="/logos/nasdaq.avif" alt="Nasdaq" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+              </div>
+              {/* Duplicate set of logos for seamless scrolling */}
+              <div className="flex animate-slide-left" aria-hidden="true">
+                <img src="/logos/hugging-face.avif" alt="HuggingFace" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+                <img src="/logos/langchain.avif" alt="LangChain" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+                <img src="/logos/docker.avif" alt="Docker" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+                <img src="/logos/nasdaq.avif" alt="Nasdaq" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-[30px]">
 
           {/* Action Buttons - Centered */}
           <div className="flex flex-col items-center my-10">
@@ -299,15 +324,6 @@ function App() {
                 View my Upwork profile
               </a>
             </div>
-          </div>
-
-          {/* Payment Section */}
-          <div className="pt-0 pb-8 border-b border-[#e0e0e0]">
-            <p className="text-gray-700">
-              Payment accesabilities: For long-term colloboration i able to recieve payments and 
-              tacking my working time with modern software such as upwork.com and hubstaff.com Fixed 
-              price deals can be covered by paypal transfers or swift transfer services.
-            </p>
           </div>
 
           {/* Open-Source Commitments Section */}
@@ -358,7 +374,6 @@ function App() {
                 <Pin className="absolute top-3 right-3 w-4 h-4 text-gray-400" />
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="font-semibold text-[#333]">LLM-toolchain</h3>
-                  <span className="text-red-500">🔥</span>
                 </div>
                 <p className="text-gray-600 text-sm">Toolchain for LLMs built on LangChain, providing a flexible framework for document processing and RAG.</p>
               </a>
@@ -459,6 +474,15 @@ function App() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Payment Section */}
+          <div className="pt-0 pb-8 border-b border-[#e0e0e0]">
+            <p className="text-gray-700">
+              Payment accesabilities: For long-term colloboration i able to recieve payments and 
+              tacking my working time with modern software such as upwork.com and hubstaff.com Fixed 
+              price deals can be covered by paypal transfers or swift transfer services.
+            </p>
           </div>
         </div>
       </div>
