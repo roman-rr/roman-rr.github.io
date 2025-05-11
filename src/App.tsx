@@ -41,7 +41,7 @@ function App() {
     <div className="min-h-screen bg-[#f9f9f9] flex flex-col">
       <div className="flex-grow">
         {/* Header Section */}
-        <div className="max-w-4xl mx-auto px-[30px] py-6">
+        <div className="max-w-4xl mx-auto px-[30px] py-6 bg-[#f9f9f9]">
           <div className="flex flex-row items-start gap-6 mb-8">
             <Avatar className="w-[100px] h-[100px] rounded-full">
               <AvatarImage src="/avatar.png" alt="Roman Antonoff" />
@@ -49,17 +49,34 @@ function App() {
             </Avatar>
             
             <div>
-
               <h1 className="text-xl font-semibold text-[#333] mb-1">Roman Antonoff</h1>
               <Badge variant="subtle" className="mb-2">AI Developer & Solutions Architect</Badge>
               <p className="text-gray-600">B.Sc. Science of Digital Business</p>
-              <p className="text-gray-600 text-sm mt-1">Creator of <a href="https://panejs.com/" target="_blank" rel="noopener noreferrer" className="font-semibold ">Panes <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a> and <a href="https://github.com/roman-rr/llm-toolchain" target="_blank" rel="noopener noreferrer" className="font-semibold font-sm">LLM-toolchain <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a></p>
+              <p className="text-gray-600 text-sm mt-1">
+                Creator of <a href="https://panejs.com/" target="_blank" rel="noopener noreferrer" className="font-semibold ">Panes <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a> and <a href="https://github.com/roman-rr/llm-toolchain" target="_blank" rel="noopener noreferrer" className="font-semibold font-sm">LLMchain <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a>
+              </p>
+            </div>
+          </div>
+
+          {/* Quote */}
+          <div className="flex flex-col items-center mb-10 mt-10">
+            <div className="flex flex-col gap-3 mb-2">
+              <h1 className="text-4xl font-bold text-center text-[#333] mb-2">
+                {/* Full-Stack & AI Development Expert */}
+                AI Developer & Solutions Architect
+              </h1>
+              <h2 className="text-xl text-center text-gray-600 max-w-2xl">
+                20+ years full-stack expertise, $300k earned on Upwork in Laravel, TypeScript, LangChain, Python & OpenAI API. 
+              </h2>
+              <h3 className="text-sm text-center text-gray-600 max-w-2xl">
+                Currently focusing on Agentic AI, Digital Workers and LLM development.
+              </h3>
             </div>
           </div>
           
           {/* Action Buttons - Centered */}
-          <div className="flex flex-col items-center mb-6">
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="flex flex-col items-center mb-4">
+            <div className="flex flex-col sm:flex-row gap-3">
               <a 
                 href="#" 
                 onClick={openCalendly}
@@ -78,10 +95,8 @@ function App() {
                 </div>
               </a>
             </div>
-            
-            {/* Quote */}
-            <p className="text-center text-gray-700 max-w-2xl">
-              20+ years full-stack expertise, $300k earned on Upwork in Laravel, TypeScriprt, LangChain, Python & OpenAI API. Currently focusing on Agentic AI, Digital Workers and LLM development.
+            <p className="text-gray-600 text-xs text-center mt-3">
+                Or view my <a href="https://upwork.com/freelancers/~016b923b0158ef81ae" target="_blank" rel="noopener noreferrer" className="font-semibold ">Upwork profile <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a>
             </p>
           </div>
         </div>
@@ -296,13 +311,13 @@ function App() {
                 <img src="/logos/docker.avif" alt="Docker" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
                 <img src="/logos/nasdaq.avif" alt="Nasdaq" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
               </div>
-              {/* Duplicate set of logos for seamless scrolling */}
+              {/* Duplicate set of logos for seamless scrolling
               <div className="flex animate-slide-left" aria-hidden="true">
                 <img src="/logos/hugging-face.avif" alt="HuggingFace" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
                 <img src="/logos/langchain.avif" alt="LangChain" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
                 <img src="/logos/docker.avif" alt="Docker" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
                 <img src="/logos/nasdaq.avif" alt="Nasdaq" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
