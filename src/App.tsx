@@ -37,6 +37,54 @@ function App() {
     }
   };
 
+  // Add this array at the top of your App function (or outside if you prefer)
+  const logos = [
+    "hugging-face.avif",
+    "langchain.avif",
+    "docker.avif",
+    "vuejs.avif",
+    "jupyter.avif",
+    "django.avif",
+    "claude.avif",
+    "azure.avif",
+    "aws.avif",
+    "webpack.avif",
+    "vercel.avif",
+    "stripe.avif",
+    "streamlist.avif",
+    "replit.avif",
+    "redis.avif",
+    "react.avif",
+    "qwen.avif",
+    "qt.avif",
+    "postgresql.avif",
+    "openai.avif",
+    "nodejs.avif",
+    "nextjs.avif",
+    "n8n.avif",
+    "livewire.avif",
+    "laravel.avif",
+    "langsmith.avif",
+    "langgraph.avif",
+    "kubernetes.avif",
+    "ionic.avif",
+    "googlecolab.avif",
+    "gemini.avif",
+    "fastapi.avif",
+    "digitalocean.avif",
+    "deepseek.avif",
+    "angular.avif",
+    "agentkit.avif",
+    "LLaMA-Meta.avif",
+    "vite.avif",
+    "vertex.avif",
+    "typescript.avif",
+    "python.avif",
+    "pinecone.avif",
+    "azureai.avif",
+    // Add more as needed
+  ];
+
   return (
     <div className="min-h-screen bg-[#f9f9f9] flex flex-col">
       <div className="flex-grow">
@@ -80,7 +128,7 @@ function App() {
               <a 
                 href="#" 
                 onClick={openCalendly}
-                className="h-[40px] ps-4 w-[320px] bg-[#222] text-white text-sm font-medium rounded hover:bg-[#333] transition-colors flex justify-start relative"
+                className="h-[44px] ps-4 w-[320px] bg-[#222] text-white text-sm font-medium rounded hover:bg-[#333] transition-colors flex justify-start relative"
               >
                 <div className="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -88,7 +136,7 @@ function App() {
                   </svg>
                   Book a 30-minute strategy call
                 </div>
-                <div className="absolute right-[8px] top-[5px] bg-white/20 w-[30px] h-[30px] rounded-[4px] flex items-center justify-center">
+                <div className="absolute right-[8px] top-[6px] bg-white/20 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center shadow-[inset_1px_1px_0px_rgba(255,255,255,0.15)]">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -105,7 +153,7 @@ function App() {
         <div className="w-full bg-[#222] mb-8">
           <div className="max-w-4xl mx-auto">
             {/* Multiple Badges in Responsive Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 divide-x divide-[#333] border-x border-[#333]">
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 divide-x divide-[#333]">
               <div className="flex justify-center items-center p-3 sm:p-4 md:p-6 bg-[#222]">
                 <LaurelBadge 
                   primaryText="20+ years" 
@@ -306,18 +354,26 @@ function App() {
             <div className="relative flex">
               {/* First set of logos */}
               <div className="flex animate-slide-left">
-                <img src="/logos/hugging-face.avif" alt="HuggingFace" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
-                <img src="/logos/langchain.avif" alt="LangChain" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
-                <img src="/logos/docker.avif" alt="Docker" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
-                <img src="/logos/nasdaq.avif" alt="Nasdaq" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
+                {logos.map((logo) => (
+                  <img
+                    key={logo}
+                    src={`/logos/${logo}`}
+                    alt={logo.replace('.avif', '')}
+                    className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]"
+                  />
+                ))}
               </div>
-              {/* Duplicate set of logos for seamless scrolling
+              {/* Duplicate set of logos for seamless scrolling */}
               <div className="flex animate-slide-left" aria-hidden="true">
-                <img src="/logos/hugging-face.avif" alt="HuggingFace" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
-                <img src="/logos/langchain.avif" alt="LangChain" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
-                <img src="/logos/docker.avif" alt="Docker" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
-                <img src="/logos/nasdaq.avif" alt="Nasdaq" className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]" />
-              </div> */}
+                {logos.map((logo) => (
+                  <img
+                    key={`dup-${logo}`}
+                    src={`/logos/${logo}`}
+                    alt={logo.replace('.avif', '')}
+                    className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -344,7 +400,7 @@ function App() {
           {/* Open-Source Commitments Section */}
           <div className="py-8 border-b border-[#e0e0e0]">
             <h2 className="text-xl font-bold mb-4 flex items-center text-[#333]">
-              Open-Source Commitments
+              Open-Source Commitment
             </h2>
             
             {/* GitHub Stats */}
@@ -427,7 +483,7 @@ function App() {
           {/* Scientific Researches Section */}
           <div className="py-8 border-b border-[#e0e0e0]">
             <h2 className="text-xl font-bold mb-4 flex items-center text-[#333]">
-              Scientific Researches
+              Scientific Research
             </h2>
             <div className="space-y-6">
               {/* First Research Paper (AI Tools) */}
