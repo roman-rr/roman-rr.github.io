@@ -45,3 +45,12 @@ npm run build
 # or
 yarn build
 ```
+
+#### Logos
+```bash
+for img in *.png *.avif; do
+  [ -e "$img" ] || continue  # skip if no matching file
+  filename="${img%.*}"
+  magick "$img" "../logos/${filename}.avif"
+done
+```
