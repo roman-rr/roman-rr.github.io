@@ -5,6 +5,9 @@ import { Badge } from './components/ui/badge'
 import { ExternalLink, FileText, Pin } from 'lucide-react'
 
 function App() {
+  // Toggle between wrapped layout and carousel transition
+  const useCarouselLayout = true; // Set to true for carousel, false for wrapped layout
+
   useEffect(() => {
     // Load Calendly script
     const script = document.createElement('script');
@@ -54,9 +57,15 @@ function App() {
     "claude.avif",
     "gemini.avif",
     "qwen.avif",
+    "gradio.avif",
+    "mistral.avif",
     "deepseek.avif",
+    "devin.avif",
+    "codex.avif",
+    "neo4j.avif",
     "LLaMA-Meta.avif",
     "langchain.avif",
+    "lovable.avif",
     "langsmith.avif",
     "langgraph.avif",
     "hugging-face.avif",
@@ -353,30 +362,47 @@ function App() {
         {/* Company Logos section - Full Width */}
         <div className="w-full bg-[#222] mb-8 overflow-hidden">
           <div className="py-6">
-            <div className="relative flex">
-              {/* First set of logos */}
-              <div className="flex animate-slide-left">
-                {logos.map((logo) => (
-                  <img
-                    key={logo}
-                    src={`/logos/${logo}`}
-                    alt={logo.replace('.avif', '')}
-                    className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]"
-                  />
-                ))}
+            {useCarouselLayout ? (
+              // Carousel Layout
+              <div className="relative flex">
+                {/* First set of logos */}
+                <div className="flex animate-slide-left-mobile md:animate-slide-left-tablet lg:animate-slide-left">
+                  {logos.map((logo) => (
+                    <img
+                      key={logo}
+                      src={`/logos/${logo}`}
+                      alt={logo.replace('.avif', '')}
+                      className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]"
+                    />
+                  ))}
+                </div>
+                {/* Duplicate set of logos for seamless scrolling */}
+                <div className="flex animate-slide-left-mobile md:animate-slide-left-tablet lg:animate-slide-left" aria-hidden="true">
+                  {logos.map((logo) => (
+                    <img
+                      key={`dup-${logo}`}
+                      src={`/logos/${logo}`}
+                      alt={logo.replace('.avif', '')}
+                      className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]"
+                    />
+                  ))}
+                </div>
               </div>
-              {/* Duplicate set of logos for seamless scrolling */}
-              <div className="flex animate-slide-left" aria-hidden="true">
-                {logos.map((logo) => (
-                  <img
-                    key={`dup-${logo}`}
-                    src={`/logos/${logo}`}
-                    alt={logo.replace('.avif', '')}
-                    className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]"
-                  />
-                ))}
+            ) : (
+              // Wrapped Layout
+              <div className="max-w-7xl mx-auto px-4">
+                <div className="flex flex-wrap justify-center gap-4">
+                  {logos.map((logo) => (
+                    <img
+                      key={logo}
+                      src={`/logos/${logo}`}
+                      alt={logo.replace('.avif', '')}
+                      className="w-[120px] h-[64px] object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 

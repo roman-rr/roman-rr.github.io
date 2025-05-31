@@ -48,9 +48,9 @@ yarn build
 
 #### Logos
 ```bash
-for img in *.png *.avif; do
+for img in public/logos-raw/*.png public/logos-raw/*.avif; do
   [ -e "$img" ] || continue  # skip if no matching file
-  filename="${img%.*}"
-  magick "$img" "../logos/${filename}.avif"
+  filename=$(basename "${img%.*}")
+  magick "$img" "public/logos/${filename}.avif"
 done
 ```
