@@ -5,9 +5,6 @@ import { Badge } from './components/ui/badge'
 import { ExternalLink, FileText, Pin } from 'lucide-react'
 
 function App() {
-  // Toggle between wrapped layout and carousel transition
-  const useCarouselLayout = true; // Set to true for carousel, false for wrapped layout
-
   useEffect(() => {
     // Load Calendly script
     const script = document.createElement('script');
@@ -362,47 +359,64 @@ function App() {
         {/* Company Logos section - Full Width */}
         <div className="w-full bg-[#222] mb-8 overflow-hidden">
           <div className="py-6">
-            {useCarouselLayout ? (
-              // Carousel Layout
-              <div className="relative flex">
+            {/* Wrapped Layout for smaller screens */}
+            <div className="lg:hidden max-w-7xl mx-auto px-4">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4">
+                {logos.map((logo, index) => (
+                  <img
+                    key={logo}
+                    src={`/logos/${logo}`}
+                    alt={logo.replace('.avif', '')}
+                    draggable="false"
+                    className={`w-[80px] h-[42px] sm:w-[100px] sm:h-[50px] md:w-[110px] md:h-[55px] object-contain filter grayscale opacity-80 md:opacity-70 hover:opacity-100 transition-opacity ${
+                      index === logos.length - 1 ? 'hidden sm:block' : ''
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {/* Carousel Layout for large screens */}
+            <div className="hidden lg:block">
+              <div className="relative flex overflow-hidden">
                 {/* First set of logos */}
-                <div className="flex animate-slide-left-mobile md:animate-slide-left-tablet lg:animate-slide-left">
+                <div className="flex animate-slide-left will-change-transform" style={{ minWidth: 'max-content' }}>
                   {logos.map((logo) => (
-                    <img
+                    <div
                       key={logo}
-                      src={`/logos/${logo}`}
-                      alt={logo.replace('.avif', '')}
-                      className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]"
-                    />
+                      className="flex-shrink-0"
+                      style={{ width: '160px' }}
+                    >
+                      <img
+                        src={`/logos/${logo}`}
+                        alt={logo.replace('.avif', '')}
+                        draggable="false"
+                        className="w-[140px] h-[64px] object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity"
+                        style={{ margin: '0 10px' }}
+                      />
+                    </div>
                   ))}
                 </div>
                 {/* Duplicate set of logos for seamless scrolling */}
-                <div className="flex animate-slide-left-mobile md:animate-slide-left-tablet lg:animate-slide-left" aria-hidden="true">
+                <div className="flex animate-slide-left will-change-transform" aria-hidden="true" style={{ minWidth: 'max-content' }}>
                   {logos.map((logo) => (
-                    <img
+                    <div
                       key={`dup-${logo}`}
-                      src={`/logos/${logo}`}
-                      alt={logo.replace('.avif', '')}
-                      className="w-[140px] h-[64px] flex-shrink-0 object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity pr-4 mr-[5px]"
-                    />
+                      className="flex-shrink-0"
+                      style={{ width: '160px' }}
+                    >
+                      <img
+                        src={`/logos/${logo}`}
+                        alt={logo.replace('.avif', '')}
+                        draggable="false"
+                        className="w-[140px] h-[64px] object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity"
+                        style={{ margin: '0 10px' }}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
-            ) : (
-              // Wrapped Layout
-              <div className="max-w-7xl mx-auto px-4">
-                <div className="flex flex-wrap justify-center gap-4">
-                  {logos.map((logo) => (
-                    <img
-                      key={logo}
-                      src={`/logos/${logo}`}
-                      alt={logo.replace('.avif', '')}
-                      className="w-[120px] h-[64px] object-contain filter grayscale opacity-70 hover:opacity-100 transition-opacity"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
 

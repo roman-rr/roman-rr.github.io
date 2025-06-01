@@ -73,9 +73,9 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        'slide-left': 'slide-left 180s linear infinite',
-        'slide-left-mobile': 'slide-left 45s linear infinite',
-        'slide-left-tablet': 'slide-left 90s linear infinite',
+        'slide-left': 'slide-left 120s linear infinite',
+        'slide-left-mobile': 'slide-left 30s linear infinite',
+        'slide-left-tablet': 'slide-left 60s linear infinite',
       },
     },
   },
