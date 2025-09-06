@@ -5,6 +5,9 @@ import { Badge } from './components/ui/badge'
 import { ExternalLink, FileText, Pin } from 'lucide-react'
 
 function App() {
+  // Add this debug toggle to switch between carousel and grid layouts
+  const DEBUG_SHOW_LOGOS_AS_GRID = false;
+
   useEffect(() => {
     // Load Calendly script
     const script = document.createElement('script');
@@ -59,6 +62,7 @@ function App() {
     "deepseek.avif",
     "devin.avif",
     "codex.avif",
+    "claudecode.avif",
     "neo4j.avif",
     "LLaMA-Meta.avif",
     "langchain.avif",
@@ -75,6 +79,12 @@ function App() {
     "streamlit.avif",
     "replit.avif",
     "n8n.avif",
+    "copilotkit.avif",
+    "crewai.avif",
+    "letta.avif",
+    "llamaindex.avif",
+    "mastra.avif",
+    "openrouter.avif",
     
     // Backend & Cloud Infrastructure
     "python.avif",
@@ -90,7 +100,8 @@ function App() {
     "digitalocean.avif",
     "vercel.avif",
     "stripe.avif",
-    "nodejs.avif"
+    "nodejs.avif",
+    "duckdb.avif"
   ];
 
   return (
@@ -360,7 +371,7 @@ function App() {
         <div className="w-full bg-[#222] mb-8 overflow-hidden">
           <div className="py-6">
             {/* Wrapped Layout for smaller screens */}
-            <div className="lg:hidden max-w-7xl mx-auto px-4">
+            <div className={DEBUG_SHOW_LOGOS_AS_GRID ? "" : "lg:hidden"}>
               <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4">
                 {logos.map((logo, index) => (
                   <img
@@ -377,7 +388,7 @@ function App() {
             </div>
             
             {/* Carousel Layout for large screens */}
-            <div className="hidden lg:block">
+            <div className={DEBUG_SHOW_LOGOS_AS_GRID ? "hidden" : ""}>
               <div className="relative flex overflow-hidden">
                 {/* First set of logos */}
                 <div className="flex animate-slide-left will-change-transform" style={{ minWidth: 'max-content' }}>
