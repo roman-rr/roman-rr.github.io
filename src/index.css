@@ -73,4 +73,56 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Reviews Grid Styles - Masonry Layout */
+.reviews-grid {
+  column-count: 1;
+  column-gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .reviews-grid {
+    column-count: 2;
+    column-gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .reviews-grid {
+    column-count: 2;
+    column-gap: 1rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .reviews-grid {
+    column-count: 2;
+    column-gap: 1rem;
+  }
+}
+
+.review-card {
+  position: relative;
+  padding: 1.5rem;
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  display: inline-block;
+  width: 100%;
+  background-color: #f5f5f5;
+  border-radius: 0.5rem;
+}
+
+.quote-symbol-closing {
+  position: absolute;
+  bottom: 20px;
+  right: 25px;
+  z-index: 0;
+  opacity: 0.25;
+  transform: rotate(180deg);
+}
+
+.review-content {
+  position: relative;
+  z-index: 1;
 } 
