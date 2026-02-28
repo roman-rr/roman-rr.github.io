@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT Agents – Agentic AI Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #fafafa;
+    font-family: 'DM Sans', sans-serif;
+    color: #374151;
+    padding: 48px 32px;
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── Title ─────────────────────────────────── */
+  .title {
+    font-size: 24px;
+    font-weight: 300;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 13px;
+    font-weight: 400;
+    color: #9ca3af;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .stats-line {
+    text-align: center;
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 8px;
+    margin-bottom: 32px;
+  }
+
+  /* ── Section Label ─────────────────────────── */
+  .section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #9ca3af;
+    margin-bottom: 12px;
+  }
+
+  /* ── Zone ───────────────────────────────────── */
+  .zone {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  /* ── Gate Agent (top level) ────────────────── */
+  .gate-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .gate-header .icon-container {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #eef2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .gate-header .icon-container svg {
+    width: 22px;
+    height: 22px;
+    stroke: #4f46e5;
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .gate-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+  }
+  .gate-desc {
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 300;
+  }
+  .gate-model {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 2px;
+  }
+
+  /* ── RAG badge ──────────────────────────────── */
+  .rag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  /* ── Eval badge ────────────────────────────── */
+  .eval-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .eval-badge-planned {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  /* ── Zone spacing ─────────────────── */
+  .zone {
+    margin-bottom: 0;
+  }
+
+  /* ── Connector between zones ─────────────────────── */
+  .connector-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0;
+  }
+  .connector-v {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .connector-line {
+    width: 1px;
+    height: 16px;
+    background: #e5e7eb;
+  }
+  .connector-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d1d5db;
+  }
+  
+  /* ── Side-by-side layout: Gate + Frontend ───────── */
+  .side-by-side-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+    margin-bottom: 0;
+  }
+  @media (max-width: 900px) {
+    .side-by-side-row { grid-template-columns: 1fr; }
+  }
+  
+
+  /* ── Sub-agents grid ───────────────────────── */
+  .subagents-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 4px;
+  }
+  @media (max-width: 800px) {
+    .subagents-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Sub-agent card ────────────────────────── */
+  .agent-card {
+    background: #fafafa;
+    border: 1px solid #f3f4f6;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .agent-card-planned {
+    border: 1px dashed #e5e7eb;
+    background: #fefce8;
+  }
+  .agent-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .icon-container {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-container svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .agent-card-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .agent-card-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1f2937;
+  }
+  .agent-card-role {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 300;
+  }
+  .agent-card-desc {
+    font-size: 10px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f3f4f6;
+  }
+  .planned-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    background: #fef3c7;
+    color: #b45309;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-left: 4px;
+  }
+
+  /* ── Namespace badges (laminograms: pill badges) ────── */
+  .namespace-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .namespace-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 4px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+  
+  /* ── Frontend application cards ───────────────────── */
+  .frontend-card {
+    background: #fafafa;
+    border: 1px solid #f3f4f6;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .frontend-card-planned {
+    background: #fefce8;
+    border: 1px dashed #e5e7eb;
+  }
+  .frontend-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .frontend-card-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1f2937;
+  }
+  .frontend-card-version {
+    font-size: 9px;
+    font-weight: 400;
+    color: #9ca3af;
+    font-family: 'DM Mono', monospace;
+  }
+  .frontend-card-desc {
+    font-size: 10px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .auth-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .auth-badge-slack {
+    background: #f0f9ff;
+    color: #0369a1;
+  }
+  .auth-badge-supabase {
+    background: #ecfdf5;
+    color: #059669;
+  }
+  
+  /* ── Middleware cards ──────────────────────────────── */
+  .middleware-card {
+    background: #fafafa;
+    border: 1px solid #f3f4f6;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .middleware-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #eef2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .middleware-card-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: #4f46e5;
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .middleware-card-content {
+    flex: 1;
+  }
+  .middleware-card-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+  .middleware-card-desc {
+    font-size: 10px;
+    color: #9ca3af;
+    line-height: 1.4;
+  }
+  .middleware-config {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #6b7280;
+    background: #f9fafb;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  /* ── Tools list ────────────────────────────── */
+  .tools-section {
+    border-top: 1px solid #f3f4f6;
+    padding-top: 10px;
+    margin-top: 8px;
+  }
+  .tools-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #9ca3af;
+    margin-bottom: 6px;
+  }
+  .tools-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .tool-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  /* ── Stats row ─────────────────────────────── */
+  .stats-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Microservices ─────────────────────────── */
+  .microservices-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 4px;
+  }
+  @media (max-width: 900px) {
+    .microservices-grid { grid-template-columns: 1fr; }
+  }
+  .service-card {
+    background: #fafafa;
+    border: 1px solid #f3f4f6;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .service-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #f3e8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .service-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #7c3aed;
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .service-name {
+    font-size: 11px;
+    font-weight: 400;
+    color: #1f2937;
+  }
+  .service-port {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+  .connection-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 400;
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 3px;
+    display: inline-block;
+  }
+
+  /* ── Footer ────────────────────────────────── */
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 11px;
+    color: #9ca3af;
+  }
+
+  /* ── Knowledge base (direct tool, no sub-agent) */
+  .direct-tool-card {
+    background: #fafafa;
+    border: 1px solid #f3f4f6;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 400px;
+  }
+  
+  /* ── Frontend grid (3-col full-width zone) ──────── */
+  .frontend-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 800px) {
+    .frontend-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Infra split (2-col: data stores + observability) ── */
+  .infra-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 900px) {
+    .infra-split { grid-template-columns: 1fr; }
+  }
+
+  /* ── External APIs chips ────────────────────────── */
+  .ext-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 800px) {
+    .ext-row { grid-template-columns: 1fr; }
+  }
+  .ext-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fafafa;
+    border: 1px solid #f3f4f6;
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+  .ext-chip-name {
+    font-size: 12px;
+    font-weight: 400;
+    color: #374151;
+  }
+  .ext-chip-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #9ca3af;
+    margin-top: 1px;
+  }
+
+  /* ── Gate top row (info + badges) ── */
+  .gate-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  @media (max-width: 800px) {
+    .gate-top-row { flex-direction: column; gap: 12px; }
+  }
+
+  /* ── Gate inner split (Direct Tools + Long Term Memory) ── */
+  .gate-inner-split {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #f3f4f6;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 800px) {
+    .gate-inner-split { grid-template-columns: 1fr; }
+  }
+
+  /* ── Middleware grid ─────────────────────────────── */
+  .middleware-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 4px;
+  }
+  @media (max-width: 800px) {
+    .middleware-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Screenshots gallery ─────────────────────────── */
+  .screenshots-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 4px;
+    padding: 0 40px;
+  }
+  @media (max-width: 800px) {
+    .screenshots-gallery { grid-template-columns: 1fr; padding: 0; }
+  }
+  .screenshot-thumb {
+    display: block;
+    text-decoration: none;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .screenshot-thumb img,
+  .screenshot-thumb svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .screenshot-caption {
+    font-size: 10px;
+    color: #9ca3af;
+    text-align: center;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Title -->
+  <h1 class="title">PT Agents – Agentic AI Architecture</h1>
+  <p class="subtitle">Project Timber intelligence platform based on <a href="https://arxiv.org/abs/2510.21618" target="_blank" style="color:#6b7280;text-decoration:none;font-weight:500;">DeepAgents</a> for long horizon autonomous tasks</p>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- IN ACTION -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 10px;">In Action</div>
+    <div class="screenshots-gallery">
+    <div>
+      <a class="screenshot-thumb" href="web-ui-chatbot-1.png" target="_blank">
+        <img src="web-ui-chatbot-1.png" alt="Web UI Chatbot">
+      </a>
+      <div class="screenshot-caption">Web UI Chatbot</div>
+    </div>
+    <div>
+      <a class="screenshot-thumb" href="per-agent-analytics-2.png" target="_blank">
+        <img src="per-agent-analytics-2.png" alt="Per-Agent Analytics">
+      </a>
+      <div class="screenshot-caption">Per-Agent Analytics</div>
+    </div>
+    <div>
+      <a class="screenshot-thumb" href="betterstack-metrics.png" target="_blank">
+        <img src="betterstack-metrics.png" alt="BetterStack Metrics">
+      </a>
+      <div class="screenshot-caption">BetterStack Metrics</div>
+    </div>
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- FRONTEND INTERFACES -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 12px;">Frontend Interfaces</div>
+    <div class="frontend-grid">
+
+      <!-- PT Helper Slack Agent -->
+      <div class="frontend-card">
+        <div class="frontend-card-header">
+          <div class="icon-container" style="background:#ecfeff;">
+            <svg viewBox="0 0 24 24" style="stroke:#0891b2;">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </div>
+          <div style="flex: 1;">
+            <div class="frontend-card-name">PT Helper Slack Agent</div>
+            <div class="frontend-card-version">v2.0</div>
+          </div>
+        </div>
+        <div class="frontend-card-desc">Interactive Slack bot for internal team queries.</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 10px; color: #9ca3af;">Auth:</span>
+          <span class="auth-badge auth-badge-slack">
+            <svg viewBox="0 0 24 24" style="width: 10px; height: 10px; stroke: currentColor; fill: none;">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            Slack OAuth 2.0
+          </span>
+        </div>
+      </div>
+
+      <!-- Web UI Chatbot -->
+      <div class="frontend-card">
+        <div class="frontend-card-header">
+          <div class="icon-container" style="background:#eef2ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div style="flex: 1;">
+            <div class="frontend-card-name">Web UI Chatbot</div>
+            <div class="frontend-card-version">v2.0</div>
+          </div>
+        </div>
+        <div class="frontend-card-desc">React-based web interface for internal team support.</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 10px; color: #9ca3af;">Auth:</span>
+          <span class="auth-badge auth-badge-supabase">
+            <svg viewBox="0 0 24 24" style="width: 10px; height: 10px; stroke: currentColor; fill: none;">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+            Supabase Auth
+          </span>
+        </div>
+      </div>
+
+      <!-- Website Widget -->
+      <div class="frontend-card">
+        <div class="frontend-card-header">
+          <div class="icon-container" style="background:#fff1f2;">
+            <svg viewBox="0 0 24 24" style="stroke:#e11d48;">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18"/>
+              <path d="M9 21V9"/>
+            </svg>
+          </div>
+          <div style="flex: 1;">
+            <div class="frontend-card-name">Website CopilotKit Widget</div>
+            <div class="frontend-card-version">v1.0</div>
+          </div>
+        </div>
+        <div class="frontend-card-desc">Automated customer support and sales widget.</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 10px; color: #9ca3af;">Auth:</span>
+          <span class="auth-badge" style="background:#f3f4f6; color:#6b7280; font-size:9px; padding:3px 8px; border-radius:4px; font-weight:400; display:inline-flex; align-items:center; gap:4px;">
+            <svg viewBox="0 0 24 24" style="width: 10px; height: 10px; stroke: currentColor; fill: none;">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Order Number + Name
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- INTERNAL GATE AGENT -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="gate-top-row">
+      <div>
+        <div class="gate-header">
+          <div class="icon-container" style="width:42px;height:42px;border-radius:10px;background:#eef2ff;">
+            <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:#4f46e5;">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="gate-name">Internal Gate Agent</div>
+            <div class="gate-desc">Lightweight supervisor — routes queries to specialized sub-agents</div>
+          </div>
+        </div>
+        <div style="margin-top: 8px; margin-left: 56px;">
+          <span class="gate-model">google/gemini-3-pro-preview</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 6px; align-items: flex-start; padding-top: 4px;">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:400;background:#ffffff;color:#1f2937;border:1px solid #e5e7eb;padding:3px 8px;border-radius:4px;white-space:nowrap;">LangGraph</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:400;background:#ffffff;color:#1f2937;border:1px solid #e5e7eb;padding:3px 8px;border-radius:4px;white-space:nowrap;">LangChain</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:400;background:#ffffff;color:#1f2937;border:1px solid #e5e7eb;padding:3px 8px;border-radius:4px;white-space:nowrap;">DeepAgents</span>
+      </div>
+    </div>
+
+    <div class="gate-inner-split">
+      <!-- Direct Tools -->
+      <div>
+        <div class="section-label" style="margin-bottom: 8px;">Direct Tools</div>
+        <div class="direct-tool-card" style="max-width: none;">
+          <div class="icon-container" style="background:#f1f5f9;">
+            <svg viewBox="0 0 24 24" style="stroke:#475569;">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 12px; font-weight: 500; color: #1f2937;">Knowledge Base Search</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 6px; margin-bottom: 4px;">Pinecone Namespaces:</div>
+            <div class="namespace-grid">
+              <span class="namespace-badge">documents</span>
+              <span class="namespace-badge">emails</span>
+              <span class="namespace-badge">website</span>
+              <span class="namespace-badge">messages</span>
+              <span class="namespace-badge">calls</span>
+            </div>
+          </div>
+          <span class="rag-badge">
+            <svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:currentColor;stroke-width:2;fill:none;">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            RAG
+          </span>
+        </div>
+      </div>
+      <!-- Long Term Memory -->
+      <div>
+        <div class="section-label" style="margin-bottom: 8px;">Long Term Memory</div>
+        <div class="middleware-card">
+          <div class="middleware-card-icon" style="background:#ede9fe;">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              <line x1="12" y1="6" x2="12" y2="6.01"/>
+              <line x1="12" y1="10" x2="12" y2="10.01"/>
+              <line x1="12" y1="14" x2="12" y2="14.01"/>
+            </svg>
+          </div>
+          <div class="middleware-card-content">
+            <div class="middleware-card-name">PostgreSQL Checkpointer</div>
+            <div class="middleware-card-desc">PostgreSQL-backed state persistence for conversation continuity.</div>
+            <div class="middleware-config">db: timber_agents · pool: 1-20 connections · async</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- SUB-AGENTS ZONE -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label">Sub-Agents</div>
+
+    <div class="subagents-grid">
+
+      <!-- ── Order Analyst ──────────────────────────── -->
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="icon-container" style="background:#f0f9ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#0369a1;">
+              <path d="M3 3v18h18"/>
+              <path d="M18 17V9"/>
+              <path d="M13 17V5"/>
+              <path d="M8 17v-3"/>
+            </svg>
+          </div>
+          <div class="agent-card-info">
+            <div class="agent-card-name">Order Analyst</div>
+            <div class="agent-card-role">Deals · Revenue · RDM · Delivery</div>
+          </div>
+          <span class="eval-badge">162 evals</span>
+        </div>
+        <div class="agent-card-desc">Analytics on deals, revenue, RDM cases, products, geography, delivery, and payment status. Queries HubSpot pipeline for insights and trends.</div>
+        <div class="tools-section">
+          <div class="tools-label">Tools</div>
+          <div class="tools-grid">
+            <span class="tool-chip">deals_query</span>
+            <span class="tool-chip">deals_summary</span>
+            <span class="tool-chip">product_analytics</span>
+            <span class="tool-chip">rdm_query</span>
+            <span class="tool-chip">rdm_dispatch</span>
+            <span class="tool-chip">rdm_association</span>
+            <span class="tool-chip">stage_groups</span>
+            <span class="tool-chip">delivery_analytics</span>
+            <span class="tool-chip">payment_status</span>
+            <span class="tool-chip">geographic</span>
+            <span class="tool-chip">fallback_query</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Customer Lookup ────────────────────────── -->
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="icon-container" style="background:#f3e8ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="agent-card-info">
+            <div class="agent-card-name">Customer Lookup</div>
+            <div class="agent-card-role">Profiles · Deals · Files · RDM</div>
+          </div>
+          <span class="eval-badge">39 evals</span>
+        </div>
+        <div class="agent-card-desc">Retrieves customer profiles from HubSpot by name, phone, email, or order reference. Provides deal history, RDM cases, and order files.</div>
+        <div class="tools-section">
+          <div class="tools-label">Tools</div>
+          <div class="tools-grid">
+            <span class="tool-chip">customer_search</span>
+            <span class="tool-chip">order_files</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Gmail Reader ───────────────────────────── -->
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="icon-container" style="background:#ecfeff;">
+            <svg viewBox="0 0 24 24" style="stroke:#0891b2;">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <div class="agent-card-info">
+            <div class="agent-card-name">Gmail Reader</div>
+            <div class="agent-card-role">Search · Threads · Mailboxes</div>
+          </div>
+          <span class="eval-badge">81 evals</span>
+        </div>
+        <div class="agent-card-desc">Read-only access to Gmail mailboxes. Search emails using Gmail query syntax, read threads, and access pipeline-labeled emails across multiple accounts.</div>
+        <div class="tools-section">
+          <div class="tools-label">Tools</div>
+          <div class="tools-grid">
+            <span class="tool-chip">email_search</span>
+            <span class="tool-chip">email_thread</span>
+            <span class="tool-chip">list_mailboxes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Monday Boards ──────────────────────────── -->
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="icon-container" style="background:#ecfdf5;">
+            <svg viewBox="0 0 24 24" style="stroke:#059669;">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </div>
+          <div class="agent-card-info">
+            <div class="agent-card-name">Monday Boards</div>
+            <div class="agent-card-role">Boards · Items · Search · Details</div>
+          </div>
+          <span class="eval-badge">82 evals</span>
+        </div>
+        <div class="agent-card-desc">Query Monday.com boards and items. List boards, get schemas, search by order/phone/email, filter by status/group, and retrieve full item details.</div>
+        <div class="tools-section">
+          <div class="tools-label">Tools</div>
+          <div class="tools-grid">
+            <span class="tool-chip">list_boards</span>
+            <span class="tool-chip">board_schema</span>
+            <span class="tool-chip">query_items</span>
+            <span class="tool-chip">search_items</span>
+            <span class="tool-chip">item_details</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── File Analyzer ──────────────────────────── -->
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="icon-container" style="background:#fef3c7;">
+            <svg viewBox="0 0 24 24" style="stroke:#d97706;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <circle cx="12" cy="13" r="2"/>
+              <path d="M12 15v3"/>
+            </svg>
+          </div>
+          <div class="agent-card-info">
+            <div class="agent-card-name">File Analyzer</div>
+            <div class="agent-card-role">Images · PDFs · Vision · Council</div>
+          </div>
+          <span class="eval-badge">38 evals</span>
+        </div>
+        <div class="agent-card-desc">Analyzes images and documents. Quick Gemini Flash analysis for images, deep GPT-5.2 for PDFs/documents, and council mode for cross-validation.</div>
+        <div class="tools-section">
+          <div class="tools-label">Tools</div>
+          <div class="tools-grid">
+            <span class="tool-chip">quick_analyze</span>
+            <span class="tool-chip">deep_analyze</span>
+            <span class="tool-chip">council_analyze</span>
+            <span class="tool-chip">resolve_files</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Call Explorer ──────────────────────────── -->
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="icon-container" style="background:#fff7ed;">
+            <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <div class="agent-card-info">
+            <div class="agent-card-name">Call Explorer</div>
+            <div class="agent-card-role">Calls · Transcripts · Analytics</div>
+          </div>
+          <span class="eval-badge">128 evals</span>
+        </div>
+        <div class="agent-card-desc">Queries call data from Athena. Search calls, analytics, transcripts, agent performance rankings, client history, and performance trends.</div>
+        <div class="tools-section">
+          <div class="tools-label">Tools</div>
+          <div class="tools-grid">
+            <span class="tool-chip">call_search</span>
+            <span class="tool-chip">call_analytics</span>
+            <span class="tool-chip">agent_rankings</span>
+            <span class="tool-chip">agent_deep_dive</span>
+            <span class="tool-chip">client_history</span>
+            <span class="tool-chip">call_transcript</span>
+            <span class="tool-chip">trends</span>
+            <span class="tool-chip">table_schema</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /subagents-grid -->
+  </div><!-- /zone -->
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- MIDDLEWARES LAYER -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label">Middleware Stack</div>
+    <div style="font-size: 11px; color: #9ca3af; margin-bottom: 16px; font-weight: 300;">Shared middleware layer applied to all 6 sub-agents</div>
+
+    <div class="middleware-grid">
+
+      <!-- S3 Offload -->
+      <div class="middleware-card">
+        <div class="middleware-card-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.5 6.9 12 12.01 20.5 6.9"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">S3 Offload Middleware</div>
+          <div class="middleware-card-desc">Offloads large tool outputs (>5k tokens) to S3 with presigned URLs. Uses tiktoken for accurate token counting.</div>
+          <div class="middleware-config">threshold: 5000 tokens · format: head+tail preview</div>
+        </div>
+      </div>
+
+      <!-- Tool Call Limits -->
+      <div class="middleware-card">
+        <div class="middleware-card-icon" style="background:#fef3c7;">
+          <svg viewBox="0 0 24 24" style="stroke:#d97706;">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Tool Call Limit</div>
+          <div class="middleware-card-desc">Prevents infinite loops by limiting tool calls per conversation and per turn.</div>
+          <div class="middleware-config">thread: 30 calls · run: 10 calls · behavior: continue</div>
+        </div>
+      </div>
+
+      <!-- Tool Retry -->
+      <div class="middleware-card">
+        <div class="middleware-card-icon" style="background:#f0f9ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#0369a1;">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+            <path d="M16 21h5v-5"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Tool Retry Middleware</div>
+          <div class="middleware-card-desc">Automatic retries for transient API failures with exponential backoff.</div>
+          <div class="middleware-config">retries: 3 · backoff: 2.0x · initial: 1s</div>
+        </div>
+      </div>
+
+      <!-- Todo List -->
+      <div class="middleware-card">
+        <div class="middleware-card-icon" style="background:#f3e8ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Todo List Middleware</div>
+          <div class="middleware-card-desc">Helps agents track progress on complex multi-step tasks with persistent state.</div>
+          <div class="middleware-config">task tracking · progress monitoring · step management</div>
+        </div>
+      </div>
+
+      <!-- Summarization -->
+      <div class="middleware-card">
+        <div class="middleware-card-icon" style="background:#ecfeff;">
+          <svg viewBox="0 0 24 24" style="stroke:#0891b2;">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Summarization Middleware</div>
+          <div class="middleware-card-desc">Automatically summarizes conversation history when context grows too large.</div>
+          <div class="middleware-config">trigger: 50k tokens · keep: 20 messages · model: flash</div>
+        </div>
+      </div>
+
+      <!-- Model Retry -->
+      <div class="middleware-card">
+        <div class="middleware-card-icon" style="background:#fff1f2;">
+          <svg viewBox="0 0 24 24" style="stroke:#e11d48;">
+            <path d="M23 4v6h-6"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Model Retry Middleware</div>
+          <div class="middleware-card-desc">Retries transient LLM API failures (429s, 503s, timeouts) before fallback.</div>
+          <div class="middleware-config">retries: 3 · backoff: 2.0x · behavior: continue</div>
+        </div>
+      </div>
+
+      <!-- Model Fallback -->
+      <div class="middleware-card">
+        <div class="middleware-card-icon" style="background:#f1f5f9;">
+          <svg viewBox="0 0 24 24" style="stroke:#475569;">
+            <path d="M18 20V10"/>
+            <path d="M12 20V4"/>
+            <path d="M6 20v-6"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Model Fallback Middleware</div>
+          <div class="middleware-card-desc">Multi-provider redundancy with automatic fallback to alternative LLMs.</div>
+          <div class="middleware-config">primary → grok-4.1-fast → gpt-4o-mini</div>
+        </div>
+      </div>
+
+      <!-- Usage Tracking -->
+      <div class="middleware-card">
+        <div class="middleware-card-icon" style="background:#f0f9ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#0369a1;">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Usage Tracking Middleware</div>
+          <div class="middleware-card-desc">Fire-and-forget recording of tool calls, duration, and success. Manages trace and invocation lifecycle. Sub-agents run in tools_only mode, reading parent context via thread_id registry.</div>
+          <div class="middleware-config">db: timber_agents · estimated_time_saved · thread_id registry</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- MICROSERVICES LAYER -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label">Microservices Layer</div>
+    <div style="font-size: 11px; color: #9ca3af; margin-bottom: 16px; font-weight: 300;">Backend services supporting agent operations</div>
+
+    <div class="microservices-grid">
+
+      <!-- Slack Agent -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">Slack Agent</div>
+          <div class="service-port">:8505</div>
+        </div>
+      </div>
+
+      <!-- Gmail Gateway -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">Gmail Gateway</div>
+          <div class="service-port">:8507</div>
+        </div>
+      </div>
+
+      <!-- HubSpot Service -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">HubSpot Service</div>
+          <div class="service-port">:8509</div>
+        </div>
+      </div>
+
+      <!-- AWS Gateway -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">AWS Gateway</div>
+          <div class="service-port">:8510</div>
+        </div>
+      </div>
+
+      <!-- KB Gateway -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">KB Gateway</div>
+          <div class="service-port">:8511</div>
+        </div>
+      </div>
+
+      <!-- PostgreSQL -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">PostgreSQL</div>
+          <div class="service-port">:5432</div>
+        </div>
+      </div>
+
+      <!-- Monday Service -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">Monday Service</div>
+          <div class="service-port">:8513</div>
+        </div>
+      </div>
+
+      <!-- URL Shortener -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">URL Shortener</div>
+          <div class="service-port">:8503</div>
+        </div>
+      </div>
+
+      <!-- Gmail Pipeline -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
+            <polyline points="7.5 19.79 7.5 14.6 3 12"/>
+            <polyline points="21 12 16.5 14.6 16.5 19.79"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">Gmail Pipeline</div>
+          <div class="service-port">:8508</div>
+        </div>
+      </div>
+
+      <!-- Athena (4COM) -->
+      <div class="service-card">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 3v18h18"/>
+            <path d="M18 17V9"/>
+            <path d="M13 17V5"/>
+            <path d="M8 17v-3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="service-name">Athena (4COM)</div>
+          <div class="service-port">AWS</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- DATA STORES + OBSERVABILITY + SCHEDULING -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="infra-split">
+
+    <!-- LEFT: Data Stores -->
+    <div class="zone">
+      <div class="section-label">Data Stores</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+
+        <div class="service-card" style="align-items: flex-start;">
+          <div class="service-icon" style="background:#ecfdf5; margin-top:2px;">
+            <svg viewBox="0 0 24 24" style="stroke:#059669;">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">PostgreSQL</div>
+            <div class="service-port">:5432</div>
+          </div>
+        </div>
+
+        <div class="service-card" style="align-items: flex-start;">
+          <div class="service-icon" style="background:#f3e8ff; margin-top:2px;">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+              <circle cx="12" cy="12" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="20" r="2"/>
+              <circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">Pinecone</div>
+            <div class="service-port">Vector store</div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background:#fef3c7;">
+            <svg viewBox="0 0 24 24" style="stroke:#b45309;">
+              <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+              <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">RedPanda</div>
+            <div class="service-port">Kafka streaming</div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background:#fff7ed;">
+            <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">AWS S3 + Athena</div>
+            <div class="service-port">File storage · SQL</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: Observability + Scheduling stacked -->
+    <div style="display:flex; flex-direction:column; gap:16px;">
+
+      <div class="zone">
+        <div class="section-label">Observability</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+
+          <div class="service-card">
+            <div class="service-icon" style="background:#f1f5f9;">
+              <svg viewBox="0 0 24 24" style="stroke:#475569;">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <div class="service-name">OTEL Collector</div>
+              <div class="service-port">Traces · Metrics · Logs</div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon" style="background:#eef2ff;">
+              <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <div>
+              <div class="service-name">LangSmith</div>
+              <div class="service-port">LLM trace monitoring</div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon" style="background:#f0f9ff;">
+              <svg viewBox="0 0 24 24" style="stroke:#0369a1;">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+            </div>
+            <div>
+              <div class="service-name">BetterStack</div>
+              <div class="service-port">Log aggregation</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="zone">
+        <div class="section-label">Scheduling &amp; Jobs</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+
+          <div class="service-card">
+            <div class="service-icon" style="background:#f1f5f9;">
+              <svg viewBox="0 0 24 24" style="stroke:#475569;">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <div class="service-name">Ofelia</div>
+              <div class="service-port">Cron scheduler</div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-icon" style="background:#f1f5f9;">
+              <svg viewBox="0 0 24 24" style="stroke:#475569;">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <div>
+              <div class="service-name">n8n Workflows</div>
+              <div class="service-port">Runs 10 workflows &amp; jobs</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- DEPLOYMENT & INFRASTRUCTURE + EVALUATION & TESTING -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="infra-split">
+
+    <!-- LEFT: Deployment & Infrastructure -->
+    <div class="zone">
+      <div class="section-label">Deployment &amp; Infrastructure</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+
+        <div class="service-card" style="align-items: flex-start;">
+          <div class="service-icon" style="background:#fff7ed; margin-top:2px;">
+            <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">AWS EC2</div>
+            <div class="service-port">t3.xlarge · 16GB · 4 vCPU</div>
+          </div>
+        </div>
+
+        <div class="service-card" style="align-items: flex-start;">
+          <div class="service-icon" style="background:#ecfdf5; margin-top:2px;">
+            <svg viewBox="0 0 24 24" style="stroke:#059669;">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">AWS RDS PostgreSQL</div>
+            <div class="service-port">Managed · auto-backup · Multi-AZ</div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background:#f1f5f9;">
+            <svg viewBox="0 0 24 24" style="stroke:#475569;">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">Docker Compose</div>
+            <div class="service-port">17 containers · rolling restart</div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background:#eef2ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+              <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">Nginx + SSL</div>
+            <div class="service-port">Reverse proxy · Let's Encrypt</div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background:#f0f9ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#0369a1;">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">GitHub Actions</div>
+            <div class="service-port">CI/CD · auto-deploy on push</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: Evaluation & Testing -->
+    <div class="zone">
+      <div class="section-label">Evaluation &amp; Testing</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+
+        <div class="service-card" style="align-items: flex-start;">
+          <div class="service-icon" style="background:#ecfdf5; margin-top:2px;">
+            <svg viewBox="0 0 24 24" style="stroke:#059669;">
+              <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">Evaluation Framework</div>
+            <div class="service-port">YAML-driven · parallel execution</div>
+            <div class="namespace-grid" style="margin-top:6px;">
+              <span class="namespace-badge">61 test suites</span>
+              <span class="namespace-badge">SQLite results</span>
+              <span class="namespace-badge">regression detection</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-card" style="align-items: flex-start;">
+          <div class="service-icon" style="background:#f0f9ff; margin-top:2px;">
+            <svg viewBox="0 0 24 24" style="stroke:#0369a1;">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">Quick Evals</div>
+            <div class="service-port">LangGraph SDK · direct API testing</div>
+            <div class="namespace-grid" style="margin-top:6px;">
+              <span class="namespace-badge">97 gate tests</span>
+              <span class="namespace-badge">10 categories</span>
+              <span class="namespace-badge">96.9% pass</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background:#eef2ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">LangSmith Tracing</div>
+            <div class="service-port">Per-agent projects · cost analysis</div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon" style="background:#f3e8ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <div class="service-name">611 Total Evaluations</div>
+            <div class="service-port">Across 6 sub-agents + gate</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- EXTERNAL APIS -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 14px;">External APIs &amp; Third-Party Integrations</div>
+    <div class="ext-row">
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#fff7ed;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#ea580c;stroke-width:1.5;fill:none;">
+            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">HubSpot CRM</div>
+          <div class="ext-chip-type">CRM · Deals · Contacts</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#ecfeff;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#0891b2;stroke-width:1.5;fill:none;">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Google Gmail</div>
+          <div class="ext-chip-type">OAuth · Watch API</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#ecfdf5;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#059669;stroke-width:1.5;fill:none;">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Monday.com</div>
+          <div class="ext-chip-type">GraphQL API · Boards</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#f3e8ff;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#7c3aed;stroke-width:1.5;fill:none;">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.06 6.06l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.69 2.02z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">4COM Athena</div>
+          <div class="ext-chip-type">Call recordings · Analytics</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#eef2ff;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#4f46e5;stroke-width:1.5;fill:none;">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">OpenAI</div>
+          <div class="ext-chip-type">GPT-4o · Embeddings</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#f1f5f9;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#475569;stroke-width:1.5;fill:none;">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">OpenRouter</div>
+          <div class="ext-chip-type">Multi-model routing</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#fff7ed;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#ea580c;stroke-width:1.5;fill:none;">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">AWS S3 + Athena</div>
+          <div class="ext-chip-type">Storage · SQL queries</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#fff1f2;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#e11d48;stroke-width:1.5;fill:none;">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Intercom</div>
+          <div class="ext-chip-type">Website conversations</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;border-radius:6px;background:#ecfdf5;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#10b981;stroke-width:1.5;fill:none;">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">WooCommerce</div>
+          <div class="ext-chip-type">Product catalog · Pricing</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row">
+    <div class="connector-v">
+      <div class="connector-dot"></div>
+      <div class="connector-line"></div>
+      <div class="connector-dot"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- TOTALS -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone" style="text-align:center;">
+    <div class="section-label" style="text-align:center;">Evaluation Summary</div>
+    <div style="display:flex; justify-content:center; gap:32px; flex-wrap:wrap; margin-top:8px;">
+      <div>
+        <div style="font-size:28px; font-weight:300; color:#059669;">611</div>
+        <div style="font-size:11px; color:#9ca3af;">total evals</div>
+      </div>
+      <div>
+        <div style="font-size:28px; font-weight:300; color:#1f2937;">6</div>
+        <div style="font-size:11px; color:#9ca3af;">sub-agents</div>
+      </div>
+      <div>
+        <div style="font-size:28px; font-weight:300; color:#1f2937;">36</div>
+        <div style="font-size:11px; color:#9ca3af;">tools</div>
+      </div>
+      <div>
+        <div style="font-size:28px; font-weight:300; color:#1f2937;">10</div>
+        <div style="font-size:11px; color:#9ca3af;">microservices</div>
+      </div>
+      <div>
+        <div style="font-size:28px; font-weight:300; color:#1f2937;">9</div>
+        <div style="font-size:11px; color:#9ca3af;">subdomains</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Project Timber · Internal Agent Architecture · March 2026
+  </div>
+
+</div>
+</body>
+</html>
