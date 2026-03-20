@@ -107,6 +107,13 @@
   .phase-card-sidebar .sidebar-days { font-size: 14px; font-weight: 500; color: var(--accent-dark); }
   .phase-card-sidebar .sidebar-price { font-size: 22px; font-weight: 700; color: var(--text); }
 
+  /* Deposit card */
+  .phase-card.deposit { border-color: var(--accent); border-width: 2px; }
+  .phase-card.deposit .badge-pill { background: var(--accent); }
+  .phase-card.deposit .phase-card-sidebar { background: var(--accent); }
+  .phase-card.deposit .sidebar-days { color: #fff; opacity: 0.85; }
+  .phase-card.deposit .sidebar-price { color: #fff; }
+
   /* ── Deliverables ── */
   .gate-section { padding: 48px 0 0; }
   .gate-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
@@ -308,25 +315,28 @@
   <div class="container">
     <div class="section-label">Section 03</div>
     <h2>Budget</h2>
-    <p class="section-desc">Fixed-scope pricing per milestone. Each milestone is invoiced upon delivery and client sign-off.</p>
+    <p class="section-desc">Fixed-scope pricing per milestone. 30% deposit due before kickoff; remaining balance invoiced per milestone upon delivery and client sign-off.</p>
     <div class="budget-table-wrapper">
       <table class="budget-table">
         <thead><tr><th>Phase</th><th>Milestone</th><th>Days</th><th>Amount</th></tr></thead>
         <tbody>
-          <tr><td>P0</td><td>Terraform Foundation</td><td>2</td><td>€xx</td></tr>
-          <tr><td>P1</td><td>Messaging + FastAPI Shell</td><td>2</td><td>€xx</td></tr>
-          <tr><td>P2</td><td>Document Worker + AI Search</td><td>3</td><td>€xx</td></tr>
-          <tr><td>P3</td><td>RAG Query API + Validation</td><td>3</td><td>€xx</td></tr>
-          <tr><td>P4</td><td>Copilot Studio + Teams Bot</td><td>2</td><td>€xx</td></tr>
-          <tr><td>P5</td><td>Hardening, Polish & Demo</td><td>3</td><td>€xx</td></tr>
+          <tr><td>—</td><td>Deposit — 30% upfront</td><td>—</td><td>$1,500</td></tr>
+          <tr><td>P0</td><td>Terraform Foundation</td><td>2</td><td>$467</td></tr>
+          <tr><td>P1</td><td>Messaging + FastAPI Shell</td><td>2</td><td>$467</td></tr>
+          <tr><td>P2</td><td>Document Worker + AI Search</td><td>3</td><td>$700</td></tr>
+          <tr><td>P3</td><td>RAG Query API + Validation</td><td>3</td><td>$700</td></tr>
+          <tr><td>P4</td><td>Copilot Studio + Teams Bot</td><td>2</td><td>$466</td></tr>
+          <tr><td>P5</td><td>Hardening, Polish & Demo</td><td>3</td><td>$700</td></tr>
         </tbody>
-        <tfoot><tr><td colspan="2"><strong>Total</strong></td><td><strong>15 days</strong></td><td><strong>€xx</strong></td></tr></tfoot>
+        <tfoot><tr><td colspan="2"><strong>Total</strong></td><td><strong>15 days</strong></td><td><strong>$5,000</strong></td></tr></tfoot>
       </table>
     </div>
     <div class="budget-footnotes">
-      <span>Daily rate: €xx excl. VAT</span>
+      <span>Daily rate: $333 excl. tax</span>
       <span class="sep">·</span>
-      <span>Invoiced per milestone upon written client sign-off</span>
+      <span>30% deposit due before kickoff</span>
+      <span class="sep">·</span>
+      <span>Balance invoiced per milestone upon written client sign-off</span>
       <span class="sep">·</span>
       <span>Expenses (travel, cloud infra) billed at cost where applicable</span>
     </div>
@@ -340,13 +350,22 @@
     <p class="section-desc">Each phase has a clear objective and exit criteria. Nothing moves to the next phase until the gate conditions are met.</p>
     <div class="phase-cards">
 
+      <div class="phase-card deposit">
+        <div class="phase-card-body">
+          <div class="phase-badge"><span class="badge-pill">PRE</span><span class="badge-label">Before Kickoff</span></div>
+          <h3>Deposit — 30% Upfront</h3>
+          <p>A 30% deposit is due before sprint kickoff to secure the engagement and cover initial infrastructure provisioning. The remaining balance is invoiced per milestone upon delivery and written client sign-off.</p>
+        </div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">30%</span><span class="sidebar-price">$1,500</span></div>
+      </div>
+
       <div class="phase-card">
         <div class="phase-card-body">
           <div class="phase-badge"><span class="badge-pill">P0</span><span class="badge-label">Phase 0 · Days 1–2</span></div>
           <h3>Terraform Foundation</h3>
           <p>We deploy the full Azure skeleton: Resource Group, Key Vault, Entra ID, Container Registry, Log Analytics, and the Container Apps Environment. A single <em>terraform apply</em> and the cloud infrastructure is ready. You validate the foundation before any application development begins — no surprises down the road.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">€xx</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">$467</span></div>
       </div>
 
       <div class="phase-card">
@@ -355,7 +374,7 @@
           <h3>Messaging + FastAPI Shell</h3>
           <p>We provision Service Bus and Cosmos DB via Terraform, then deploy the FastAPI application with MSAL authentication and a Docker image on Container Apps. The Microsoft Graph webhook is configured and receives SharePoint notifications in real time. Messages flow into Service Bus.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">€xx</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">$467</span></div>
       </div>
 
       <div class="phase-card">
@@ -364,7 +383,7 @@
           <h3>Document Worker + AI Search</h3>
           <p>This is the core value. We build the document processing worker: fetch the file from SharePoint via Graph, extract text (PDF, DOCX, PPTX), chunk it, embed it via Azure OpenAI, and index it in AI Search. By the end of this phase, any document uploaded to SharePoint is searchable in under 60 seconds.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">€xx</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$700</span></div>
       </div>
 
       <div class="phase-card">
@@ -373,7 +392,7 @@
           <h3>RAG Query API + Validation</h3>
           <p>We wire the RAG retrieval path: user question → hybrid search (vector + BM25) → context assembly → LLM answer with sourced citations. The API supports multi-turn conversations with context carry-over. 10 test queries validate retrieval accuracy, answer grounding, and citation correctness before the Copilot integration in P4.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">€xx</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$700</span></div>
       </div>
 
       <div class="phase-card">
@@ -382,7 +401,7 @@
           <h3>Copilot Studio + Teams Bot</h3>
           <p>We connect the RAG pipeline to a real user surface. The Copilot Studio agent is grounded on AI Search, with FastAPI as an action plugin. Deployed to Teams so users can ask questions in their daily workspace. A web chat embed is available as fallback.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">€xx</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">$466</span></div>
       </div>
 
       <div class="phase-card">
@@ -391,7 +410,7 @@
           <h3>Hardening, Polish & Demo</h3>
           <p>We run the full stabilization sequence: error handling on all external calls, automatic Graph subscription renewal, edge case testing (large documents, duplicates). We prepare and rehearse the demo scenario. The knowledge base is pre-loaded with real content. Formal sign-off marks project close.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">€xx</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$700</span></div>
       </div>
 
     </div>
