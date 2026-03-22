@@ -81,7 +81,7 @@
   .seg-5 { background: var(--phase-5); color: var(--text); }
   .timeline-note { font-size: 12px; color: var(--text-muted); margin-bottom: 32px; }
 
-  /* ── Budget table — card-style on mobile ── */
+  /* ── Budget table ── */
   .budget-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -20px; padding: 0 20px; }
   .budget-table { width: 100%; min-width: 480px; border-collapse: collapse; margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
   .budget-table thead th { background: var(--bg); font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -94,7 +94,7 @@
   .budget-footnotes { font-size: 12px; color: var(--text-muted); margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
   .budget-footnotes .sep { display: none; }
 
-  /* ── Phase cards — stacked on mobile ── */
+  /* ── Phase cards ── */
   .phase-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
   .phase-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; }
   .phase-card-body { padding: 24px; flex: 1; }
@@ -158,7 +158,7 @@
     .timeline-segment .t-label { min-width: auto; text-align: center; }
     .timeline-segment .t-name { text-align: center; margin-top: 2px; flex: none; }
     .timeline-segment .t-days { margin-top: 4px; }
-    .seg-0 { flex: 2; } .seg-1 { flex: 2; } .seg-2 { flex: 3; }
+    .seg-0 { flex: 2; } .seg-1 { flex: 3; } .seg-2 { flex: 4; }
     .seg-3 { flex: 3; } .seg-4 { flex: 2; } .seg-5 { flex: 3; }
 
     .budget-table-wrapper { overflow-x: visible; margin: 0; padding: 0; }
@@ -245,11 +245,11 @@
 
 <header>
   <div class="container">
-    <div class="overline">Technical Proposal</div>
+    <div class="overline">Technical Proposal · v2</div>
     <h1>M365 + FastAPI<br>Unified Data & AI Platform</h1>
-    <p class="subtitle">Retroplanning for the document RAG pipeline and Copilot interface deployment, on a clean Terraform foundation.</p>
+    <p class="subtitle">Retroplanning for the document RAG pipeline and Copilot interface deployment, on a clean Terraform foundation with idempotent processing guarantees.</p>
     <div class="meta">
-      <div class="meta-item"><span class="meta-label">Duration</span><span class="meta-value">15 working days</span></div>
+      <div class="meta-item"><span class="meta-label">Duration</span><span class="meta-value">17 working days</span></div>
       <div class="meta-item"><span class="meta-label">Team</span><span class="meta-value">1 developer</span></div>
       <div class="meta-item"><span class="meta-label">Infrastructure</span><span class="meta-value">Terraform IaC</span></div>
       <div class="meta-item"><span class="meta-label">Delivery</span><span class="meta-value">Remote or on-site</span></div>
@@ -257,23 +257,29 @@
   </div>
 </header>
 
+<!-- ═══════ SCOPE ═══════ -->
 <section>
   <div class="container">
     <div class="section-label">Section 01</div>
     <h2>Scope</h2>
-    <p class="section-desc">Sprint focused on core value — document RAG pipeline + Copilot interface. V2 features are deliberately excluded to keep the timeline tight.</p>
+    <p class="section-desc">Sprint focused on core value — document RAG pipeline with idempotent processing + Copilot interface. V2 features are deliberately excluded to keep the timeline tight.</p>
     <div class="scope-grid">
       <div class="scope-box scope-in">
         <h4>✅ Included in sprint</h4>
         <ul>
           <li>Full Terraform foundation (Azure)</li>
           <li>Service Bus + Cosmos DB + FastAPI</li>
+          <li>Entra ID app registration + MSAL auth</li>
+          <li>Graph webhook subscription + validation</li>
           <li>Document worker (PDF, DOCX, PPTX)</li>
+          <li>Idempotency layer (Cosmos DB check/claim/commit)</li>
+          <li>Content hash — skip re-indexing unchanged files</li>
           <li>Pipeline: extraction → chunking → embedding</li>
           <li>Azure AI Search (vector + BM25 index)</li>
           <li>RAG API with citations + validation</li>
           <li>Copilot Studio + Teams Bot + Web Chat</li>
-          <li>Hardening, testing, demo</li>
+          <li>Graph subscription auto-renewal</li>
+          <li>Hardening, edge-case testing, demo</li>
         </ul>
       </div>
       <div class="scope-box scope-out">
@@ -288,21 +294,23 @@
           <li>Multi-environment (staging, prod)</li>
           <li>Geo-DR / multi-region</li>
           <li>Load testing / pen testing</li>
+          <li>Bicep migration (if needed for v2 Logic Apps / Fabric)</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ═══════ PLANNING ═══════ -->
 <section>
   <div class="container">
     <div class="section-label">Section 02</div>
     <h2>Planning</h2>
-    <p class="section-desc">Milestones run sequentially. Each phase delivers a clear output that the next phase builds on.</p>
+    <p class="section-desc">Milestones run sequentially. Each phase delivers a clear output that the next phase builds on. P1 and P2 carry extra buffer for Entra ID ceremony and idempotency layer.</p>
     <div class="timeline-bar">
       <div class="timeline-segment seg-0"><span class="t-label">P0</span><span class="t-name">Terraform Foundation</span><span class="t-days">2 days</span></div>
-      <div class="timeline-segment seg-1"><span class="t-label">P1</span><span class="t-name">Messaging + FastAPI</span><span class="t-days">2 days</span></div>
-      <div class="timeline-segment seg-2"><span class="t-label">P2</span><span class="t-name">Doc Worker + AI Search</span><span class="t-days">3 days</span></div>
+      <div class="timeline-segment seg-1"><span class="t-label">P1</span><span class="t-name">Messaging + FastAPI + Graph</span><span class="t-days">3 days</span></div>
+      <div class="timeline-segment seg-2"><span class="t-label">P2</span><span class="t-name">Doc Worker + Idempotency</span><span class="t-days">4 days</span></div>
       <div class="timeline-segment seg-3"><span class="t-label">P3</span><span class="t-name">RAG API + Validation</span><span class="t-days">3 days</span></div>
       <div class="timeline-segment seg-4"><span class="t-label">P4</span><span class="t-name">Copilot + Teams</span><span class="t-days">2 days</span></div>
       <div class="timeline-segment seg-5"><span class="t-label">P5</span><span class="t-name">Hardening + Demo</span><span class="t-days">3 days</span></div>
@@ -311,6 +319,7 @@
   </div>
 </section>
 
+<!-- ═══════ BUDGET ═══════ -->
 <section>
   <div class="container">
     <div class="section-label">Section 03</div>
@@ -321,18 +330,18 @@
         <thead><tr><th>Phase</th><th>Milestone</th><th>Days</th><th>Amount</th></tr></thead>
         <tbody>
           <tr><td>—</td><td>Deposit — 30% upfront</td><td>—</td><td>$1,500</td></tr>
-          <tr><td>P0</td><td>Terraform Foundation</td><td>2</td><td>$467</td></tr>
-          <tr><td>P1</td><td>Messaging + FastAPI Shell</td><td>2</td><td>$467</td></tr>
-          <tr><td>P2</td><td>Document Worker + AI Search</td><td>3</td><td>$700</td></tr>
-          <tr><td>P3</td><td>RAG Query API + Validation</td><td>3</td><td>$700</td></tr>
-          <tr><td>P4</td><td>Copilot Studio + Teams Bot</td><td>2</td><td>$466</td></tr>
-          <tr><td>P5</td><td>Hardening, Polish & Demo</td><td>3</td><td>$700</td></tr>
+          <tr><td>P0</td><td>Terraform Foundation</td><td>2</td><td>$412</td></tr>
+          <tr><td>P1</td><td>Messaging + FastAPI + Graph Webhook</td><td>3</td><td>$618</td></tr>
+          <tr><td>P2</td><td>Document Worker + Idempotency + AI Search</td><td>4</td><td>$824</td></tr>
+          <tr><td>P3</td><td>RAG Query API + Validation</td><td>3</td><td>$618</td></tr>
+          <tr><td>P4</td><td>Copilot Studio + Teams Bot</td><td>2</td><td>$412</td></tr>
+          <tr><td>P5</td><td>Hardening, Polish & Demo</td><td>3</td><td>$616</td></tr>
         </tbody>
-        <tfoot><tr><td colspan="2"><strong>Total</strong></td><td><strong>15 days</strong></td><td><strong>$5,000</strong></td></tr></tfoot>
+        <tfoot><tr><td colspan="2"><strong>Total</strong></td><td><strong>17 days</strong></td><td><strong>$5,000</strong></td></tr></tfoot>
       </table>
     </div>
     <div class="budget-footnotes">
-      <span>Daily rate: $333 excl. tax</span>
+      <span>Daily rate: $294 excl. tax</span>
       <span class="sep">·</span>
       <span>30% deposit due before kickoff</span>
       <span class="sep">·</span>
@@ -343,6 +352,7 @@
   </div>
 </section>
 
+<!-- ═══════ PHASE DETAILS ═══════ -->
 <section>
   <div class="container">
     <div class="section-label">Section 04</div>
@@ -363,76 +373,80 @@
         <div class="phase-card-body">
           <div class="phase-badge"><span class="badge-pill">P0</span><span class="badge-label">Phase 0 · Days 1–2</span></div>
           <h3>Terraform Foundation</h3>
-          <p>We deploy the full Azure skeleton: Resource Group, Key Vault, Entra ID, Container Registry, Log Analytics, and the Container Apps Environment. A single <em>terraform apply</em> and the cloud infrastructure is ready. You validate the foundation before any application development begins — no surprises down the road.</p>
+          <p>We deploy the full Azure skeleton: Resource Group, Key Vault, Entra ID app registration, Container Registry, Log Analytics, and the Container Apps Environment. A single <em>terraform apply</em> and the cloud infrastructure is ready. You validate the foundation before any application development begins — no surprises down the road.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">$467</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">$412</span></div>
       </div>
 
       <div class="phase-card">
         <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P1</span><span class="badge-label">Phase 1 · Days 3–4</span></div>
-          <h3>Messaging + FastAPI Shell</h3>
-          <p>We provision Service Bus and Cosmos DB via Terraform, then deploy the FastAPI application with MSAL authentication and a Docker image on Container Apps. The Microsoft Graph webhook is configured and receives SharePoint notifications in real time. Messages flow into Service Bus.</p>
+          <div class="phase-badge"><span class="badge-pill">P1</span><span class="badge-label">Phase 1 · Days 3–5</span></div>
+          <h3>Messaging + FastAPI + Graph Webhook</h3>
+          <p>We provision Service Bus and Cosmos DB via Terraform, then deploy the FastAPI application with MSAL authentication and a Docker image on Container Apps. The Entra ID app is configured with the correct Microsoft Graph API permissions and admin consent is obtained. The Graph webhook subscription is created and validated — SharePoint change notifications arrive in real time and flow into Service Bus. The extra day provides buffer for tenant-specific Entra ID requirements (conditional access, multi-admin approval).</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">$467</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$618</span></div>
       </div>
 
       <div class="phase-card">
         <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P2</span><span class="badge-label">Phase 2 · Days 5–7</span></div>
-          <h3>Document Worker + AI Search</h3>
-          <p>This is the core value. We build the document processing worker: fetch the file from SharePoint via Graph, extract text (PDF, DOCX, PPTX), chunk it, embed it via Azure OpenAI, and index it in AI Search. By the end of this phase, any document uploaded to SharePoint is searchable in under 60 seconds.</p>
+          <div class="phase-badge"><span class="badge-pill">P2</span><span class="badge-label">Phase 2 · Days 6–9</span></div>
+          <h3>Document Worker + Idempotency + AI Search</h3>
+          <p>This is the core value. We build the document processing worker: fetch the file from SharePoint via Graph, extract text (PDF, DOCX, PPTX), chunk it into 512–1024 token passages, embed via Azure OpenAI, and index in AI Search. The idempotency layer is built into the worker from day one — every message is checked against Cosmos DB before processing (check → claim → process → commit → ack). A SHA-256 content hash prevents re-embedding unchanged files, saving AI Search write costs and OpenAI embedding spend. By the end of this phase, any document uploaded to SharePoint is searchable in under 60 seconds with no duplicates.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$700</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">4 days</span><span class="sidebar-price">$824</span></div>
       </div>
 
       <div class="phase-card">
         <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P3</span><span class="badge-label">Phase 3 · Days 8–10</span></div>
+          <div class="phase-badge"><span class="badge-pill">P3</span><span class="badge-label">Phase 3 · Days 10–12</span></div>
           <h3>RAG Query API + Validation</h3>
           <p>We wire the RAG retrieval path: user question → hybrid search (vector + BM25) → context assembly → LLM answer with sourced citations. The API supports multi-turn conversations with context carry-over. 10 test queries validate retrieval accuracy, answer grounding, and citation correctness before the Copilot integration in P4.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$700</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$618</span></div>
       </div>
 
       <div class="phase-card">
         <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P4</span><span class="badge-label">Phase 4 · Days 11–12</span></div>
+          <div class="phase-badge"><span class="badge-pill">P4</span><span class="badge-label">Phase 4 · Days 13–14</span></div>
           <h3>Copilot Studio + Teams Bot</h3>
-          <p>We connect the RAG pipeline to a real user surface. The Copilot Studio agent is grounded on AI Search, with FastAPI as an action plugin. Deployed to Teams so users can ask questions in their daily workspace. A web chat embed is available as fallback.</p>
+          <p>We connect the RAG pipeline to a real user surface. The Copilot Studio agent is grounded on AI Search as its knowledge source, with FastAPI registered as an action plugin for custom operations. Deployed to Teams so users can ask questions in their daily workspace. A web chat embed is available as fallback. The agent is tested end-to-end: upload a document → wait for indexing → ask a question → receive a cited answer.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">$466</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">2 days</span><span class="sidebar-price">$412</span></div>
       </div>
 
       <div class="phase-card">
         <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P5</span><span class="badge-label">Phase 5 · Days 13–15</span></div>
+          <div class="phase-badge"><span class="badge-pill">P5</span><span class="badge-label">Phase 5 · Days 15–17</span></div>
           <h3>Hardening, Polish & Demo</h3>
-          <p>We run the full stabilization sequence: error handling on all external calls, automatic Graph subscription renewal, edge case testing (large documents, duplicates). We prepare and rehearse the demo scenario. The knowledge base is pre-loaded with real content. Formal sign-off marks project close.</p>
+          <p><strong>Day 15:</strong> Graph subscription auto-renewal mechanism (background task that renews before the 3-day expiry window) + structured error handling on all external calls (Graph, AI Search, Cosmos DB, LLM). <strong>Day 16:</strong> Edge-case testing — large documents (>50 pages), duplicate uploads, unsupported file formats, empty files, concurrent processing under load. <strong>Day 17:</strong> Demo preparation and rehearsal. Knowledge base pre-loaded with real client content. Full flow demonstrated live: upload → indexing → question → cited answer. Formal sign-off marks project close.</p>
         </div>
-        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$700</span></div>
+        <div class="phase-card-sidebar"><span class="sidebar-days">3 days</span><span class="sidebar-price">$616</span></div>
       </div>
 
     </div>
   </div>
 </section>
 
+<!-- ═══════ DELIVERABLES ═══════ -->
 <section class="gate-section">
   <div class="container">
     <div class="section-label">Section 05</div>
     <h2>Final Deliverables</h2>
     <p class="section-desc">What you receive at the end of the sprint.</p>
     <div class="gate-grid">
-      <div class="gate-card"><h4>Operational Document Pipeline</h4><p>SharePoint upload → extraction → vector indexing in under 60 seconds, with error handling and retries.</p></div>
-      <div class="gate-card"><h4>RAG API with Citations</h4><p>Hybrid search, context-grounded answers, clickable source links.</p></div>
-      <div class="gate-card"><h4>Copilot Agent + Teams Bot</h4><p>Copilot Studio agent deployed in Teams with web chat embed as fallback — the single conversational interface for end users.</p></div>
+      <div class="gate-card"><h4>Operational Document Pipeline</h4><p>SharePoint upload → extraction → vector indexing in under 60 seconds, with idempotent processing — no duplicates, no wasted embedding spend on unchanged files.</p></div>
+      <div class="gate-card"><h4>RAG API with Citations</h4><p>Hybrid search (vector + BM25), context-grounded answers, clickable source links. Multi-turn conversation support.</p></div>
+      <div class="gate-card"><h4>Copilot Agent + Teams Bot</h4><p>Copilot Studio agent deployed in Teams with web chat embed as fallback — the single conversational interface for end users, grounded on your indexed knowledge base.</p></div>
+      <div class="gate-card"><h4>Idempotency & Metadata Store</h4><p>Cosmos DB tracks every processed document with status, content hash, chunk count, and processing duration. Full audit trail with automatic TTL expiry.</p></div>
       <div class="gate-card"><h4>Reproducible Terraform Infrastructure</h4><p>Clean repo, a single <em>terraform apply</em> deploys everything. README with prerequisites and deployment guide.</p></div>
-      <div class="gate-card"><h4>Rehearsed Demo Scenario</h4><p>Complete flow documented and tested: upload → indexing → question → cited answer, live.</p></div>
-      <div class="gate-card"><h4>Documented v2 Roadmap</h4><p>Prioritized expansion plan: Email Worker, VNet, KEDA, Logic Apps, Fabric, multi-env, Geo-DR.</p></div>
+      <div class="gate-card"><h4>Graph Subscription Auto-Renewal</h4><p>Background mechanism ensures webhook subscriptions never expire. No manual intervention required.</p></div>
+      <div class="gate-card"><h4>Rehearsed Demo Scenario</h4><p>Complete flow documented and tested: upload → indexing → question → cited answer, live with real content.</p></div>
+      <div class="gate-card"><h4>Documented v2 Roadmap</h4><p>Prioritized expansion plan: Email Worker, VNet, KEDA, Logic Apps, Fabric, Bicep migration, multi-env, Geo-DR.</p></div>
     </div>
   </div>
 </section>
 
+<!-- ═══════ ROADMAP ═══════ -->
 <section>
   <div class="container">
     <div class="section-label">Section 06</div>
@@ -445,8 +459,9 @@
       <div class="roadmap-item"><span class="roadmap-num">4</span><div class="roadmap-text"><span class="rm-name">Logic Apps</span><span class="rm-desc">Email triage, onboarding, approval workflows</span></div></div>
       <div class="roadmap-item"><span class="roadmap-num">5</span><div class="roadmap-text"><span class="rm-name">Comms Worker</span><span class="rm-desc">Teams meeting summaries, action item extraction</span></div></div>
       <div class="roadmap-item"><span class="roadmap-num">6</span><div class="roadmap-text"><span class="rm-name">Fabric + Power BI</span><span class="rm-desc">Pipeline health dashboards, business KPIs</span></div></div>
-      <div class="roadmap-item"><span class="roadmap-num">7</span><div class="roadmap-text"><span class="rm-name">Multi-environment</span><span class="rm-desc">Dev / staging / prod with CI/CD gates</span></div></div>
-      <div class="roadmap-item"><span class="roadmap-num">8</span><div class="roadmap-text"><span class="rm-name">Geo-DR</span><span class="rm-desc">Cosmos multi-region, Service Bus geo-pairing</span></div></div>
+      <div class="roadmap-item"><span class="roadmap-num">7</span><div class="roadmap-text"><span class="rm-name">Bicep Migration</span><span class="rm-desc">Move IaC to Bicep for same-day Azure resource support (Logic Apps, Fabric)</span></div></div>
+      <div class="roadmap-item"><span class="roadmap-num">8</span><div class="roadmap-text"><span class="rm-name">Multi-environment</span><span class="rm-desc">Dev / staging / prod with CI/CD gates</span></div></div>
+      <div class="roadmap-item"><span class="roadmap-num">9</span><div class="roadmap-text"><span class="rm-name">Geo-DR</span><span class="rm-desc">Cosmos multi-region, Service Bus geo-pairing</span></div></div>
     </div>
   </div>
 </section>
