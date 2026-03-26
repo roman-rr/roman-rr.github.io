@@ -10,7 +10,32 @@ const Cases = () => {
       </div>
 
       <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <a
+            href="/cases/microsoft-365-v1/microsoft-365-architecture.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#f5f5f5] rounded-lg overflow-hidden border border-[#e0e0e0]"
+          >
+            <div className="h-[140px] overflow-hidden border-b border-[#e0e0e0] relative bg-gradient-to-br from-[#0f3460] to-[#1a5276] flex items-center justify-center gap-3">
+              <svg className="w-16 h-16 text-white opacity-60" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zM24 11.4H12.6V0H24v11.4z" />
+              </svg>
+              <div className="absolute inset-0 bg-[#0a1628] opacity-20 pointer-events-none" />
+            </div>
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-[#333] text-sm">M365 RAG Platform</h3>
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800">Azure RAG</span>
+              </div>
+              <p className="text-gray-600 text-xs mb-3 leading-relaxed">Real-time RAG pipeline over Microsoft 365 data with Azure AI Search, FastAPI backend, and enterprise access control.</p>
+              <span className="text-xs font-medium text-[#333] flex items-center">
+                View case
+                <ExternalLink className="h-3 w-3 ml-1" />
+              </span>
+            </div>
+          </a>
+
           <a
             href="/cases/pt-agents/pt-agents-architecture.html"
             target="_blank"
@@ -26,7 +51,7 @@ const Cases = () => {
                 <h3 className="font-semibold text-[#333] text-sm">PT Agents</h3>
                 <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-violet-100 text-violet-800">Agentic AI Chatbot</span>
               </div>
-              <p className="text-gray-600 text-xs mb-3 leading-relaxed">Multi-agent system built on LangGraph and DeepAgents with real-time analytics, per-agent observability and web UI chatbot.</p>
+              <p className="text-gray-600 text-xs mb-3 leading-relaxed">Multi-agent system built on LangGraph with real-time analytics, per-agent observability and web UI chatbot.</p>
               <span className="text-xs font-medium text-[#333] flex items-center">
                 View case
                 <ExternalLink className="h-3 w-3 ml-1" />

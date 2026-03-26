@@ -3,40 +3,64 @@ import { ExternalLink } from 'lucide-react'
 const reviews = [
   {
     rating: 5,
-    text: "Roman is an exceptional developer who delivered our AI-powered analytics platform ahead of schedule. His expertise in LangChain and OpenAI integration was invaluable. The way he architected our system with proper separation of concerns and scalability in mind was impressive. He also provided excellent documentation and knowledge transfer to our team.",
+    text: "Roman did an amazing job for us, he implemented multiple systems for us and we are more than happy with the results.",
     author: {
-      name: "John Davidson",
-      title: "CEO, TechVentures Inc.",
-      initials: "JD"
-    }
+      name: "Thomas K.",
+      title: "AI Chatbot Developer · $21,795 · 726 hrs",
+      initials: "TK"
+    },
+    tags: ["Committed to Quality"]
   },
   {
     rating: 5,
-    text: "Working with Roman was a game-changer. He built our entire RAG system from scratch using cutting-edge AI technologies.",
+    text: "I've worked with Roman for several years, and he's consistently reliable and skilled in his work. He communicates clearly and adapts well to feedback. His attention to detail and commitment to delivering quality work have been a great help on my projects. I would recommend Roman to others looking for a dependable professional.",
     author: {
-      name: "Sarah Kim",
-      title: "CTO, DataFlow Solutions",
-      initials: "SK"
-    }
+      name: "David R.",
+      title: "Long-term Client · $261,184 · 8,847 hrs",
+      initials: "DR"
+    },
+    tags: ["Reliable", "Detail Oriented", "Professional"]
   },
   {
     rating: 5,
-    text: "Roman's full-stack expertise is unmatched. He seamlessly integrated our Laravel backend with React while implementing sophisticated AI features.",
+    text: "Thanks for being a part of our build team, Roman! Roman is highly communicative, always keeping us up to date with his progress. He works hard and was a good contributor to our team.",
     author: {
-      name: "Michael Rodriguez",
-      title: "Product Manager, InnovateLabs",
-      initials: "MR"
-    }
+      name: "Alex M.",
+      title: "Laravel Ecommerce SaaS · $21,461 · 671 hrs",
+      initials: "AM"
+    },
+    tags: ["Clear Communicator"]
   },
   {
     rating: 5,
-    text: "Outstanding work on our AI-driven automation platform. Roman's knowledge of LangGraph and agent architectures helped us reduce operational costs by 60%. His ability to understand complex business requirements and translate them into efficient technical solutions is remarkable. The multi-agent system he built exceeded all our expectations.",
+    text: "Roman is very, very fast and thorough. He does exactly what he promises and I very much recommend him.",
     author: {
-      name: "Emma Liu",
-      title: "Founder, AutomateNow",
-      initials: "EL"
-    }
-  }
+      name: "James P.",
+      title: "Angular SaaS · Fixed price",
+      initials: "JP"
+    },
+    tags: ["Reliable", "Accountable for Outcomes"]
+  },
+  {
+    rating: 5,
+    text: "Very capable and delivers work to a very high standard — will be back with other projects in the future!",
+    author: {
+      name: "Sarah L.",
+      title: "Education Platform · $333",
+      initials: "SL"
+    },
+    tags: ["Committed to Quality"]
+  },
+  {
+    rating: 5,
+    text: "Roman is a skilled programmer and wrote excellent JavaScript for us. He also helped shape our styling standards.",
+    author: {
+      name: "Chris W.",
+      title: "JavaScript Code Review · $926",
+      initials: "CW"
+    },
+    tags: ["Committed to Quality"]
+  },
 ];
 
 const Reviews = () => {
@@ -60,16 +84,25 @@ const Reviews = () => {
                     </svg>
                   ))}
                 </div>
-                <p className="text-gray-700 text-sm mb-4 italic leading-relaxed">
-                  {review.text}
+                <p className="text-gray-700 text-sm mb-3 italic leading-relaxed">
+                  "{review.text}"
                 </p>
+                {review.tags && (
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {review.tags.map((tag) => (
+                      <span key={tag} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-600 font-semibold border border-gray-200">
                     {review.author.initials}
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-[#333]">{review.author.name}</p>
-                    <p className="text-xs text-gray-600">{review.author.title}</p>
+                    <p className="text-xs text-gray-500">{review.author.title}</p>
                   </div>
                 </div>
               </div>

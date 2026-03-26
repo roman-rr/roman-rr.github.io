@@ -1,7 +1,7 @@
 import Header from './components/Header'
 import Achievements from './components/Achievements'
-import Reviews from './components/Reviews'
 import Certificates from './components/Certificates'
+import Reviews from './components/Reviews'
 import SkillsTabs from './components/SkillsTabs'
 import Cases from './components/Cases'
 import LogoCarousel from './components/LogoCarousel'
@@ -15,8 +15,8 @@ function App() {
       <div className="flex-grow">
         <Header />
         <Achievements />
-        <Reviews />
         <Certificates />
+        <Reviews />
         <SkillsTabs />
         <Cases />
         <LogoCarousel />
