@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Fine-Tuning Audit — Scope & Milestones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --text: #1A1A1A;
+    --text-secondary: #5A5A5A;
+    --text-muted: #8A8A8A;
+    --accent: #2DB87B;
+    --accent-light: #E8F7F0;
+    --accent-dark: #1E8A5A;
+    --border: #E8E8E4;
+    --phase-1: #34675C;
+    --phase-2: #2DB87B;
+    --phase-3: #5ECDA2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+  /* ── Header ── */
+  header { padding: 48px 0 36px; border-bottom: 1px solid var(--border); }
+  header .overline { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  header h1 { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; line-height: 1.2; color: var(--text); margin-bottom: 12px; }
+  header .subtitle { font-size: 15px; color: var(--text-secondary); }
+  header .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+  header .meta-item { display: flex; flex-direction: column; gap: 2px; }
+  header .meta-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+  header .meta-value { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  /* ── Sections ── */
+  section { padding: 48px 0 0; }
+  .section-label { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  section > .container > h2 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; margin-bottom: 8px; }
+  section > .container > p.section-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
+
+  /* ── Scope boxes ── */
+  .scope-grid { display: flex; flex-direction: column; gap: 16px; }
+  .scope-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+  .scope-box h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .scope-box ul { list-style: none; padding: 0; }
+  .scope-box ul li { font-size: 13.5px; color: var(--text-secondary); padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+  .scope-box ul li::before { flex-shrink: 0; margin-top: 3px; }
+  .scope-in ul li::before { content: '✓'; color: var(--accent); font-weight: 700; }
+  .scope-out ul li::before { content: '—'; color: var(--text-muted); }
+  .scope-need ul li::before { content: '→'; color: var(--accent-dark); font-weight: 700; }
+
+  /* ── Phase cards ── */
+  .phase-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+  .phase-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; }
+  .phase-card-body { padding: 24px; flex: 1; }
+  .phase-badge { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .phase-badge .badge-pill { background: var(--phase-1); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; }
+  .phase-card:nth-child(2) .badge-pill { background: var(--phase-2); }
+  .phase-card:nth-child(3) .badge-pill { background: var(--phase-3); color: var(--text); }
+  .phase-badge .badge-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+  .phase-card-body h3 { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; margin-bottom: 10px; }
+  .phase-card-body p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+  .phase-card-body .deliverable { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+  .phase-card-body .deliverable strong { color: var(--text-secondary); font-weight: 600; }
+  .phase-card-sidebar { background: var(--accent-light); display: flex; align-items: center; justify-content: center; padding: 16px 24px; gap: 12px; }
+  .phase-card-sidebar .sidebar-hours { font-size: 14px; font-weight: 500; color: var(--accent-dark); }
+  .phase-card-sidebar .sidebar-price { font-size: 22px; font-weight: 700; color: var(--text); }
+
+  /* ── Total bar ── */
+  .total-bar { background: var(--surface); border: 2px solid var(--accent); border-radius: 14px; padding: 20px 24px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .total-bar .total-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+  .total-bar .total-value { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); }
+  .total-bar .total-meta { font-size: 13px; color: var(--text-secondary); }
+
+  /* ── Footer ── */
+  footer { margin-top: 56px; padding: 24px 0; border-top: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--text-muted); }
+
+  /* ── Tablet ── */
+  @media (min-width: 768px) {
+    .container { padding: 0 28px; }
+    header { padding: 64px 0 48px; }
+    header h1 { font-size: 36px; }
+    header .subtitle { font-size: 16px; }
+    header .meta { grid-template-columns: repeat(4, auto); gap: 28px; }
+    section { padding: 60px 0 0; }
+    section > .container > h2 { font-size: 30px; }
+    section > .container > p.section-desc { font-size: 15px; margin-bottom: 36px; }
+    .scope-box { padding: 28px; }
+    .phase-card { flex-direction: row; }
+    .phase-card-body { padding: 28px; }
+    .phase-card-sidebar { flex-direction: column; align-items: center; justify-content: center; padding: 24px 32px; min-width: 140px; gap: 2px; }
+    .phase-card-body h3 { font-size: 21px; }
+    .phase-card-body p { font-size: 14px; }
+  }
+
+  @media (min-width: 960px) {
+    .container { padding: 0 32px; }
+    header { padding: 80px 0 64px; }
+    header h1 { font-size: 42px; }
+    header .subtitle { font-size: 17px; max-width: 640px; }
+    header .meta { display: flex; gap: 32px; }
+    section { padding: 72px 0 0; }
+    section > .container > h2 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="overline">Engagement Scope</div>
+    <h1>LLM Fine-Tuning &amp; Inference Audit</h1>
+    <p class="subtitle">Independent technical review of the ToolACE fine-tuning &amp; SGLang serving PoC, with focus on defending the 5 design questions for FinTech presentation.</p>
+    <div class="meta">
+      <div class="meta-item">
+        <span class="meta-label">Fixed Price</span>
+        <span class="meta-value">$500</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Effort</span>
+        <span class="meta-value">10–12 hours</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Delivery</span>
+        <span class="meta-value">5 business days</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Start</span>
+        <span class="meta-value">Within 24h of kickoff</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <div class="section-label">Scope</div>
+    <h2>What's Covered</h2>
+    <p class="section-desc">Three boxes — what I do, what I don't, and what I'll need from you to kick off.</p>
+
+    <div class="scope-grid">
+
+      <div class="scope-box scope-in">
+        <h4>Included</h4>
+        <ul>
+          <li>Full script &amp; architecture review</li>
+          <li>Verdict + strongest pushback + handling for each of the 5 design questions</li>
+          <li>Training best-practices gap analysis (loss masking, chat template, sequence packing, LoRA rank, eval cadence)</li>
+          <li>Inference stack review — SGLang vs vLLM, RadixAttention's practical effect, FP8 behavior, concurrency stability</li>
+          <li>BFCL integrity check — including ToolACE/BFCL function overlap analysis</li>
+          <li>Benchmark plausibility at concurrency 16–32</li>
+          <li>Written report (2–4 pages) with Critical/Major/Minor ratings + stronger-moves section</li>
+          <li>30-min walkthrough <em>after</em> report delivery</li>
+        </ul>
+      </div>
+
+      <div class="scope-box scope-out">
+        <h4>Not Included</h4>
+        <ul>
+          <li>Re-running training from scratch</li>
+          <li>Full re-execution of the BFCL evaluation</li>
+          <li>Hosting, redeploying, or keeping your model served for your use</li>
+          <li>Writing code to fix identified issues</li>
+          <li>If a specific claim looks anomalous, I may spin up a short H100 session on my own infra to verify — ephemeral, no cost to you, findings only</li>
+        </ul>
+      </div>
+
+      <div class="scope-box scope-need">
+        <h4>To Kick Off</h4>
+        <ul>
+          <li>Scripts (zip or repo access)</li>
+          <li><code>trainer_state.json</code> for each experiment</li>
+          <li>wandb run links (read access ideal)</li>
+          <li>BFCL score JSONs (raw per-example, not just aggregate)</li>
+          <li><code>benchmark_results.json</code></li>
+          <li>Original FinTech assignment brief</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-label">Milestones</div>
+    <h2>Three Checkpoints</h2>
+    <p class="section-desc">Each milestone ships a concrete artifact. Tentative — will revise based on your answer on scope framing.</p>
+
+    <div class="phase-cards">
+
+      <div class="phase-card">
+        <div class="phase-card-body">
+          <div class="phase-badge">
+            <span class="badge-pill">M1</span>
+            <span class="badge-label">Kickoff + Initial Findings</span>
+          </div>
+          <h3>Scripts &amp; Architecture Review</h3>
+          <p>Read all training, quantization, serving, and evaluation scripts. Map the full pipeline end-to-end. Identify initial findings list with preliminary severity ratings.</p>
+          <div class="deliverable"><strong>Ships:</strong> Short written summary (~1 page) of architecture + initial findings list with Critical/Major/Minor tags.</div>
+        </div>
+        <div class="phase-card-sidebar">
+          <span class="sidebar-hours">3–4 hours</span>
+          <span class="sidebar-price">$170</span>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-card-body">
+          <div class="phase-badge">
+            <span class="badge-pill">M2</span>
+            <span class="badge-label">Core Audit</span>
+          </div>
+          <h3>5 Design Questions + Technical Deep Dive</h3>
+          <p>For each of the 5 questions: verdict, strongest pushback to expect, how to handle it. Training best-practices gap analysis. Inference stack defense. BFCL integrity check including ToolACE/BFCL function name overlap analysis.</p>
+          <div class="deliverable"><strong>Ships:</strong> Draft of the core report sections — the 5 questions, training audit, inference audit, BFCL integrity finding.</div>
+        </div>
+        <div class="phase-card-sidebar">
+          <span class="sidebar-hours">5–6 hours</span>
+          <span class="sidebar-price">$250</span>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-card-body">
+          <div class="phase-badge">
+            <span class="badge-pill">M3</span>
+            <span class="badge-label">Report + Walkthrough</span>
+          </div>
+          <h3>Final Report &amp; 30-min Call</h3>
+          <p>Final 2–4 page report with stronger-moves section and red-flags summary. Benchmark plausibility review. 30-min walkthrough call scheduled after you've read the report, so we're discussing something concrete.</p>
+          <div class="deliverable"><strong>Ships:</strong> Final report PDF + 30-min walkthrough call.</div>
+        </div>
+        <div class="phase-card-sidebar">
+          <span class="sidebar-hours">2–3 hours</span>
+          <span class="sidebar-price">$80</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="total-bar">
+      <div>
+        <div class="total-label">Total Fixed</div>
+        <div class="total-value">$500</div>
+      </div>
+      <div class="total-meta">10–12 hours · 5 business days from kickoff</div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    Roman Antonoff · AI Solutions Architect · roman.x70.ai
+  </div>
+</footer>
+
+</body>
+</html>
