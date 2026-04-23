@@ -6,10 +6,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const distDir = resolve(__dirname, '..', 'dist')
 
 const aliases = [
-  { short: 'ai-agents',       source: 'cases/pt-agents/pt-agents-architecture.html' },
-  { short: 'ai-emails',       source: 'cases/pt-emails/pt-emails-pipeline-arch.html' },
-  { short: 'ai-calls',        source: 'cases/pt-calls/pt-calls-pipeline-arch.html' },
+  { short: 'ai-agents',        source: 'cases/pt-agents/pt-agents-architecture.html' },
+  { short: 'ai-emails',        source: 'cases/pt-emails/pt-emails-pipeline-arch.html' },
+  { short: 'ai-calls',         source: 'cases/pt-calls/pt-calls-pipeline-arch.html' },
   { short: 'ai-microsoft-365', source: 'cases/microsoft-365-v1/microsoft-365-architecture.html' },
+  { short: 'callstack',        source: 'cases/callstack/callstack-demo.html' },
+  { short: 'callstack-arch',   source: 'cases/callstack/callstack-arch.html' },
+  { short: 'claude-setup',     source: 'cases/monster-pack-claude-setup.html' },
 ]
 
 const ABSOLUTE_RE = /^(https?:|\/\/|\/|#|mailto:|tel:|data:|javascript:)/i

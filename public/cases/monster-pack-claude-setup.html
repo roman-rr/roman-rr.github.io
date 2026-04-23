@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monster Pack v1 — Agentic Code Infrastructure Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {
+    --bg: #fafaf8;
+    --card: #ffffff;
+    --border: #d4d0c8;
+    --border-light: #e8e5de;
+    --text: #1a1a18;
+    --text-secondary: #4a4a46;
+    --text-muted: #7a7a74;
+    --accent-1: #2d5a27;
+    --accent-2: #8b4513;
+    --accent-3: #1a3a5c;
+    --accent-4: #5c3a6e;
+    --accent-red: #8b2020;
+    --accent-teal: #1a5a5a;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 48px 32px;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+  @media (max-width: 600px) {
+    body { padding: 20px 14px; }
+  }
+  .container { max-width: 1320px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+    padding-bottom: 40px;
+    border-bottom: 2px solid var(--text);
+  }
+  .header-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .header h1 {
+    font-size: 36px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .header h1 strong { font-weight: 600; }
+  .header .subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+  .header .meta-line {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Grid */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 1000px) { .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) {
+    .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
+    .search-grid { grid-template-columns: 1fr !important; }
+    .license-grid { grid-template-columns: 1fr !important; }
+    .file-grid { grid-template-columns: 1fr !important; }
+    .header h1 { font-size: 28px !important; }
+    .header .subtitle { font-size: 14px !important; }
+    .flow-row { flex-direction: column; align-items: stretch; }
+    .flow-box { min-width: auto !important; }
+    table.spec-table, table.routing-table { font-size: 11px; }
+    table.spec-table td, table.spec-table th,
+    table.routing-table td { padding: 8px 6px; }
+    .routing-table .question { font-size: 12px; }
+    .card { padding: 16px; }
+    .section-title { font-size: 17px; }
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow-lg); }
+  .card.wide { grid-column: 1 / -1; }
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .card-marker {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .card-marker.green { background: var(--accent-1); }
+  .card-marker.brown { background: var(--accent-2); }
+  .card-marker.blue { background: var(--accent-3); }
+  .card-marker.purple { background: var(--accent-4); }
+  .card-marker.teal { background: var(--accent-teal); }
+  .card-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .card-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .tag.green { color: var(--accent-1); border-color: var(--accent-1); background: rgba(45,90,39,0.05); }
+  .tag.brown { color: var(--accent-2); border-color: var(--accent-2); background: rgba(139,69,19,0.05); }
+  .tag.blue { color: var(--accent-3); border-color: var(--accent-3); background: rgba(26,58,92,0.05); }
+  .tag.purple { color: var(--accent-4); border-color: var(--accent-4); background: rgba(92,58,110,0.05); }
+  .tag.teal { color: var(--accent-teal); border-color: var(--accent-teal); background: rgba(26,90,90,0.05); }
+
+  /* Tool list */
+  .tool-list { list-style: none; margin-top: 10px; }
+  .tool-list li {
+    font-size: 13px;
+    padding: 5px 0;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .tool-list li:last-child { border-bottom: none; }
+  .tool-list li code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    background: #f0ede6;
+    padding: 1px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .tool-list li .dim { color: var(--text-muted); }
+
+  /* Stats */
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    gap: 12px 0;
+  }
+  .stat { text-align: center; flex: 1; min-width: 100px; }
+  .stat-number { font-size: 32px; font-weight: 700; color: var(--text); }
+  .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  @media (max-width: 600px) {
+    .stats-row { justify-content: center; gap: 16px 8px; }
+    .stat { min-width: 90px; flex: 0 0 30%; }
+    .stat-number { font-size: 24px; }
+    .stat-label { font-size: 10px; }
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    background: var(--text);
+    color: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+  }
+
+  /* Flow diagram */
+  .flow-section { margin-bottom: 48px; }
+  .flow-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .flow-box {
+    background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+    padding: 12px 18px; font-size: 13px; text-align: center;
+    box-shadow: var(--shadow); min-width: 170px;
+  }
+  .flow-box strong { font-size: 14px; }
+  .flow-box.trigger { border-left: 3px solid var(--accent-2); }
+  .flow-box.action { border-left: 3px solid var(--accent-1); }
+  .flow-box.result { border-left: 3px solid var(--accent-4); }
+  .flow-box small { color: var(--text-muted); font-size: 12px; }
+  .flow-box code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); }
+  .connector { display: flex; justify-content: center; margin: 12px 0; }
+  .connector .line {
+    width: 1px; height: 28px; background: var(--text-muted); position: relative;
+  }
+  .connector .line::after {
+    content: '▾'; position: absolute; bottom: -8px; left: 50%;
+    transform: translateX(-50%); color: var(--text-muted); font-size: 12px;
+  }
+  .source-label {
+    font-size: 10px; padding: 1px 6px; border-radius: 3px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    display: inline-block; margin-bottom: 6px;
+  }
+  .source-label.gitnexus { background: rgba(45,90,39,0.1); color: var(--accent-1); }
+  .source-label.serena { background: rgba(139,69,19,0.1); color: var(--accent-2); }
+  .source-label.beads { background: rgba(26,58,92,0.1); color: var(--accent-3); }
+  .source-label.custom { background: rgba(92,58,110,0.1); color: var(--accent-4); }
+
+  /* Hook table */
+  table.spec-table {
+    width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px;
+  }
+  table.spec-table th {
+    text-align: left; padding: 10px 12px;
+    border-bottom: 2px solid var(--text);
+    font-weight: 600; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.5px; color: var(--text);
+  }
+  table.spec-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  table.spec-table td code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; background: #f0ede6; padding: 1px 5px;
+    border-radius: 3px; color: var(--text);
+  }
+  table.spec-table tr:last-child td { border-bottom: none; }
+  table.spec-table tr.git-hook { background: rgba(26,58,92,0.03); }
+
+  /* Routing */
+  .routing-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  .routing-table td {
+    padding: 12px 14px; border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+  }
+  .routing-table tr:last-child td { border-bottom: none; }
+  .routing-table .question { font-style: italic; color: var(--text-secondary); }
+  .routing-table .arrow { color: var(--text-muted); text-align: center; width: 40px; font-size: 16px; }
+  .routing-table .tool { font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: right; }
+  .routing-table .system {
+    font-size: 11px; color: var(--text-muted); text-align: right;
+    text-transform: uppercase; letter-spacing: 0.5px; width: 100px;
+  }
+
+  /* Search modes */
+  .search-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 16px; }
+  .search-mode {
+    background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+    padding: 20px; box-shadow: var(--shadow);
+  }
+  .search-mode h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+  .search-mode p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .search-mode .tools { margin-top: 8px; }
+  .search-mode .tools code {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    background: #f0ede6; padding: 1px 6px; border-radius: 3px;
+    color: var(--text); margin-right: 4px;
+  }
+
+  /* Dashboard */
+  .dash-preview {
+    background: #f5f3ed; border: 1px solid var(--border); border-radius: 4px;
+    padding: 14px; margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    line-height: 1.7; color: var(--text-secondary);
+  }
+  .dash-preview .cmd { color: var(--accent-1); font-weight: 500; }
+  .dash-preview .comment { color: var(--text-muted); }
+
+  /* File list */
+  .file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 6px; margin-top: 12px; }
+  .file-item {
+    display: flex; align-items: center; gap: 10px; font-size: 12px;
+    padding: 8px 12px; background: #f5f3ed; border-radius: 3px;
+    border: 1px solid var(--border-light);
+  }
+  .file-item code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); }
+  .file-action {
+    font-size: 10px; padding: 2px 7px; border-radius: 3px;
+    font-weight: 600; flex-shrink: 0; text-transform: uppercase;
+    letter-spacing: 0.3px; font-family: 'JetBrains Mono', monospace;
+  }
+  .file-action.create { background: rgba(45,90,39,0.1); color: var(--accent-1); }
+  .file-action.edit { background: rgba(139,69,19,0.1); color: var(--accent-2); }
+  .file-action.auto { background: rgba(92,58,110,0.1); color: var(--accent-4); }
+
+  /* Note */
+  .note {
+    background: #f5f3ed; border-left: 3px solid var(--accent-2);
+    padding: 14px 18px; margin-bottom: 20px; font-size: 13px;
+    color: var(--text-secondary); line-height: 1.6;
+  }
+  .note strong { color: var(--text); }
+
+  /* Install phases */
+  .phase-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+    border: 2px solid;
+  }
+  .phase-num.p1 { border-color: var(--accent-1); color: var(--accent-1); }
+  .phase-num.p2 { border-color: var(--accent-3); color: var(--accent-3); }
+  .phase-num.p3 { border-color: var(--accent-2); color: var(--accent-2); }
+  .phase-num.p4 { border-color: var(--accent-4); color: var(--accent-4); }
+
+  /* License */
+  .license-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .license-item { padding: 16px; background: #f5f3ed; border-radius: 4px; }
+  .license-item h4 { font-size: 14px; margin-bottom: 4px; }
+  .license-item p { font-size: 12px; color: var(--text-muted); }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding-top: 32px; margin-top: 24px;
+    border-top: 2px solid var(--text);
+    font-size: 12px; color: var(--text-muted);
+  }
+  .footer p { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="badge">Monster Pack v1</div>
+    <div class="header-label">Architecture Specification</div>
+    <h1>&#x1F47E; <strong>Agentic Coding</strong> Infrastructure</h1>
+    <div class="subtitle">GitNexus + Serena + Beads &mdash; Full Coding Intelligence Stack</div>
+    <div class="meta-line">rev 3 &bull; April 2026 &bull; Universal setup for any codebase</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat"><div class="stat-number">3</div><div class="stat-label">Intelligence Systems</div></div>
+    <div class="stat"><div class="stat-number">27+</div><div class="stat-label">MCP Tools</div></div>
+    <div class="stat"><div class="stat-number">8</div><div class="stat-label">Hooks</div></div>
+    <div class="stat"><div class="stat-number">11+</div><div class="stat-label">Skills</div></div>
+    <div class="stat"><div class="stat-number">2</div><div class="stat-label">Dashboards</div></div>
+    <div class="stat"><div class="stat-number">0</div><div class="stat-label">Cloud Deps</div></div>
+  </div>
+
+  <!-- ═══ 01 CORE SYSTEMS ═══ -->
+  <div class="section">
+    <div class="section-num">01</div>
+    <div class="section-title">Core Intelligence Systems</div>
+    <div class="grid-3">
+
+      <!-- GitNexus -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker green"></div>
+          <div>
+            <div class="card-title">GitNexus</div>
+            <div class="card-subtitle">Code Intelligence &amp; Knowledge Graph</div>
+          </div>
+        </div>
+        <div class="card-desc">Precomputed knowledge graph with hybrid search, execution flow tracing, blast radius analysis, and interactive web dashboard.</div>
+        <div class="card-meta">
+          <span class="tag green">21.5k &#9733;</span>
+          <span class="tag green">LadybugDB</span>
+          <span class="tag green">MiniLM ONNX</span>
+          <span class="tag green">Zero-server</span>
+        </div>
+        <ul class="tool-list">
+          <li><code>query</code> <span class="dim">&mdash; hybrid search (BM25 + semantic + RRF)</span></li>
+          <li><code>context</code> <span class="dim">&mdash; 360&deg; symbol: callers, callees, processes</span></li>
+          <li><code>impact</code> <span class="dim">&mdash; blast radius with confidence scores</span></li>
+          <li><code>detect_changes</code> <span class="dim">&mdash; git diff &rarr; affected processes</span></li>
+          <li><code>rename</code> <span class="dim">&mdash; graph-aware multi-file rename</span></li>
+          <li><code>cypher</code> <span class="dim">&mdash; raw Cypher queries</span></li>
+          <li><span class="dim">+ 5 multi-repo group tools, 7 resources, 2 prompts</span></li>
+        </ul>
+      </div>
+
+      <!-- Serena -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker brown"></div>
+          <div>
+            <div class="card-title">Serena</div>
+            <div class="card-subtitle">Precision Editing via LSP</div>
+          </div>
+        </div>
+        <div class="card-desc">LSP-powered symbol navigation: safe renames, code insertion, live references. Always-fresh via language server &mdash; never stale, no reindexing.</div>
+        <div class="card-meta">
+          <span class="tag brown">LSP-based</span>
+          <span class="tag brown">Real-time</span>
+          <span class="tag brown">14+ languages</span>
+        </div>
+        <ul class="tool-list">
+          <li><code>rename_symbol</code> <span class="dim">&mdash; safe multi-file rename</span></li>
+          <li><code>replace_symbol_body</code> <span class="dim">&mdash; precise code edits</span></li>
+          <li><code>insert_before/after</code> <span class="dim">&mdash; positional insertion</span></li>
+          <li><code>find_referencing_symbols</code> <span class="dim">&mdash; live refs</span></li>
+          <li><code>get_symbols_overview</code> <span class="dim">&mdash; file structure</span></li>
+          <li><code>find_symbol</code> <span class="dim">&mdash; locate by name path</span></li>
+          <li><code>search_for_pattern</code> <span class="dim">&mdash; regex code search</span></li>
+          <li><code>write/read_memory</code> <span class="dim">&mdash; project knowledge</span></li>
+        </ul>
+      </div>
+
+      <!-- Beads -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker blue"></div>
+          <div>
+            <div class="card-title">Beads</div>
+            <div class="card-subtitle">Task Management &amp; Agent Memory</div>
+          </div>
+        </div>
+        <div class="card-desc">Persistent, dependency-aware task graph. Git-embedded issue tracker purpose-built for AI agents. Survives context compaction, works across sessions.</div>
+        <div class="card-meta">
+          <span class="tag blue">20.2k &#9733;</span>
+          <span class="tag blue">MIT</span>
+          <span class="tag blue">Dolt DB</span>
+          <span class="tag blue">Steve Yegge</span>
+        </div>
+        <ul class="tool-list">
+          <li><code>bd ready</code> <span class="dim">&mdash; unblocked tasks queue</span></li>
+          <li><code>bd create</code> <span class="dim">&mdash; new issue (bug/feature/task/epic)</span></li>
+          <li><code>bd update --claim</code> <span class="dim">&mdash; claim for session</span></li>
+          <li><code>bd show</code> <span class="dim">&mdash; full detail + dependency graph</span></li>
+          <li><code>bd close</code> <span class="dim">&mdash; mark complete</span></li>
+          <li><code>bd prime</code> <span class="dim">&mdash; inject state at session start</span></li>
+          <li><code>@task-agent</code> <span class="dim">&mdash; autonomous execution loop</span></li>
+          <li><code>bd dep</code> <span class="dim">&mdash; blocking/related relationships</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 SEARCH CAPABILITIES ═══ -->
+  <div class="section">
+    <div class="section-num">02</div>
+    <div class="section-title">Search Capabilities</div>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">
+      GitNexus exposes two complementary search modes through its MCP tools.
+      The agent can search by graph structure or semantic meaning &mdash; all within Claude Code.
+    </p>
+    <div class="grid-2">
+      <div class="search-mode" style="border-top:3px solid var(--accent-1)">
+        <h4>Graph Search</h4>
+        <div class="tools"><code>context</code><code>impact</code><code>cypher</code></div>
+        <p style="margin-top:8px">Traverse call chains, find callers/callees, blast radius analysis, Leiden clusters, execution flow tracing, dependency mapping.</p>
+      </div>
+      <div class="search-mode" style="border-top:3px solid var(--accent-4)">
+        <h4>Semantic + Keyword Search</h4>
+        <div class="tools"><code>query</code></div>
+        <p style="margin-top:8px">Hybrid BM25 + embeddings + RRF fusion. Natural language queries, results grouped by functional process. PreToolUse hook auto-enriches Grep/Glob.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 DASHBOARDS ═══ -->
+  <div class="section">
+    <div class="section-num">03</div>
+    <div class="section-title">Web Dashboards</div>
+    <div class="note">
+      <strong>Operational model:</strong> Neither dashboard runs as a background daemon. They are started on-demand. The agent can launch either when asked: <em>"open the code graph"</em> or <em>"show me the task board."</em> For persistent access, wrap in tmux or launchd.
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker green"></div>
+          <div>
+            <div class="card-title">GitNexus Dashboard</div>
+            <div class="card-subtitle">Code Intelligence</div>
+          </div>
+        </div>
+        <div class="card-desc">Interactive knowledge graph visualization, AI chat, hybrid search, and Cypher queries. Shows all indexed repositories.</div>
+        <div class="dash-preview">
+          <span class="cmd">$ gitnexus serve &amp;</span><br>
+          <span class="comment"># starts backend API on :4747</span><br><br>
+          <span class="cmd">$ cd /tmp/gitnexus-web/gitnexus-web &amp;&amp; npx vite --host &amp;</span><br>
+          <span class="comment"># starts frontend on :5173 (must be local &mdash; HTTPS mixed content blocks Vercel)</span><br><br>
+          <span class="cmd">$ open http://localhost:5173</span>
+        </div>
+        <ul class="tool-list" style="margin-top:14px">
+          <li>Interactive graph with Leiden clustering visualization</li>
+          <li>Hybrid search (BM25 + semantic) in browser</li>
+          <li>AI chat agent for code questions</li>
+          <li>Multi-repo support via global registry</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker blue"></div>
+          <div>
+            <div class="card-title">Beads Dashboard</div>
+            <div class="card-subtitle">Task Management</div>
+          </div>
+        </div>
+        <div class="card-desc">Web-based task board with Kanban view, dependency graph, and ready queue. Real-time sync via WebSocket.</div>
+        <div class="dash-preview">
+          <span class="comment"># web dashboard (community: mgalpert/beads-viewer)</span><br>
+          <span class="cmd">$ bun dev:full</span><br>
+          <span class="comment"># opens at localhost:5173 with live sync</span><br><br>
+          <span class="comment"># or TUI in terminal:</span><br>
+          <span class="cmd">$ beads_viewer</span>
+        </div>
+        <ul class="tool-list" style="margin-top:14px">
+          <li>Kanban board (drag-and-drop across statuses)</li>
+          <li>Interactive dependency graph (animated edges)</li>
+          <li>Ready Work view (unblocked, priority-sorted)</li>
+          <li>Real-time sync &mdash; watches issues.jsonl</li>
+          <li>TUI viewer with static HTML graph export</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 SESSION LIFECYCLE ═══ -->
+  <div class="section">
+    <div class="section-num">04</div>
+    <div class="section-title">Session Lifecycle</div>
+    <div class="flow-section">
+      <div class="flow-row">
+        <div class="flow-box trigger"><strong>Claude Code Session Starts</strong></div>
+      </div>
+      <div class="connector"><div class="line"></div></div>
+      <div class="flow-row">
+        <div class="flow-box action"><strong>SessionStart Hook</strong><br><small>session-start-hook.sh &bull; 10s timeout</small></div>
+      </div>
+      <div class="connector"><div class="line"></div></div>
+      <div class="grid-3" style="margin-bottom:0">
+        <div class="flow-box result">
+          <span class="source-label beads">Beads</span><br>
+          <code>bd prime</code><br>
+          <small>Injects open issues, blockers, ready queue (~1-2k tokens)</small>
+        </div>
+        <div class="flow-box result">
+          <span class="source-label serena">Serena</span><br>
+          <strong>Auto-activation</strong><br>
+          <small>CLAUDE.md enforces agent calls activate_project first</small>
+        </div>
+        <div class="flow-box result">
+          <span class="source-label gitnexus">GitNexus</span><br>
+          <strong>Stale check + inventory</strong><br>
+          <small>Compares index vs HEAD. 16 MCP tools auto-available</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 05 AUTO-ROUTING ═══ -->
+  <div class="section">
+    <div class="section-num">05</div>
+    <div class="section-title">Auto-Routing Rules</div>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">
+      Defined in <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:#f0ede6;padding:1px 6px;border-radius:3px">CLAUDE.md</code>. The agent follows these without user prompting.
+    </p>
+    <div class="card wide">
+      <table class="routing-table">
+        <tr><td class="question">"What should I work on next?"</td><td class="arrow">&rarr;</td><td class="tool"><code>bd ready</code></td><td class="system">Beads</td></tr>
+        <tr><td class="question">"How does authentication work?"</td><td class="arrow">&rarr;</td><td class="tool"><code>query</code> + <code>context</code></td><td class="system">GitNexus</td></tr>
+        <tr><td class="question">"What breaks if I change this function?"</td><td class="arrow">&rarr;</td><td class="tool"><code>impact</code></td><td class="system">GitNexus</td></tr>
+        <tr><td class="question">"Show me the execution flow"</td><td class="arrow">&rarr;</td><td class="tool"><code>context</code> + <code>cypher</code></td><td class="system">GitNexus</td></tr>
+        <tr><td class="question">"Rename this service across codebase"</td><td class="arrow">&rarr;</td><td class="tool"><code>rename_symbol</code></td><td class="system">Serena</td></tr>
+        <tr><td class="question">"Find all callers of this function"</td><td class="arrow">&rarr;</td><td class="tool"><code>find_referencing_symbols</code></td><td class="system">Serena</td></tr>
+        <tr><td class="question">"Search for rate limiting code"</td><td class="arrow">&rarr;</td><td class="tool"><code>Grep</code> <span class="dim">(auto-enriched)</span></td><td class="system">Built-in</td></tr>
+        <tr><td class="question">"Open the code graph / task board"</td><td class="arrow">&rarr;</td><td class="tool"><code>gitnexus serve</code> / <code>beads-viewer</code></td><td class="system">Dashboards</td></tr>
+        <tr><td class="question">"Create a bug report"</td><td class="arrow">&rarr;</td><td class="tool"><code>bd create --type bug</code></td><td class="system">Beads</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 06 HOOKS ═══ -->
+  <div class="section">
+    <div class="section-num">06</div>
+    <div class="section-title">Hooks &mdash; Claude Code + Git</div>
+    <div class="card wide">
+      <table class="spec-table">
+        <thead>
+          <tr><th>Hook</th><th>Trigger</th><th>Owner</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>SessionStart</strong></td><td>Session begins</td><td><span class="source-label custom">Custom</span></td><td><code>bd prime</code> + Serena reminder + GitNexus stale check</td></tr>
+          <tr><td><strong>PreCompact</strong></td><td>Context compaction</td><td><span class="source-label beads">Beads</span></td><td><code>bd ready</code> &mdash; preserves task state</td></tr>
+          <tr><td><strong>PreToolUse</strong></td><td>Grep / Glob / Bash</td><td><span class="source-label gitnexus">GitNexus</span></td><td>Auto-enriches searches with graph context</td></tr>
+          <tr><td><strong>PostToolUse</strong></td><td>Bash (git mutations)</td><td><span class="source-label gitnexus">GitNexus</span></td><td>Warns if knowledge graph is stale</td></tr>
+          <tr class="git-hook"><td><strong>git post-commit</strong></td><td>After commit</td><td><span class="source-label custom">Custom</span></td><td>GitNexus reindex (graph + embeddings) + Serena refresh (via .beads/hooks/)</td></tr>
+          <tr class="git-hook"><td><strong>git pre-commit</strong></td><td>Before commit</td><td><span class="source-label beads">Beads</span></td><td>Export Dolt &rarr; JSONL, stage .beads/</td></tr>
+          <tr class="git-hook"><td><strong>git post-merge</strong></td><td>After merge</td><td><span class="source-label beads">Beads</span></td><td>Import JSONL &rarr; Dolt (3-way merge)</td></tr>
+          <tr class="git-hook"><td><strong>git post-checkout</strong></td><td>After checkout</td><td><span class="source-label beads">Beads</span></td><td>Auto-import if JSONL changed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 07 HOOK STORAGE ═══ -->
+  <div class="section">
+    <div class="section-num">07</div>
+    <div class="section-title">Hook Storage &amp; Beads Git Hooks Explained</div>
+    <div class="note">
+      <strong>Why <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.beads/hooks/</code> instead of <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.git/hooks/</code>?</strong>
+      Beads v1.0 sets <code style="font-family:'JetBrains Mono',monospace;font-size:11px">core.hooksPath=.beads/hooks/</code> during <code style="font-family:'JetBrains Mono',monospace;font-size:11px">bd hooks install</code>.
+      This redirects ALL git hooks to <code style="font-family:'JetBrains Mono',monospace;font-size:11px">.beads/hooks/</code>, which is git-tracked (travels with clones).
+      Any custom git hooks (like our post-commit) MUST also live there.
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker blue"></div>
+          <div>
+            <div class="card-title">Git Hooks</div>
+            <div class="card-subtitle">Stored in <code>.beads/hooks/</code> (via core.hooksPath)</div>
+          </div>
+        </div>
+        <ul class="tool-list">
+          <li><code>pre-commit</code> <span class="dim">&mdash; <strong>Beads</strong>: exports Dolt DB &rarr; issues.jsonl + stages .beads/ files. Ensures task data is committed alongside code.</span></li>
+          <li><code>post-merge</code> <span class="dim">&mdash; <strong>Beads</strong>: imports issues.jsonl &rarr; Dolt DB (3-way merge). Syncs task state after pulling/merging branches.</span></li>
+          <li><code>post-checkout</code> <span class="dim">&mdash; <strong>Beads</strong>: auto-imports if issues.jsonl changed on branch switch.</span></li>
+          <li><code>pre-push</code> <span class="dim">&mdash; <strong>Beads</strong>: validates JSONL consistency before push.</span></li>
+          <li><code>post-commit</code> <span class="dim">&mdash; <strong>Custom</strong> (GitNexus + Serena): reindexes graph + embeddings (background), signals LSP refresh. Beads does NOT use post-commit.</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker purple"></div>
+          <div>
+            <div class="card-title">Claude Code Hooks</div>
+            <div class="card-subtitle">Stored in <code>.claude/settings.json</code></div>
+          </div>
+        </div>
+        <ul class="tool-list">
+          <li><code>SessionStart</code> <span class="dim">&mdash; <strong>Custom</strong>: runs <code>.claude/helpers/session-start-hook.sh</code> &rarr; <code>bd prime</code> + Serena reminder + GitNexus stale check</span></li>
+          <li><code>PreCompact</code> <span class="dim">&mdash; <strong>Beads</strong>: <code>bd ready</code> preserves task state through context compaction</span></li>
+          <li><code>PreToolUse</code> <span class="dim">&mdash; <strong>GitNexus</strong>: auto-enriches Grep/Glob/Bash with graph context (installed by <code>gitnexus setup</code> in <code>~/.claude/settings.json</code>)</span></li>
+          <li><code>PostToolUse</code> <span class="dim">&mdash; <strong>GitNexus</strong>: warns if knowledge graph is stale after git mutations (installed by <code>gitnexus setup</code> in <code>~/.claude/settings.json</code>)</span></li>
+          <li><code>PreToolUse</code> <span class="dim">&mdash; <strong>RTK</strong>: rewrites CLI commands for token optimization (in <code>~/.claude/settings.json</code>)</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px">
+      <strong>Two settings.json files:</strong> Project-level (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">.claude/settings.json</code>) has SessionStart + PreCompact. User-level (<code style="font-family:'JetBrains Mono',monospace;font-size:11px">~/.claude/settings.json</code>) has GitNexus PreToolUse/PostToolUse + RTK PreToolUse (global, shared across all projects). Both are merged at runtime.
+    </div>
+  </div>
+
+  <!-- ═══ 08 POST-COMMIT ═══ -->
+  <div class="section">
+    <div class="section-num">08</div>
+    <div class="section-title">Post-Commit Pipeline</div>
+    <div class="flow-section">
+      <div class="flow-row">
+        <div class="flow-box trigger"><strong>git commit</strong></div>
+      </div>
+      <div class="connector"><div class="line"></div></div>
+      <div class="flow-row">
+        <div class="flow-box action" style="min-width:300px"><strong>.beads/hooks/post-commit</strong><br><small>Unified &bull; all actions backgrounded &bull; via core.hooksPath</small></div>
+      </div>
+      <div class="connector"><div class="line"></div></div>
+      <div class="grid-2" style="margin-bottom:0">
+        <div class="flow-box result">
+          <span class="source-label gitnexus">GitNexus</span><br>
+          <code>analyze --embeddings</code><br>
+          <small>Full rebuild of graph + embeddings (~10-30s, local, $0 cost)</small>
+        </div>
+        <div class="flow-box result">
+          <span class="source-label serena">Serena</span><br>
+          <code>touch .refresh</code><br>
+          <small>Signal LSP to re-scan</small>
+        </div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:20px">
+      <strong>Timing:</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:11px">analyze --embeddings</code> does a full rebuild (~10-30s, entirely local, $0 cost). Runs in background &mdash; commits never blocked. Deleted files auto-dropped from index. <strong>Beads note:</strong> Beads v1.0 does NOT support post-commit hooks. Beads uses pre-commit (export Dolt&rarr;JSONL) and post-merge (import JSONL&rarr;Dolt) only.
+    </div>
+  </div>
+
+  <!-- ═══ 09 SKILLS ═══ -->
+  <div class="section">
+    <div class="section-num">09</div>
+    <div class="section-title">Skills &amp; Slash Commands</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker green"></div>
+          <div>
+            <div class="card-title">GitNexus Skills</div>
+            <div class="card-subtitle">Auto-generated at index time</div>
+          </div>
+        </div>
+        <ul class="tool-list">
+          <li><strong>Exploring</strong> <span class="dim">&mdash; navigate code via knowledge graph</span></li>
+          <li><strong>Debugging</strong> <span class="dim">&mdash; trace bugs through call chains</span></li>
+          <li><strong>Impact Analysis</strong> <span class="dim">&mdash; blast radius with risk levels</span></li>
+          <li><strong>Refactoring</strong> <span class="dim">&mdash; safe refactors via dependency map</span></li>
+          <li><strong>+ N generated</strong> <span class="dim">&mdash; per-module skills (Leiden clustering)</span></li>
+        </ul>
+        <div class="card-meta" style="margin-top:12px">
+          <span class="tag green">.claude/skills/gitnexus/</span>
+          <span class="tag green">.claude/skills/generated/</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker blue"></div>
+          <div>
+            <div class="card-title">Beads Commands</div>
+            <div class="card-subtitle">Task management slash commands</div>
+          </div>
+        </div>
+        <ul class="tool-list">
+          <li><code>/beads:ready</code> <span class="dim">&mdash; surface unblocked tasks</span></li>
+          <li><code>/beads:create</code> <span class="dim">&mdash; interactive issue creation</span></li>
+          <li><code>/beads:show</code> <span class="dim">&mdash; detailed issue + dependencies</span></li>
+          <li><code>/beads:update</code> <span class="dim">&mdash; modify status/fields</span></li>
+          <li><code>/beads:close</code> <span class="dim">&mdash; mark complete</span></li>
+          <li><code>/beads:workflow</code> <span class="dim">&mdash; AI workflow guide</span></li>
+          <li><code>/beads:stats</code> <span class="dim">&mdash; project overview</span></li>
+          <li><code>@task-agent</code> <span class="dim">&mdash; autonomous execution loop</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 10 STATUS LINE ═══ -->
+  <div class="section">
+    <div class="section-num">10</div>
+    <div class="section-title">Status Line</div>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">
+      Persistent status bar at the bottom of the Claude Code terminal. Shows session context at a glance &mdash; model, branch, context pressure, and cost.
+    </p>
+    <div class="card wide">
+      <div class="card-header">
+        <div class="card-marker teal"></div>
+        <div>
+          <div class="card-title">Status Line Output</div>
+          <div class="card-subtitle">~/.claude/statusline-command.sh</div>
+        </div>
+      </div>
+      <div class="dash-preview" style="font-size:14px;letter-spacing:0.5px">
+        <strong>Opus</strong>&ensp; <span style="opacity:0.6">agent/my-feature</span>&ensp; <span style="color:var(--accent-1)">&block;&block;&block;</span><span style="opacity:0.4">&block;&block;&block;&block;&block;&block;&block;</span> <span style="opacity:0.6">30%</span>&ensp; <span style="opacity:0.6">$0.08</span>
+      </div>
+      <table class="spec-table" style="margin-top:16px">
+        <thead>
+          <tr><th>Segment</th><th>Source</th><th>Style</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Model name</strong></td><td><code>model.display_name</code> (shortened: "Claude Opus 4.6" &rarr; "Opus")</td><td>Bold</td></tr>
+          <tr><td><strong>Git branch</strong></td><td><code>symbolic-ref --short HEAD</code> (fallback: short commit hash)</td><td>Dim</td></tr>
+          <tr><td><strong>Context bar</strong></td><td><code>context_window.used_percentage</code> &mdash; 10-block bar</td><td>Green &lt;50% &bull; Yellow 50-79% &bull; Red 80%+</td></tr>
+          <tr><td><strong>Cost estimate</strong></td><td>Input/output tokens &times; blended rate (~$4/1M in, ~$20/1M out)</td><td>Dim</td></tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:16px;margin-bottom:0">
+        <strong>Implementation:</strong> Script receives JSON on stdin from Claude Code, uses <code style="font-family:'JetBrains Mono',monospace;font-size:11px">$'\e[...'</code> shell syntax for real ANSI escape bytes (not <code style="font-family:'JetBrains Mono',monospace;font-size:11px">\033</code> string literals). Registered in <code style="font-family:'JetBrains Mono',monospace;font-size:11px">~/.claude/settings.json</code> under <code style="font-family:'JetBrains Mono',monospace;font-size:11px">statusLine.command</code>. Context bar and cost appear after first API response.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 11 STORAGE ═══ -->
+  <div class="section">
+    <div class="section-num">11</div>
+    <div class="section-title">Storage &amp; Data</div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker green"></div>
+          <div><div class="card-title" style="font-size:15px;font-family:'JetBrains Mono',monospace">.gitnexus/</div></div>
+        </div>
+        <div class="card-desc">LadybugDB graph + MiniLM embeddings. Gitignored. Rebuilt from source on any machine (~10-30s).</div>
+        <div class="card-meta"><span class="tag green">~50-200MB</span><span class="tag green">gitignored</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker blue"></div>
+          <div><div class="card-title" style="font-size:15px;font-family:'JetBrains Mono',monospace">.beads/</div></div>
+        </div>
+        <div class="card-desc">issues.jsonl + Dolt DB + config. Committed to git &mdash; travels with the repo across clones and branches.</div>
+        <div class="card-meta"><span class="tag blue">git-tracked</span><span class="tag blue">JSONL source of truth</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-marker brown"></div>
+          <div><div class="card-title" style="font-size:15px;font-family:'JetBrains Mono',monospace">.serena/</div></div>
+        </div>
+        <div class="card-desc">project.yml + memory files. LSP config for language servers. Committed to git &mdash; project knowledge persists.</div>
+        <div class="card-meta"><span class="tag brown">git-tracked</span><span class="tag brown">language-aware</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 12 FILES ═══ -->
+  <div class="section">
+    <div class="section-num">12</div>
+    <div class="section-title">Files Created &amp; Modified</div>
+    <div class="card wide">
+      <div class="file-grid">
+        <div class="file-item"><span class="file-action create">create</span><code>.beads/hooks/post-commit</code> &mdash; unified pipeline (GitNexus + Serena)</div>
+        <div class="file-item"><span class="file-action auto">auto</span><code>.beads/hooks/pre-commit</code> &mdash; Beads export (via <code>bd hooks install</code>)</div>
+        <div class="file-item"><span class="file-action auto">auto</span><code>.beads/hooks/post-merge</code> &mdash; Beads import (via <code>bd hooks install</code>)</div>
+        <div class="file-item"><span class="file-action auto">auto</span><code>.beads/hooks/post-checkout</code> &mdash; Beads sync (via <code>bd hooks install</code>)</div>
+        <div class="file-item"><span class="file-action create">create</span><code>.claude/helpers/session-start-hook.sh</code></div>
+        <div class="file-item"><span class="file-action edit">edit</span><code>CLAUDE.md</code> &mdash; full stack docs + auto-routing</div>
+        <div class="file-item"><span class="file-action edit">edit</span><code>.claude/settings.json</code> &mdash; unified hooks</div>
+        <div class="file-item"><span class="file-action edit">edit</span><code>.gitignore</code> &mdash; add .gitnexus/</div>
+        <div class="file-item"><span class="file-action edit">edit</span><code>.serena/project.yml</code> &mdash; initial_prompt</div>
+        <div class="file-item"><span class="file-action auto">auto</span><code>.gitnexus/</code> &mdash; graph + embeddings</div>
+        <div class="file-item"><span class="file-action auto">auto</span><code>.claude/skills/gitnexus/</code> &mdash; 4 skills</div>
+        <div class="file-item"><span class="file-action auto">auto</span><code>.claude/skills/generated/</code> &mdash; module skills</div>
+        <div class="file-item"><span class="file-action auto">auto</span><code>.beads/</code> &mdash; issues + Dolt DB</div>
+        <div class="file-item"><span class="file-action create">create</span><code>~/.claude/statusline-command.sh</code> &mdash; status bar script</div>
+        <div class="file-item"><span class="file-action auto">auto</span><code>~/.gitnexus/registry.json</code> &mdash; global index</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 13 INSTALL ═══ -->
+  <div class="section">
+    <div class="section-num">13</div>
+    <div class="section-title">Installation Sequence</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="phase-num p1">1</div>
+          <div><div class="card-title">GitNexus</div><div class="card-subtitle">Code Intelligence</div></div>
+        </div>
+        <ul class="tool-list">
+          <li><code>npm install -g gitnexus</code></li>
+          <li><code>gitnexus setup</code> <span class="dim">&mdash; MCP + hooks (one-time global)</span></li>
+          <li><code>gitnexus analyze --embeddings --skills --skip-agents-md</code></li>
+          <li><code>gitnexus status</code> <span class="dim">&mdash; verify index</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="phase-num p2">2</div>
+          <div><div class="card-title">Beads</div><div class="card-subtitle">Task Management</div></div>
+        </div>
+        <ul class="tool-list">
+          <li><code>brew install beads</code> <span class="dim">or</span> <code>npm i -g @beads/bd</code></li>
+          <li><code>bd init --prefix &lt;project&gt;</code></li>
+          <li><code>bd setup claude</code> <span class="dim">&mdash; hooks (SessionStart + PreCompact)</span></li>
+          <li><code>bd hooks install</code> <span class="dim">&mdash; git hooks</span></li>
+          <li><code>bd doctor --fix</code> <span class="dim">&mdash; validate</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="phase-num p3">3</div>
+          <div><div class="card-title">Serena</div><div class="card-subtitle">Precision Editing</div></div>
+        </div>
+        <ul class="tool-list">
+          <li>Install via Claude Code plugin marketplace</li>
+          <li><code>mcp__serena__onboarding</code> <span class="dim">&mdash; project setup</span></li>
+          <li>Configure <code>.serena/project.yml</code> <span class="dim">&mdash; languages</span></li>
+          <li>Add <code>initial_prompt</code> to project.yml</li>
+          <li>Add activation instruction to CLAUDE.md</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="phase-num p4">4</div>
+          <div><div class="card-title">Wire Up</div><div class="card-subtitle">Hooks &amp; Configuration</div></div>
+        </div>
+        <ul class="tool-list">
+          <li>Create unified <code>.beads/hooks/post-commit</code></li>
+          <li>Create <code>session-start-hook.sh</code></li>
+          <li>Merge hooks in <code>.claude/settings.json</code></li>
+          <li>Update <code>CLAUDE.md</code> with auto-routing rules</li>
+          <li>Add <code>.gitnexus/</code> to <code>.gitignore</code></li>
+        </ul>
+      </div>
+      <div class="card" style="grid-column: 1 / -1">
+        <div class="card-header">
+          <div class="phase-num" style="border-color:var(--accent-teal);color:var(--accent-teal)">5</div>
+          <div><div class="card-title">Status Line</div><div class="card-subtitle">Terminal Context Bar (Optional)</div></div>
+        </div>
+        <ul class="tool-list">
+          <li>Create <code>~/.claude/statusline-command.sh</code> <span class="dim">&mdash; model, branch, context bar, cost</span></li>
+          <li>Add <code>statusLine</code> to <code>~/.claude/settings.json</code> <span class="dim">&mdash; uses absolute path to script</span></li>
+          <li>Uses <code>$'\e[...'</code> for ANSI colors <span class="dim">&mdash; green/yellow/red context pressure bar</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 14 LICENSE ═══ -->
+  <div class="section">
+    <div class="section-num">14</div>
+    <div class="section-title">License</div>
+    <div class="license-grid">
+      <div class="license-item"><h4>GitNexus</h4><p>PolyForm Noncommercial 1.0.0 &mdash; commercial use requires license from Akon Labs</p></div>
+      <div class="license-item"><h4>Beads</h4><p>MIT &mdash; no restrictions, fully open source</p></div>
+      <div class="license-item"><h4>Serena</h4><p>Community plugin &mdash; verify current license terms</p></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p><strong>&#x1F47E; Monster Pack v1</strong> &mdash; Agentic Code Infrastructure Architecture</p>
+    <p>GitNexus (21.5k&#9733;) &bull; Serena (LSP) &bull; Beads (20.2k&#9733;) &mdash; Universal setup, zero cloud deps</p>
+    <p style="margin-top:12px">&copy; 2026 Roman &mdash; <a href="https://roman.x70.ai/" style="color:var(--accent-3);text-decoration:none">roman.x70.ai</a> &bull; <a href="mailto:romwtb@gmail.com" style="color:var(--accent-3);text-decoration:none">romwtb@gmail.com</a></p>
+  </div>
+
+</div>
+</body>
+</html>

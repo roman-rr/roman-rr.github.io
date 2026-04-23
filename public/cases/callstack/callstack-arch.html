@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Callstack AI — Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #fafafa;
+    font-family: 'DM Sans', sans-serif;
+    color: #374151;
+    padding: 48px 32px;
+    min-height: 100vh;
+  }
+  .page { max-width: 1100px; margin: 0 auto; }
+
+  /* Title */
+  .title { font-size: 24px; font-weight: 300; color: #1f2937; text-align: center; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; font-weight: 400; color: #9ca3af; text-align: center; margin-bottom: 32px; line-height: 1.8; }
+
+  /* Section Label */
+  .section-label {
+    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 12px;
+  }
+
+  /* Zone */
+  .zone {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px;
+    padding: 24px; margin-bottom: 0;
+  }
+
+  /* Connector */
+  .connector-row { display: flex; align-items: center; justify-content: center; padding: 16px 0; }
+  .connector-v { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .connector-line { width: 1px; height: 16px; background: #e5e7eb; }
+  .connector-dot { width: 6px; height: 6px; border-radius: 50%; background: #d1d5db; }
+
+  /* Icon container */
+  .icon-container {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .icon-container svg { width: 18px; height: 18px; stroke-width: 1.5; fill: none; }
+
+  /* Model / path badge */
+  .gate-model {
+    font-family: 'DM Mono', monospace; font-size: 10px; color: #6b7280;
+    background: #f3f4f6; padding: 3px 8px; border-radius: 4px;
+    display: inline-block; margin-top: 2px;
+  }
+  .namespace-badge {
+    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 400;
+    background: #f3f4f6; color: #6b7280; padding: 4px 10px;
+    border-radius: 12px; white-space: nowrap;
+  }
+  .tool-chip {
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 400;
+    background: #f3f4f6; color: #6b7280; padding: 3px 8px; border-radius: 4px;
+  }
+  .rag-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 400;
+    background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0;
+    padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+  }
+  .orchestration-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 400;
+    background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd;
+    padding: 4px 10px; border-radius: 4px; margin-top: 12px;
+  }
+
+  /* Gate / hero agent */
+  .gate-header { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .gate-header .icon-container { width: 42px; height: 42px; border-radius: 10px; background: #eef2ff; }
+  .gate-header .icon-container svg { width: 22px; height: 22px; stroke: #4f46e5; }
+  .gate-name { font-size: 16px; font-weight: 500; color: #1f2937; }
+  .gate-desc { font-size: 12px; color: #9ca3af; font-weight: 300; }
+  .gate-top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  @media (max-width: 800px) { .gate-top-row { flex-direction: column; gap: 12px; } }
+  .gate-inner-split {
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid #f3f4f6;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  @media (max-width: 800px) { .gate-inner-split { grid-template-columns: 1fr; } }
+
+  /* Step card */
+  .step-card {
+    background: #fafafa; border: 1px solid #f3f4f6; border-radius: 10px;
+    padding: 16px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .step-card-header { display: flex; align-items: flex-start; gap: 10px; }
+  .step-card-info { flex: 1; min-width: 0; }
+  .step-card-name { font-size: 13px; font-weight: 500; color: #1f2937; }
+  .step-card-desc { font-size: 10px; color: #6b7280; line-height: 1.5; margin-top: 4px; }
+
+  /* Layer card (pipeline overview) */
+  .layer-card {
+    background: #fafafa; border: 1px solid #f3f4f6; border-radius: 10px;
+    padding: 16px; display: flex; align-items: flex-start; gap: 12px;
+  }
+  .layer-card-name { font-size: 13px; font-weight: 500; color: #1f2937; margin-bottom: 2px; }
+  .layer-card-role { font-size: 11px; color: #9ca3af; font-weight: 300; margin-bottom: 8px; }
+  .layer-card-count { font-family: 'DM Mono', monospace; font-size: 10px; color: #6b7280; }
+
+  /* Tools section (inside step-card) */
+  .tools-section { border-top: 1px solid #f3f4f6; padding-top: 10px; margin-top: 8px; }
+  .tools-label {
+    font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.8px; color: #9ca3af; margin-bottom: 6px;
+  }
+  .tools-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  /* Middleware-style card (2-col content card) */
+  .middleware-card {
+    background: #fafafa; border: 1px solid #f3f4f6; border-radius: 10px;
+    padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px;
+  }
+  .middleware-card-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .middleware-card-icon svg { width: 16px; height: 16px; stroke-width: 1.5; fill: none; }
+  .middleware-card-content { flex: 1; }
+  .middleware-card-name { font-size: 12px; font-weight: 500; color: #1f2937; margin-bottom: 4px; }
+  .middleware-card-desc { font-size: 10px; color: #9ca3af; line-height: 1.4; }
+  .middleware-config {
+    font-family: 'DM Mono', monospace; font-size: 9px; color: #6b7280;
+    background: #f9fafb; padding: 4px 8px; border-radius: 4px;
+    margin-top: 6px; display: inline-block;
+  }
+
+  /* Pipeline overview 3-col */
+  .pipeline-overview {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 4px;
+  }
+  @media (max-width: 800px) { .pipeline-overview { grid-template-columns: 1fr; } }
+
+  /* Channel grid (5-col) */
+  .channels-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 4px; }
+  @media (max-width: 900px) { .channels-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .channels-grid { grid-template-columns: 1fr; } }
+
+  .channel-card {
+    background: #fafafa; border: 1px solid #f3f4f6; border-radius: 10px;
+    padding: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+  }
+  .channel-card-name { font-size: 12px; font-weight: 500; color: #1f2937; }
+  .channel-card-desc { font-size: 10px; color: #6b7280; line-height: 1.45; }
+
+  /* 2-col grids */
+  .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+  @media (max-width: 800px) { .split-2 { grid-template-columns: 1fr; } }
+
+  /* 3-col grid */
+  .split-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 4px; }
+  @media (max-width: 800px) { .split-3 { grid-template-columns: 1fr; } }
+
+  /* 4-col grid */
+  .split-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 4px; }
+  @media (max-width: 900px) { .split-4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .split-4 { grid-template-columns: 1fr; } }
+
+  /* Infra split */
+  .infra-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .infra-split { grid-template-columns: 1fr; } }
+
+  /* Endpoint chip (route prefix list) */
+  .endpoint-card {
+    background: #fafafa; border: 1px solid #f3f4f6; border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .endpoint-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; margin-bottom: 8px;
+  }
+  .endpoint-prefix {
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: #1f2937;
+  }
+  .endpoint-method-chips { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+  .endpoint-method-chip {
+    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 400;
+    padding: 2px 6px; border-radius: 4px; letter-spacing: 0.02em;
+  }
+  .m-get { background: #f0f9ff; color: #0369a1; }
+  .m-post { background: #ecfdf5; color: #059669; }
+  .m-put { background: #fff7ed; color: #ea580c; }
+  .m-del { background: #fef2f2; color: #dc2626; }
+  .m-ws { background: #f3e8ff; color: #7c3aed; }
+
+  .endpoint-card-desc { font-size: 10px; color: #6b7280; line-height: 1.5; margin-top: 4px; }
+
+  /* External services chips */
+  .ext-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 800px) { .ext-row { grid-template-columns: 1fr; } }
+  .ext-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: #fafafa; border: 1px solid #f3f4f6; border-radius: 8px; padding: 8px 12px;
+  }
+  .ext-chip-name { font-size: 12px; font-weight: 400; color: #374151; }
+  .ext-chip-type { font-family: 'DM Mono', monospace; font-size: 9px; color: #9ca3af; margin-top: 1px; }
+
+  /* Label pill */
+  .label-pill {
+    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 400;
+    padding: 2px 7px; border-radius: 4px; display: inline-block; margin: 2px 2px; line-height: 1.6;
+  }
+
+  /* Summary stats */
+  .stats-block { display:flex; justify-content:center; gap:28px; flex-wrap:wrap; margin-top:8px; }
+  .stat-num { font-size:28px; font-weight:300; color:#1f2937; }
+  .stat-lbl { font-size:11px; color:#9ca3af; }
+
+  /* Screenshots gallery */
+  .screenshots-gallery {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-top: 4px; padding: 0 16px;
+  }
+  @media (max-width: 900px) {
+    .screenshots-gallery { grid-template-columns: repeat(2, 1fr); padding: 0; }
+  }
+  @media (max-width: 500px) {
+    .screenshots-gallery { grid-template-columns: 1fr; }
+  }
+  .screenshot-thumb {
+    display: block; text-decoration: none;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative; cursor: pointer;
+    background: #ffffff;
+    aspect-ratio: 3 / 2;
+  }
+  .screenshot-thumb img,
+  .screenshot-thumb svg,
+  .screenshot-thumb video,
+  .screenshot-thumb .shot-placeholder {
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: saturate(1.05) contrast(1.02);
+    position: relative;
+    z-index: 1;
+  }
+  /* Lighting overlay removed — thick emerald border replaces it */
+  /* Legacy no-overlay class kept as no-op */
+  .screenshot-thumb.no-overlay img { filter: saturate(1.05) contrast(1.02); }
+
+  /* Play button overlay for video thumbnails */
+  .play-btn {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: rgba(28, 60, 60, 0.72);
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .play-btn::after {
+    content: '';
+    display: block;
+    width: 0; height: 0;
+    border-left: 14px solid #ffffff;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    margin-left: 3px;
+  }
+  .screenshot-caption {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 500; color: #1f2937;
+    text-align: center; margin-top: 12px;
+  }
+
+  /* Section header with right-aligned action link */
+  .section-header-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; gap: 12px;
+  }
+  .section-header-row .section-label { margin-bottom: 0; }
+  .demo-link {
+    font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: #6b7280; text-decoration: none;
+    padding: 6px 12px; border: 1px solid #e5e7eb; border-radius: 6px;
+    background: #ffffff; transition: all 0.15s ease;
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .demo-link:hover { border-color: #1c3c3c; color: #1c3c3c; }
+  .demo-link svg {
+    width: 10px; height: 10px; stroke: currentColor;
+    stroke-width: 2; fill: none;
+  }
+
+  /* Screenshot placeholders (before real PNGs are dropped in) */
+  .shot-placeholder {
+    width: 100%; aspect-ratio: 16 / 10;
+    background: repeating-linear-gradient(
+      135deg, #f9fafb 0px, #f9fafb 10px,
+      #f3f4f6 10px, #f3f4f6 20px
+    );
+    display: flex; align-items: center; justify-content: center;
+    color: #9ca3af; font-size: 11px; font-weight: 500;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.5px;
+  }
+
+  /* Logo grid — Built With */
+  .logos-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 12px; margin-top: 4px;
+  }
+  @media (max-width: 900px) { .logos-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 500px) { .logos-grid { grid-template-columns: repeat(2, 1fr); } }
+  .logo-tile {
+    background: #fafafa; border: 1px solid #f3f4f6;
+    border-radius: 10px; padding: 16px 12px;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 8px; aspect-ratio: 3 / 2;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .logo-tile:hover { border-color: #e5e7eb; background: #ffffff; }
+  .logo-tile img, .logo-tile .logo-svg {
+    max-width: 70%; max-height: 44px; width: auto; height: 44px;
+    object-fit: contain;
+  }
+  .logo-tile-placeholder {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: #e5e7eb; display: flex;
+    align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 14px;
+    font-weight: 500; color: #9ca3af;
+  }
+  .logo-tile-name {
+    font-size: 11px; font-weight: 500; color: #6b7280;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* Footer */
+  .footer { text-align: center; margin-top: 32px; font-size: 11px; color: #9ca3af; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Title -->
+  <h1 class="title">Callstack AI — Multi-Tenant Voice &amp; Chat Architecture</h1>
+  <p class="subtitle">Self-hosted AI contact center. One <span style="color:#6b7280;font-weight:500;">LangChain ReAct agent</span> behind every channel.<br><span style="color:#6b7280;font-weight:500;">Twilio PSTN</span> &middot; <span style="color:#6b7280;font-weight:500;">Azure Voice Live</span> &middot; <span style="color:#6b7280;font-weight:500;">CopilotKit chat</span> &middot; <span style="color:#6b7280;font-weight:500;">embeddable widgets</span>.</p>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- IN ACTION -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 10px;">In Action</div>
+    <div class="screenshots-gallery">
+      <div>
+        <a class="screenshot-thumb no-overlay" href="callstack-demo-1.mp4" target="_blank">
+          <video src="callstack-demo-1.mp4" muted playsinline preload="metadata"></video>
+          <span class="play-btn"></span>
+        </a>
+        <div class="screenshot-caption">Video Demo</div>
+      </div>
+      <div>
+        <a class="screenshot-thumb no-overlay" href="callstack-chat-ui.png" target="_blank">
+          <img src="callstack-chat-ui.png" alt="Chat UI">
+        </a>
+        <div class="screenshot-caption">Chat UI</div>
+      </div>
+      <div>
+        <a class="screenshot-thumb no-overlay" href="callstack-calls-ui.png" target="_blank">
+          <img src="callstack-calls-ui.png" alt="Calls UI">
+        </a>
+        <div class="screenshot-caption">Calls UI</div>
+      </div>
+      <div>
+        <a class="screenshot-thumb no-overlay" href="callstack-kb-ui.png" target="_blank">
+          <img src="callstack-kb-ui.png" alt="Knowledge Base">
+        </a>
+        <div class="screenshot-caption">Knowledge Base</div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:center; margin-top: 24px;">
+      <a class="demo-link" href="callstack-demo.html" target="_blank">
+        Try a Demo
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- BUILT WITH — TECH STACK LOGOS -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 12px;">Built With</div>
+    <div class="logos-grid">
+
+      <div class="logo-tile">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100"><path fill="#1c3c3c" d="M34.887 60.426c.054-.25.1-.492.159-.709l.254.605c.479 1.166.954 2.32 2.108 2.975-.05 1.058-1.392 1.487-2.3 1.358-.2-.475-.479-.95-1.062-.683-.596.233-1.25-.042-1.109-.771 1.388-.05 1.696-1.546 1.95-2.775m41.717-21.904a4.95 4.95 0 0 0-3.496 1.425l-3.758 3.695a4.84 4.84 0 0 0-1.43 3.805l.026.233a4.75 4.75 0 0 0 1.404 2.842c.541.533 1.137.875 1.862 1.108a3.61 3.61 0 0 1-1.029 3.237l-.233.23a8.43 8.43 0 0 1-5.646-6.48l-.042-.237-.191.154q-.19.15-.367.325l-3.758 3.696a4.817 4.817 0 0 0 0 6.875 4.97 4.97 0 0 0 3.5 1.425 4.97 4.97 0 0 0 3.491-1.42l3.759-3.7a4.815 4.815 0 0 0-1.817-8.005 3.97 3.97 0 0 1 1.15-3.508 8.59 8.59 0 0 1 5.713 6.541l.041.238.196-.154q.19-.15.367-.325l3.758-3.7a4.81 4.81 0 0 0 0-6.875 4.95 4.95 0 0 0-3.5-1.425"/><path fill="#1c3c3c" fill-rule="evenodd" d="M74.588 25H25.417C11.4 25 0 36.217 0 50c0 13.784 11.4 25 25.413 25h49.17C88.6 75 100 63.784 100 50c0-13.783-11.4-25-25.412-25M50.333 64.196c-.812.167-1.725.196-2.341-.441-.188.416-.567.32-.921.233a3 3 0 0 0-.254-.059c-.042.105-.071.2-.109.305-1.37.087-2.395-1.288-3.05-2.325q-.962-.49-1.97-.875c-.717-.292-1.438-.584-2.121-.959q-.022.36-.017.721c-.008 1.017-.017 2.096-.946 2.713-.029 1.229.983 1.216 1.983 1.208.863-.013 1.709-.02 1.863.767q-.105.011-.208.012c-.192 0-.384 0-.53.142-.487.462-1.008.262-1.55.054-.5-.192-1.012-.392-1.529-.083a10 10 0 0 0-1.091.641 4.04 4.04 0 0 1-2.284.809c-.1-.15-.058-.246.025-.334q.097-.11.18-.233c.079-.117.145-.238.212-.35.225-.396.43-.75 1.008-.917-.77-.12-1.433.23-2.083.571l-.017.008q-.135.073-.27.142c-.405.167-.642.038-.884-.096-.342-.187-.7-.383-1.567.167-.166-.133-.083-.254.009-.358.379-.455.875-.521 1.437-.496-1.462-.804-2.516-.233-3.375.229-.758.408-1.362.733-1.962-.05-.271.07-.425.263-.575.45a2 2 0 0 1-.196.23c-.146-.163-.113-.347-.075-.534l.02-.109a1 1 0 0 0 .013-.125l-.112-.041c-.221-.092-.438-.183-.375-.517-.488-.166-.834.125-1.192.392-.225-.171-.041-.396.134-.604q.113-.122.187-.271c.158-.271.43-.28.692-.288.225-.004.45-.012.604-.175.554-.312 1.237-.15 1.925.013.504.117 1.008.237 1.475.175.846.104 1.892-.75 1.467-1.604-.776-.971-.767-2.2-.763-3.388v-.596c-.067-.45-.717-.97-1.367-1.491-.5-.396-1-.796-1.241-1.167-.667-.737-1.188-1.592-1.704-2.437l-.063-.1c-.883-1.684-1.238-3.584-1.592-5.48-.429-2.275-.854-4.541-2.191-6.416-1.109.6-2.55.312-3.504-.492-.5.446-.542 1.03-.576 1.65l-.004.058c-1.237-1.216-1.083-3.516-.095-4.875a6.6 6.6 0 0 1 1.425-1.358c.125-.087.166-.175.162-.308.98-4.334 7.65-3.496 9.758-.43.696.859 1.171 1.842 1.646 2.826.571 1.179 1.138 2.358 2.084 3.312.916.987 1.883 1.93 2.85 2.87 1.495 1.46 2.991 2.913 4.3 4.538 2.041 2.446 3.495 5.317 4.766 8.209.209.383.334.804.459 1.22.183.626.37 1.246.833 1.738.108.146.35.367.62.617.65.595 1.488 1.366 1.205 1.704a.8.8 0 0 0 .208.25c.133.117.308.242.483.367.509.362 1.046.741.671 1.041m32.409-14.77-3.759 3.695a8.7 8.7 0 0 1-3.579 2.125l-.07.021-.026.063a8.4 8.4 0 0 1-1.975 3.004l-3.758 3.7a8.7 8.7 0 0 1-6.142 2.5c-2.32 0-4.5-.888-6.141-2.5a8.46 8.46 0 0 1 0-12.084l3.758-3.7a8.6 8.6 0 0 1 3.58-2.116l.066-.017.025-.067a8.6 8.6 0 0 1 1.979-3.016l3.758-3.696a8.7 8.7 0 0 1 6.142-2.5c2.325 0 4.5.887 6.142 2.5a8.4 8.4 0 0 1 2.541 6.041c0 2.288-.9 4.434-2.541 6.042z" clip-rule="evenodd"/></svg>
+        <div class="logo-tile-name">LangChain</div>
+      </div>
+
+      <div class="logo-tile">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100"><g clip-path="url(#lg-a)"><path fill="#1c3c3c" fill-rule="evenodd" d="M25.412 25h49.171C88.6 25 100 36.217 100 50c0 13.784-11.4 25-25.413 25h-49.17C11.4 75 0 63.784 0 50c0-13.783 11.4-25 25.412-25m22.58 38.75c.616.642 1.529.609 2.337.442l.008.004c.375-.3-.158-.679-.666-1.041-.309-.217-.605-.425-.692-.613.283-.333-.554-1.104-1.204-1.7a6 6 0 0 1-.625-.617c-.459-.495-.646-1.116-.834-1.741-.125-.417-.25-.834-.458-1.217-1.266-2.892-2.72-5.763-4.762-8.208-1.313-1.625-2.809-3.084-4.304-4.542a81 81 0 0 1-2.846-2.867c-.942-.954-1.509-2.129-2.08-3.308-.474-.983-.95-1.97-1.65-2.833-2.112-3.063-8.779-3.9-9.758.433 0 .133-.041.217-.162.304a6.7 6.7 0 0 0-1.425 1.363c-.992 1.358-1.142 3.654.091 4.875l.005-.08c.041-.612.083-1.191.579-1.629.95.805 2.4 1.092 3.504.488 1.333 1.875 1.758 4.146 2.187 6.416.355 1.9.709 3.8 1.592 5.484l.058.092c.517.845 1.042 1.708 1.709 2.445.245.371.741.767 1.237 1.163.654.52 1.309 1.041 1.371 1.496v.596c-.004 1.187-.008 2.416.767 3.387.429.854-.625 1.708-1.467 1.604-.467.063-.97-.058-1.475-.175-.687-.166-1.37-.325-1.925-.012-.158.166-.38.166-.604.175-.267.008-.538.016-.696.291-.033.08-.108.167-.187.263-.175.208-.363.437-.138.608l.063-.041c.341-.259.666-.5 1.124-.35-.058.333.163.424.384.512l.112.05a1.4 1.4 0 0 1-.033.233c-.038.188-.07.367.075.53q.102-.108.192-.225c.154-.192.304-.384.579-.459.6.792 1.204.463 1.962.054.859-.462 1.913-1.033 3.375-.229-.562-.025-1.062.042-1.437.5-.096.1-.175.217-.009.35.863-.55 1.226-.354 1.563-.166.25.133.48.262.883.1l.292-.15c.646-.346 1.308-.692 2.08-.571-.58.162-.784.52-1.01.908a3 3 0 0 1-.39.583c-.088.088-.126.192-.03.334 1.208-.096 1.667-.396 2.283-.8.292-.192.625-.413 1.088-.642.517-.312 1.033-.113 1.533.083.542.209 1.063.409 1.546-.058.154-.138.346-.142.538-.142q.1.002.208-.008c-.154-.792-1-.783-1.867-.775-1 .013-2.012.025-1.979-1.204.925-.621.933-1.696.942-2.713 0-.25 0-.487.02-.72.68.375 1.4.666 2.117.954.675.27 1.346.541 1.975.875.658 1.041 1.684 2.416 3.05 2.325.034-.109.067-.196.108-.304q.12.022.246.058c.359.083.742.179.93-.238m26.787-11.787a4.26 4.26 0 0 0 2.983 1.208 4.26 4.26 0 0 0 2.984-1.208 4.08 4.08 0 0 0 1.237-2.917 4.08 4.08 0 0 0-1.237-2.916 4.27 4.27 0 0 0-4.5-.934l-2.417-3.462-1.687 1.133 2.429 3.48a4.075 4.075 0 0 0 .208 5.616m-7.57-11.208a4.29 4.29 0 0 0 4.4-.396 4.13 4.13 0 0 0 1.512-2.113 4.04 4.04 0 0 0-.067-2.583 4.14 4.14 0 0 0-1.625-2.033 4.28 4.28 0 0 0-5.408.583 4.11 4.11 0 0 0-1.096 3.566c.117.637.384 1.237.779 1.75.396.521.913.938 1.504 1.225m0 23.966a4.3 4.3 0 0 0 4.4-.396 4.13 4.13 0 0 0 1.512-2.112 4.04 4.04 0 0 0-.067-2.584 4.14 4.14 0 0 0-1.625-2.033 4.28 4.28 0 0 0-5.408.584 4.11 4.11 0 0 0-1.096 3.566c.117.637.384 1.237.779 1.75.396.521.913.938 1.504 1.225m3.874-14.65v-2.05h-6.458a4.1 4.1 0 0 0-.904-1.683l2.433-3.53-1.77-1.15-2.43 3.53a4.26 4.26 0 0 0-4.362.958 4.05 4.05 0 0 0-1.234 2.9c0 1.088.446 2.133 1.234 2.9a4.26 4.26 0 0 0 4.362.959l2.43 3.529 1.75-1.15-2.413-3.53a4.1 4.1 0 0 0 .904-1.683z" clip-rule="evenodd"/></g><defs><clipPath id="lg-a"><path fill="#fff" d="M0 0h100v100H0z"/></clipPath></defs></svg>
+        <div class="logo-tile-name">LangGraph</div>
+      </div>
+
+      <div class="logo-tile">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100"><g clip-path="url(#tw-a)"><path fill="#f22f46" d="M37.5 72.116c5.31 0 9.615-4.305 9.615-9.616a9.615 9.615 0 0 0-9.615-9.615 9.615 9.615 0 0 0 0 19.23m0-25c5.31 0 9.615-4.306 9.615-9.616s-4.305-9.615-9.615-9.615a9.615 9.615 0 0 0-9.615 9.615 9.615 9.615 0 0 0 9.615 9.615m25 25a9.615 9.615 0 1 0-9.615-9.616 9.615 9.615 0 0 0 9.615 9.615m0-25a9.615 9.615 0 0 0 9.615-9.616 9.615 9.615 0 0 0-9.615-9.615 9.615 9.615 0 0 0-9.615 9.615 9.615 9.615 0 0 0 9.615 9.615M50 0c27.083 0 50 22.917 50 50s-22.917 50-50 50S0 77.083 0 50 22.917 0 50 0m0 13.462c-20.122 0-36.538 15.848-36.538 35.867S29.878 86.539 50 86.539s36.539-17.191 36.539-37.21S70.122 13.462 50 13.462"/></g><defs><clipPath id="tw-a"><path fill="#fff" d="M0 0h100v100H0z"/></clipPath></defs></svg>
+        <div class="logo-tile-name">Twilio</div>
+      </div>
+
+      <div class="logo-tile">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100"><path fill="#000" d="M35.417 60.982a4.066 4.066 0 0 1 8.131 0v7.494a4.066 4.066 0 1 1-8.132 0zm24.899-4.065a4.066 4.066 0 0 0-4.066 4.065v7.494a4.066 4.066 0 1 0 8.132 0v-7.494a4.066 4.066 0 0 0-4.066-4.065"/><path fill="#000" fill-rule="evenodd" d="M100 68.331V57.125a6.85 6.85 0 0 0-1.344-4.081l-3.044-4.125c-1.629-2.22-4.042-2.794-6.63-2.794C88.005 35 85.693 27.063 80.187 21.25 69.688 10.125 55.75 9 50 9s-19.687 1.125-30.187 12.25C14.3 27.063 11.993 35 11.019 46.125c-2.583 0-5.008.584-6.638 2.794l-3.043 4.119A6.9 6.9 0 0 0 0 57.125v11.206a4.67 4.67 0 0 0 1.888 3.713C11.645 79.206 30.834 90.25 50 90.25c17.324 0 34.33-8.116 48.113-18.206A4.67 4.67 0 0 0 100 68.33M76.563 47.77c2.156.708 4.228 1.71 4.362 4.262h-.006c.343 7.188.443 14.412.319 21.607a3.66 3.66 0 0 1-2.126 3.274C68.776 81.625 58.995 84 50.006 84c-9 0-18.781-2.375-29.125-7.088a3.66 3.66 0 0 1-2.125-3.275c.035-2.326.046-4.651.055-6.976l.002-.245c.02-4.795.04-9.588.268-14.385.137-2.538 2.2-3.556 4.35-4.262 2.272 1.433 5.056 1.987 7.713 1.987 2.825 0 8.1-.675 12.475-5.05 1.106-1.1 1.862-2.825 2.375-4.737a42 42 0 0 1 4.012-.213q2.005.01 4 .213c.513 1.912 1.269 3.637 2.375 4.737 4.382 4.375 9.65 5.05 12.475 5.05 2.657 0 5.433-.56 7.707-1.987m-47.25-2.956c-3.438 0-6.625-1.126-8.313-2.813-2.312-2.375-3.187-13.625.875-18.062 1.875-2 5.563-3.438 9.938-3.875 4.125-.375 7.812.25 9.437 1.687 1.5 1.25 2.5 4.188 2.625 7.75.125 4.438-1 8.813-2.812 10.563-4.126 4.187-9.126 4.75-11.75 4.75m17.437-11.5c-.062-.813-.125-1.563-.25-2.25 1.313-.125 2.5-.188 3.5-.188s2.188.063 3.5.188c-.125.687-.187 1.437-.25 2.25 0 .562 0 1.124.063 1.75-1.25-.126-2.313-.126-3.313-.126s-2.062 0-3.312.126c.062-.626.062-1.188.062-1.75m12.188 6.75C57.125 38.313 56 33.937 56.125 29.5c.125-3.562 1.125-6.5 2.625-7.75 1.625-1.437 5.313-2.062 9.438-1.687 4.374.437 8.062 1.875 9.937 3.875C82.188 28.375 81.313 39.625 79 42c-1.687 1.688-4.875 2.813-8.312 2.813-2.626 0-7.626-.563-11.75-4.75" clip-rule="evenodd"/></svg>
+        <div class="logo-tile-name">CopilotKit</div>
+      </div>
+
+      <div class="logo-tile">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100"><g clip-path="url(#oa-a)"><path fill="#193718" d="M93.06 40.937c1.25-3.438 1.563-6.875 1.25-10.313-.312-3.437-1.562-6.875-3.125-10-2.812-4.687-6.875-8.437-11.562-10.625-5-2.187-10.313-2.812-15.625-1.562-2.5-2.5-5.313-4.688-8.438-6.25S48.685-.001 45.248-.001c-5.313 0-10.625 1.563-15 4.688a24.16 24.16 0 0 0-9.063 12.5c-3.75.937-6.875 2.5-10 4.374-2.812 2.188-5 5-6.875 7.813-2.812 4.688-3.75 10-3.125 15.313a27.2 27.2 0 0 0 6.25 14.375c-1.25 3.437-1.562 6.874-1.25 10.312s1.563 6.875 3.125 10c2.813 4.688 6.875 8.438 11.563 10.625 5 2.188 10.312 2.813 15.625 1.563 2.5 2.5 5.312 4.687 8.437 6.25s6.875 2.187 10.313 2.187c5.312 0 10.625-1.562 15-4.687s7.5-7.5 9.062-12.5c3.438-.626 6.875-2.188 9.688-4.376 2.812-2.187 5.312-4.687 6.875-7.812 2.812-4.687 3.75-10 3.125-15.312-.625-5.313-2.5-10.313-5.938-14.375m-37.5 52.5c-5 0-8.75-1.563-12.187-4.376 0 0 .312-.312.625-.312l20-11.562c.625-.313.937-.626 1.25-1.25.312-.626.312-.938.312-1.563V46.249l8.438 5v23.125c.312 10.938-8.438 19.063-18.438 19.063M15.248 76.249c-2.188-3.75-3.125-8.125-2.188-12.5 0 0 .313.312.625.312l20 11.563c.625.313.938.313 1.563.313s1.25 0 1.562-.313l24.375-14.062v9.687L40.873 83.124c-4.375 2.5-9.375 3.125-14.063 1.875-5-1.25-9.062-4.375-11.562-8.75M9.935 32.812c2.188-3.75 5.625-6.563 9.688-8.125v23.75c0 .625 0 1.25.312 1.562.313.625.625.938 1.25 1.25L45.56 65.311l-8.437 5-20-11.562c-4.375-2.5-7.5-6.562-8.75-11.25s-.938-10.312 1.562-14.687m69.063 15.937L54.623 34.687l8.437-5 20 11.562c3.125 1.875 5.625 4.375 7.188 7.5s2.5 6.563 2.187 10.313c-.312 3.437-1.562 6.874-3.75 9.687s-5 5-8.437 6.25v-23.75c0-.625 0-1.25-.313-1.562 0 0-.312-.625-.937-.938m8.437-12.5s-.312-.312-.625-.312l-20-11.563c-.625-.312-.937-.312-1.562-.312s-1.25 0-1.563.312L39.31 38.437v-9.688l20.313-11.875c3.125-1.875 6.562-2.5 10.312-2.5 3.438 0 6.875 1.25 10 3.437 2.813 2.188 5.313 5 6.563 8.125s1.562 6.876.937 10.313m-52.5 17.5-8.437-5V25.311c0-3.437.937-7.187 2.812-10 1.875-3.124 4.688-5.312 7.813-6.874 3.125-1.563 6.875-2.188 10.312-1.563 3.438.313 6.875 1.875 9.688 4.063 0 0-.313.312-.625.312l-20 11.562c-.625.313-.938.625-1.25 1.25s-.313.938-.313 1.563zm4.375-10 10.938-6.25 10.937 6.25v12.5l-10.937 6.25-10.938-6.25z"/></g><defs><clipPath id="oa-a"><path fill="#fff" d="M0 0h100v100H0z"/></clipPath></defs></svg>
+        <div class="logo-tile-name">OpenAI</div>
+      </div>
+
+      <div class="logo-tile">
+        <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100"><path fill="#d97757" d="m95.815 38.848 3.465 1.98v1.486l-.99 3.465-42.08 9.901-3.956-9.83z"/><path fill="#d97757" d="m80.076 9.73 4.845 1.016 1.286 1.585 1.226 3.799-.508 2.422-28.239 38.613-9.406-9.406 26.04-34.17z"/><path fill="#d97757" d="m55.716 3.7 2.97-1.98 2.475.99 2.475 3.465-6.78 40.755-4.605-3.131-1.98-5.446L53.736 7.66z"/><path fill="#d97757" d="M23.959 4.352 27.01.454 29 0l3.95.577 1.949 1.526L49.102 33.59l5.137 14.961-6.01 3.342L25.32 10.322z"/><path fill="#d97757" d="m9.18 25.979-.99-3.962 2.972-3.465 3.465.495h.99L36.41 34.393l6.435 4.95 8.911 6.931-4.95 8.416-4.455-3.465-2.97-2.97-28.714-20.298z"/><path fill="#d97757" d="M3.24 51.72 1 49.244v-2.202l2.24-.768 25.248 1.485 24.753 1.98-.804 4.93-47.216-2.454z"/><path fill="#d97757" d="M18.092 77.488h-4.95l-1.968-2.266v-2.71l8.404-5.94 34.166-21.75 3.458 5.907z"/><path fill="#d97757" d="m27.498 91.324-1.98.495-2.97-1.486.495-2.475 29.208-38.614 3.96 5.446L34.43 83.403z"/><path fill="#d97757" d="m52.25 96.274-1.485 1.98-2.97.99-2.475-1.98-1.486-2.97 7.426-40.1 4.456.496z"/><path fill="#d97757" d="M77.499 85.383v3.96l-.495 1.485-1.98.99-3.466-.46-23.796-35.416 9.439-7.193 7.92 14.357.744 5.197z"/><path fill="#d97757" d="m88.885 79.442.495 2.475-1.485 1.98-1.485-.495-8.416-5.94-12.871-11.387-9.901-6.93 2.97-9.406 4.95 2.97 2.97 5.445z"/><path fill="#d97757" d="m82.448 54.195 12.377.99 2.97 1.98 1.98 2.97v2.138L94.33 64.59l-27.723-6.93-11.386-.496 2.97-10.396 7.921 5.94z"/></svg>
+        <div class="logo-tile-name">Claude</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- ENTRY CHANNELS -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label">Entry Channels</div>
+    <div class="channels-grid">
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#fef2f2;">
+          <svg viewBox="0 0 24 24" style="stroke:#dc2626;">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Twilio Inbound</div>
+        <span class="gate-model">POST /voice/twilio/incoming</span>
+        <div class="channel-card-desc">Global webhook auto-resolves tenant from dialed Twilio number. TwiML response opens Media Stream.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#fff7ed;">
+          <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Twilio Outbound</div>
+        <span class="gate-model">POST /voice/twilio/outbound</span>
+        <div class="channel-card-desc">REST call originates PSTN from tenant number. Per-tenant concurrency cap enforced.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#f3e8ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Browser Voice</div>
+        <span class="gate-model">WS /voice/ws/{client_id}</span>
+        <div class="channel-card-desc">Live Azure Voice Live session over WebSocket. Bidirectional PCM16 24 kHz audio.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#eef2ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Web Chat</div>
+        <span class="gate-model">POST /agents/agenticChatbot</span>
+        <div class="channel-card-desc">AG-UI streaming endpoint via CopilotKit runtime proxy. Server-Sent Events.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#ecfdf5;">
+          <svg viewBox="0 0 24 24" style="stroke:#059669;">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18"/>
+            <path d="M9 21V9"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Embed Widget</div>
+        <span class="gate-model">/embed/loader.js</span>
+        <div class="channel-card-desc">Vite-built React widget. Popup bubble, sidebar, or full-page chat via tenant key.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- PLATFORM FEATURES -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label">Platform Features</div>
+    <div class="split-3">
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#fef2f2;">
+          <svg viewBox="0 0 24 24" style="stroke:#dc2626;">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Outbound Calls on Demand</div>
+        <div class="channel-card-desc">Trigger AI-driven Twilio outbound calls via a single REST endpoint — perfect for CRM integration, reminders, surveys, and proactive outreach.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#fff7ed;">
+          <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+            <polyline points="9 10 4 15 9 20"/>
+            <path d="M20 4v7a4 4 0 0 1-4 4H4"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Inbound Auto-Routing</div>
+        <div class="channel-card-desc">One global webhook auto-resolves tenant from the dialed Twilio number. Add a tenant, assign a number, done — no per-tenant webhook config.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#f3e8ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Concurrent Call Capacity</div>
+        <div class="channel-card-desc">Per-tenant concurrency caps. Run 1, 10, or 100 AI calls in parallel — configurable per client, throttled automatically.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#eff6ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#2563eb;">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Live Web Search</div>
+        <div class="channel-card-desc">Tavily integration with per-tenant domain allow/blocklists. Answers stay grounded, on-brand, and current — never stale training data.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#eef2ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Multi-Tenant Isolation</div>
+        <div class="channel-card-desc">Each tenant: its own FAISS vector index, document registry, phone number, system prompt, and access key. SHA-256 hashed — never plaintext.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#ecfeff;">
+          <svg viewBox="0 0 24 24" style="stroke:#0891b2;">
+            <rect x="2" y="2" width="20" height="8" rx="2"/>
+            <rect x="2" y="14" width="20" height="8" rx="2"/>
+            <line x1="6" y1="6" x2="6.01" y2="6"/>
+            <line x1="6" y1="18" x2="6.01" y2="18"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Self-Hosted — Pay Only for LLM</div>
+        <div class="channel-card-desc">Deploy on your own Docker infrastructure. No per-seat fees, no usage markup. You pay Azure OpenAI directly. Software is yours forever.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#f0fdf4;">
+          <svg viewBox="0 0 24 24" style="stroke:#16a34a;">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">RAG Over Your Documents</div>
+        <div class="channel-card-desc">Ingest PDF, DOCX, TXT. Incremental re-indexing via document registry — only changed files are re-embedded. Source citations in every response.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#ecfdf5;">
+          <svg viewBox="0 0 24 24" style="stroke:#059669;">
+            <polyline points="23 4 23 10 17 10"/>
+            <polyline points="1 20 1 14 7 14"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Voice ⇄ Chat Sync</div>
+        <div class="channel-card-desc">Every voice call is written back to the tenant's chat history — one unified conversation log across every channel, reviewable by your team.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#ede9fe;">
+          <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Encrypted Vault</div>
+        <div class="channel-card-desc">All API keys encrypted (Fernet AES) in MongoDB. Rotate keys through the browser UI — no SSH, no redeploy, no downtime.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#fef3c7;">
+          <svg viewBox="0 0 24 24" style="stroke:#d97706;">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Per-Tenant System Prompts</div>
+        <div class="channel-card-desc">Company context, industry terminology, competitor awareness, and tone — all injected into every response for brand-safe output.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#f0fdf4;">
+          <svg viewBox="0 0 24 24" style="stroke:#16a34a;">
+            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Feedback Loop</div>
+        <div class="channel-card-desc">Thumbs up/down + categorized labels (factually incorrect, unsafe, lazy). Stored per tenant for fine-tuning, QA, and continuous improvement.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#eef2ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+            <line x1="4" y1="21" x2="4" y2="14"/>
+            <line x1="4" y1="10" x2="4" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12" y2="3"/>
+            <line x1="20" y1="21" x2="20" y2="16"/>
+            <line x1="20" y1="12" x2="20" y2="3"/>
+            <line x1="1" y1="14" x2="7" y2="14"/>
+            <line x1="9" y1="8" x2="15" y2="8"/>
+            <line x1="17" y1="16" x2="23" y2="16"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Admin Console</div>
+        <div class="channel-card-desc">Manage tenants, upload documents, view call history, listen to transcripts, and rotate keys — all from a single React admin UI.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#fef3c7;">
+          <svg viewBox="0 0 24 24" style="stroke:#d97706;">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Streaming Responses</div>
+        <div class="channel-card-desc">Server-Sent Events over the AG-UI protocol. Tool calls, source citations, and tokens stream live to the UI — no waiting for full completions.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#ecfeff;">
+          <svg viewBox="0 0 24 24" style="stroke:#0891b2;">
+            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">Thread Persistence</div>
+        <div class="channel-card-desc">MongoDB checkpointing via LangGraph. Conversations resume across sessions, devices, and channels — voice or chat, same memory.</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="icon-container" style="background:#ecfdf5;">
+          <svg viewBox="0 0 24 24" style="stroke:#059669;">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="channel-card-name">GDPR &amp; Data Residency</div>
+        <div class="channel-card-desc">User data stays in your MongoDB, on your servers, in your jurisdiction. Vault stores infrastructure secrets only — no user PII leaves your stack.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- FRONTEND INTERFACES & RUNTIME -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 12px;">Frontend Surfaces</div>
+    <div class="split-3">
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#eef2ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">frontend/</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">React 18 · nginx · :8000</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">Admin dashboard + multi-tenant chat UI. React + TypeScript + Tailwind + Radix UI + @copilotkit/react-core 1.54. Manages tenants, documents, vault, calls, and feedback.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#ecfeff;">
+            <svg viewBox="0 0 24 24" style="stroke:#0891b2;">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">frontend-runtime/</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">Node + Express · :3000</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">@copilotkit/runtime 1.54 proxy. Mediates between React frontend and FastAPI /agents/agenticChatbot. Forwards AG-UI streaming events.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#f0fdf4;">
+            <svg viewBox="0 0 24 24" style="stroke:#16a34a;">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18"/>
+              <path d="M9 21V9"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">frontend-embed/</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">Vite · static @ /embed</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">Embeddable widget bundle. React 18 + Vite + Tailwind. Three surfaces: popup bubble, sidebar, full-page chat. Initialized with tenant access key.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- AGENT RUNTIME (centerpiece) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="gate-top-row">
+      <div>
+        <div class="gate-header">
+          <div class="icon-container" style="width:42px;height:42px;border-radius:10px;background:#eef2ff;">
+            <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:#4f46e5;">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+          </div>
+          <div>
+            <div class="gate-name">Agent Runtime</div>
+            <div class="gate-desc">Flat <code>create_agent()</code> ReAct loop — no StateGraph nodes</div>
+          </div>
+        </div>
+        <div style="margin-top: 8px; margin-left: 56px; display:flex; gap:6px; flex-wrap:wrap;">
+          <span class="gate-model">AzureChatOpenAI · temperature=0.2</span>
+          <span class="gate-model">name: agenticChatbot</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 6px; align-items: flex-start; padding-top: 4px; flex-wrap:wrap;">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:400;background:#ffffff;color:#1f2937;border:1px solid #e5e7eb;padding:3px 8px;border-radius:4px;white-space:nowrap;">LangChain</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:400;background:#ffffff;color:#1f2937;border:1px solid #e5e7eb;padding:3px 8px;border-radius:4px;white-space:nowrap;">LangGraph</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:400;background:#ffffff;color:#1f2937;border:1px solid #e5e7eb;padding:3px 8px;border-radius:4px;white-space:nowrap;">CopilotKit AG-UI</span>
+      </div>
+    </div>
+
+    <div class="gate-inner-split">
+      <!-- Tools -->
+      <div>
+        <div class="section-label" style="margin-bottom: 8px;">Tools</div>
+
+        <div class="step-card" style="margin-bottom:10px;">
+          <div class="step-card-header">
+            <div class="icon-container" style="background:#f0fdf4;">
+              <svg viewBox="0 0 24 24" style="stroke:#16a34a;">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <div class="step-card-info">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+                <div class="step-card-name">retrieve_documents_tool</div>
+                <span class="rag-badge">
+                  <svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:currentColor;stroke-width:2;fill:none;">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  RAG
+                </span>
+              </div>
+              <div style="margin-top: 4px;">
+                <span class="gate-model">FAISS MMR · k=5 · fetch_k=20</span>
+              </div>
+            </div>
+          </div>
+          <div class="step-card-desc">Async tool. Reads <code>tenant_id</code> + <code>rag_top_k</code> from runtime state. Loads per-tenant FAISS index and retrieves chunks via MMR (<code>lambda_mult=0.7</code>). Sources surfaced to UI.</div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-card-header">
+            <div class="icon-container" style="background:#eff6ff;">
+              <svg viewBox="0 0 24 24" style="stroke:#2563eb;">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+            </div>
+            <div class="step-card-info">
+              <div class="step-card-name">search_web_tool</div>
+              <div style="margin-top: 4px;">
+                <span class="gate-model">Tavily · tenant domain filters</span>
+              </div>
+            </div>
+          </div>
+          <div class="step-card-desc">Async tool. POSTs to <code>api.tavily.com/search</code> scoped to tenant's <code>search_include_domains</code> allowlist and <code>search_exclude_domains</code> blocklist.</div>
+        </div>
+      </div>
+
+      <!-- State / Context / Checkpointer -->
+      <div>
+        <div class="section-label" style="margin-bottom: 8px;">State, Context &amp; Persistence</div>
+
+        <div class="middleware-card" style="margin-bottom:10px;">
+          <div class="middleware-card-icon" style="background:#ede9fe;">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <div class="middleware-card-content">
+            <div class="middleware-card-name">AgentRuntimeState</div>
+            <div class="middleware-card-desc">Extends <code>AgentState</code> with <code>sources: list[dict]</code>. Tenant system prompt injected per-invocation as <code>context</code>.</div>
+            <div class="middleware-config">multi_chatbot_core/agent_runtime.py</div>
+          </div>
+        </div>
+
+        <div class="middleware-card" style="margin-bottom:10px;">
+          <div class="middleware-card-icon" style="background:#e0e7ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+          </div>
+          <div class="middleware-card-content">
+            <div class="middleware-card-name">CopilotKitMiddleware</div>
+            <div class="middleware-card-desc">Emits AG-UI streaming events — tool calls, intermediate tokens, and source citations — to the CopilotKit runtime proxy.</div>
+            <div class="middleware-config">copilotkit package</div>
+          </div>
+        </div>
+
+        <div class="middleware-card">
+          <div class="middleware-card-icon" style="background:#f0fdf4;">
+            <svg viewBox="0 0 24 24" style="stroke:#16a34a;">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <div class="middleware-card-content">
+            <div class="middleware-card-name">MongoDBSaver Checkpointer</div>
+            <div class="middleware-card-desc">Persistent state. Threads resume across sessions and channels. A separate <code>MemorySaver</code> instance powers the suggestions agent.</div>
+            <div class="middleware-config">checkpoints · checkpoint_writes · TTL 24h</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- VOICE PIPELINE -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 12px;">Voice Pipeline — Twilio ⇄ Azure Voice Live</div>
+    <div class="split-3">
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#f3e8ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">VoiceSessionHandler</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">azure.ai.voicelive.aio</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">Full session lifecycle: config, audio relay, transcription, barge-in, function calls. Replays up to 10 prior thread messages on connect. Persists turns to LangGraph checkpoint.</div>
+        <div class="tools-section">
+          <div class="tools-label">Function Tools</div>
+          <div class="tools-grid">
+            <span class="tool-chip">retrieve_documents</span>
+            <span class="tool-chip">search_web</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#fff7ed;">
+            <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+              <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"/>
+              <path d="M7 12h10"/>
+              <path d="M12 7v10"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">TwilioMediaAdapter</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">μ-law 8kHz ⇄ PCM16 24kHz</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">Bidirectional codec bridge via <code>audioop</code>. Installed as <code>send_message</code> callback on VoiceSessionHandler. Handles ulaw2lin + ratecv both directions.</div>
+        <div class="tools-section">
+          <div class="tools-label">Route</div>
+          <div class="tools-grid">
+            <span class="tool-chip">WS /voice/twilio/stream/{tenant}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#ecfdf5;">
+            <svg viewBox="0 0 24 24" style="stroke:#059669;">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">voice_metrics</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">ring buffer · maxlen=500</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">Tracks end-of-speech → first-audio TTFT per tenant. In-memory deque. Exposed via <code>GET /voice/stats</code>.</div>
+        <div class="tools-section">
+          <div class="tools-label">Methods</div>
+          <div class="tools-grid">
+            <span class="tool-chip">record_turn()</span>
+            <span class="tool-chip">snapshot()</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 14px; text-align: center;">
+      <span class="namespace-badge">webhook: POST /voice/twilio/incoming</span>
+      <span class="namespace-badge">status: POST /voice/twilio/status</span>
+      <span class="namespace-badge">hangup: POST /voice/twilio/calls/{sid}/hangup</span>
+      <span class="namespace-badge">browser: WS /voice/ws/{client_id}</span>
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- API ENDPOINT MAP -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 12px;">API Endpoints — FastAPI :8001</div>
+    <div class="split-4">
+
+      <div class="endpoint-card">
+        <div class="endpoint-card-header">
+          <span class="endpoint-prefix">/vectorstore</span>
+          <span class="rag-badge">RAG</span>
+        </div>
+        <div class="endpoint-method-chips">
+          <span class="endpoint-method-chip m-post">POST refill</span>
+          <span class="endpoint-method-chip m-post">refill-selected</span>
+          <span class="endpoint-method-chip m-del">wipe</span>
+          <span class="endpoint-method-chip m-get">status</span>
+          <span class="endpoint-method-chip m-get">documents</span>
+          <span class="endpoint-method-chip m-post">validate</span>
+          <span class="endpoint-method-chip m-post">upload</span>
+        </div>
+        <div class="endpoint-card-desc">FAISS index management per tenant.</div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-card-header">
+          <span class="endpoint-prefix">/threads</span>
+        </div>
+        <div class="endpoint-method-chips">
+          <span class="endpoint-method-chip m-get">list</span>
+          <span class="endpoint-method-chip m-del">{id}</span>
+          <span class="endpoint-method-chip m-get">{id}/state</span>
+          <span class="endpoint-method-chip m-get">conversation</span>
+          <span class="endpoint-method-chip m-get">agui_messages</span>
+        </div>
+        <div class="endpoint-card-desc">Thread CRUD + hydration for voice.</div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-card-header">
+          <span class="endpoint-prefix">/feedbacks</span>
+        </div>
+        <div class="endpoint-method-chips">
+          <span class="endpoint-method-chip m-post">POST</span>
+          <span class="endpoint-method-chip m-get">GET</span>
+          <span class="endpoint-method-chip m-get">{id}</span>
+          <span class="endpoint-method-chip m-del">{id}</span>
+        </div>
+        <div class="endpoint-card-desc">Up/down votes with category labels.</div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-card-header">
+          <span class="endpoint-prefix">/tenants-manage</span>
+          <span class="namespace-badge" style="background:#fef2f2;color:#dc2626;">admin</span>
+        </div>
+        <div class="endpoint-method-chips">
+          <span class="endpoint-method-chip m-post">auth</span>
+          <span class="endpoint-method-chip m-post">POST</span>
+          <span class="endpoint-method-chip m-put">{id}</span>
+          <span class="endpoint-method-chip m-del">{id}</span>
+          <span class="endpoint-method-chip m-post">regenerate-key</span>
+          <span class="endpoint-method-chip m-put">vault-keys</span>
+        </div>
+        <div class="endpoint-card-desc">Tenant CRUD + vault mgmt (master-JWT gated).</div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-card-header">
+          <span class="endpoint-prefix">/admin</span>
+        </div>
+        <div class="endpoint-method-chips">
+          <span class="endpoint-method-chip m-post">login</span>
+          <span class="endpoint-method-chip m-get">validate</span>
+        </div>
+        <div class="endpoint-card-desc">Master key → short-lived <code>adm.*</code> JWT.</div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-card-header">
+          <span class="endpoint-prefix">/agent-runtime</span>
+        </div>
+        <div class="endpoint-method-chips">
+          <span class="endpoint-method-chip m-post">eval</span>
+        </div>
+        <div class="endpoint-card-desc">Non-streaming invocation for eval/testing.</div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-card-header">
+          <span class="endpoint-prefix">/voice</span>
+          <span class="namespace-badge" style="background:#f3e8ff;color:#7c3aed;">voice</span>
+        </div>
+        <div class="endpoint-method-chips">
+          <span class="endpoint-method-chip m-ws">WS ws/{id}</span>
+          <span class="endpoint-method-chip m-ws">WS twilio/stream</span>
+          <span class="endpoint-method-chip m-post">twilio/incoming</span>
+          <span class="endpoint-method-chip m-post">twilio/outbound</span>
+          <span class="endpoint-method-chip m-post">twilio/status</span>
+          <span class="endpoint-method-chip m-get">stats</span>
+        </div>
+        <div class="endpoint-card-desc">Voice Live + Twilio PSTN endpoints.</div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-card-header">
+          <span class="endpoint-prefix">/agents</span>
+          <span class="namespace-badge" style="background:#ecfdf5;color:#059669;">no auth</span>
+        </div>
+        <div class="endpoint-method-chips">
+          <span class="endpoint-method-chip m-post">agenticChatbot</span>
+          <span class="endpoint-method-chip m-post">suggestionsProvider</span>
+        </div>
+        <div class="endpoint-card-desc">AG-UI streaming entry for CopilotKit.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- MONGODB COLLECTIONS + TENANT FIELDS (side-by-side) -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="infra-split">
+
+    <div class="zone">
+      <div class="section-label">MongoDB Collections — multi_tenant_chatbot</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+
+        <div class="middleware-card">
+          <div class="middleware-card-icon" style="background:#f0fdf4;">
+            <svg viewBox="0 0 24 24" style="stroke:#16a34a;">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <div class="middleware-card-content">
+            <div class="middleware-card-name">State &amp; Memory</div>
+            <div style="margin-top: 6px; display:flex; flex-wrap:wrap; gap:4px;">
+              <span class="label-pill" style="background:#f0fdf4;color:#16a34a;">checkpoints</span>
+              <span class="label-pill" style="background:#f0fdf4;color:#16a34a;">checkpoint_writes</span>
+            </div>
+            <div class="middleware-card-desc" style="margin-top:6px;">LangGraph thread state · TTL 24h</div>
+          </div>
+        </div>
+
+        <div class="middleware-card">
+          <div class="middleware-card-icon" style="background:#eef2ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="middleware-card-content">
+            <div class="middleware-card-name">Tenancy &amp; Secrets</div>
+            <div style="margin-top: 6px; display:flex; flex-wrap:wrap; gap:4px;">
+              <span class="label-pill" style="background:#eef2ff;color:#4f46e5;">tenants</span>
+              <span class="label-pill" style="background:#eef2ff;color:#4f46e5;">vault</span>
+            </div>
+            <div class="middleware-card-desc" style="margin-top:6px;">SHA-256 access keys · Fernet AES secrets</div>
+          </div>
+        </div>
+
+        <div class="middleware-card">
+          <div class="middleware-card-icon" style="background:#fff7ed;">
+            <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <div class="middleware-card-content">
+            <div class="middleware-card-name">Voice &amp; Telephony</div>
+            <div style="margin-top: 6px; display:flex; flex-wrap:wrap; gap:4px;">
+              <span class="label-pill" style="background:#fff7ed;color:#ea580c;">phone_calls</span>
+              <span class="label-pill" style="background:#fff7ed;color:#ea580c;">twilio_events</span>
+            </div>
+            <div class="middleware-card-desc" style="margin-top:6px;">Call lifecycle + webhook idempotency (TTL 24h)</div>
+          </div>
+        </div>
+
+        <div class="middleware-card">
+          <div class="middleware-card-icon" style="background:#f3e8ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <div class="middleware-card-content">
+            <div class="middleware-card-name">RAG &amp; Feedback</div>
+            <div style="margin-top: 6px; display:flex; flex-wrap:wrap; gap:4px;">
+              <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">document_registry</span>
+              <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">feedbacks</span>
+            </div>
+            <div class="middleware-card-desc" style="margin-top:6px;">File hash tracking for incremental loader · up/down votes</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="zone">
+      <div class="section-label">Tenant Configuration</div>
+
+      <div class="middleware-card" style="margin-bottom:10px;">
+        <div class="middleware-card-icon" style="background:#eef2ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18"/>
+            <path d="M9 21V9"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Identity &amp; Auth</div>
+          <div style="margin-top: 6px; display:flex; flex-wrap:wrap; gap:4px;">
+            <span class="label-pill" style="background:#f3f4f6;color:#374151;">id</span>
+            <span class="label-pill" style="background:#f3f4f6;color:#374151;">slug</span>
+            <span class="label-pill" style="background:#f3f4f6;color:#374151;">name</span>
+            <span class="label-pill" style="background:#fef2f2;color:#dc2626;">access_key (hashed)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="middleware-card" style="margin-bottom:10px;">
+        <div class="middleware-card-icon" style="background:#ecfdf5;">
+          <svg viewBox="0 0 24 24" style="stroke:#16a34a;">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Agent &amp; Retrieval</div>
+          <div style="margin-top: 6px; display:flex; flex-wrap:wrap; gap:4px;">
+            <span class="label-pill" style="background:#f0fdf4;color:#16a34a;">max_parallel_search_queries</span>
+            <span class="label-pill" style="background:#f0fdf4;color:#16a34a;">max_intention_clarify_attempts</span>
+            <span class="label-pill" style="background:#f0fdf4;color:#16a34a;">search_include_domains</span>
+            <span class="label-pill" style="background:#f0fdf4;color:#16a34a;">search_exclude_domains</span>
+            <span class="label-pill" style="background:#f0fdf4;color:#16a34a;">web_search_enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="middleware-card" style="margin-bottom:10px;">
+        <div class="middleware-card-icon" style="background:#fff7ed;">
+          <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Voice &amp; Telephony</div>
+          <div style="margin-top: 6px; display:flex; flex-wrap:wrap; gap:4px;">
+            <span class="label-pill" style="background:#fff7ed;color:#ea580c;">voice_enabled</span>
+            <span class="label-pill" style="background:#fff7ed;color:#ea580c;">voice_id</span>
+            <span class="label-pill" style="background:#fff7ed;color:#ea580c;">voice_model</span>
+            <span class="label-pill" style="background:#fff7ed;color:#ea580c;">voice_greeting</span>
+            <span class="label-pill" style="background:#fff7ed;color:#ea580c;">voice_disclosure_enabled</span>
+            <span class="label-pill" style="background:#fff7ed;color:#ea580c;">twilio_phone_number</span>
+            <span class="label-pill" style="background:#fff7ed;color:#ea580c;">max_concurrent_calls</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="middleware-card">
+        <div class="middleware-card-icon" style="background:#f3e8ff;">
+          <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <div class="middleware-card-content">
+          <div class="middleware-card-name">Brand &amp; Prompt — company_context</div>
+          <div style="margin-top: 6px; display:flex; flex-wrap:wrap; gap:4px;">
+            <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">company_name</span>
+            <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">company_industry</span>
+            <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">primary_product</span>
+            <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">services_list</span>
+            <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">domain_topics</span>
+            <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">terminology_examples</span>
+            <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">competitor_context</span>
+            <span class="label-pill" style="background:#f3e8ff;color:#7c3aed;">assistant_role</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- EXTERNAL SERVICES -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 12px;">External Services</div>
+    <div class="ext-row">
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;background:#eef2ff;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#4f46e5;">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Azure OpenAI Chat</div>
+          <div class="ext-chip-type">GPT-4.1 · AzureChatOpenAI</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;background:#eef2ff;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#4f46e5;">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Azure OpenAI Embeddings</div>
+          <div class="ext-chip-type">FAISS vectors</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;background:#f3e8ff;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#7c3aed;">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Azure Voice Live</div>
+          <div class="ext-chip-type">WebSocket · PCM16 24kHz</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;background:#fef2f2;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#dc2626;">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Twilio REST</div>
+          <div class="ext-chip-type">Programmable Voice</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;background:#fef2f2;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#dc2626;">
+            <path d="M4 11a9 9 0 0 1 9 9"/>
+            <path d="M4 4a16 16 0 0 1 16 16"/>
+            <circle cx="5" cy="19" r="1"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Twilio Media Streams</div>
+          <div class="ext-chip-type">μ-law 8kHz audio</div>
+        </div>
+      </div>
+
+      <div class="ext-chip">
+        <div class="icon-container" style="width:28px;height:28px;background:#f0fdf4;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#16a34a;">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ext-chip-name">Tavily Search</div>
+          <div class="ext-chip-type">web tool · allowlist</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- DEPLOYMENT -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone">
+    <div class="section-label" style="margin-bottom: 12px;">Deployment — docker-compose</div>
+    <div class="split-4">
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#f0fdf4;">
+            <svg viewBox="0 0 24 24" style="stroke:#16a34a;">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">mongodb</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">mongo:6.0</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">Persistent state. Port <code>27017</code> (host-configurable).</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#eef2ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#4f46e5;">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+              <line x1="6" y1="6" x2="6.01" y2="6"/>
+              <line x1="6" y1="18" x2="6.01" y2="18"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">app</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">FastAPI · :8001</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">Backend API + agent runtime + voice bridge. Internal port.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#fff7ed;">
+            <svg viewBox="0 0 24 24" style="stroke:#ea580c;">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">frontend</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">nginx · :8000</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">React admin SPA + chat UI. Reverse-proxies to <code>app</code> and <code>frontend-runtime</code>.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-card-header">
+          <div class="icon-container" style="background:#f3e8ff;">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed;">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+          </div>
+          <div class="step-card-info">
+            <div class="step-card-name">frontend-runtime</div>
+            <div style="margin-top: 4px;">
+              <span class="gate-model">Node + Express · :3000</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-card-desc">CopilotKit Runtime proxy. Bridges React → FastAPI <code>/agents/agenticChatbot</code>.</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 14px; text-align: center;">
+      <span class="namespace-badge">Self-Hosted · Any Cloud</span>
+      <span class="namespace-badge">uv + Python 3.12</span>
+      <span class="namespace-badge">Docker Compose</span>
+      <span class="namespace-badge">GDPR · Data Residency</span>
+    </div>
+  </div>
+
+  <!-- connector -->
+  <div class="connector-row"><div class="connector-v"><div class="connector-dot"></div><div class="connector-line"></div><div class="connector-dot"></div></div></div>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- STATS SUMMARY -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <div class="zone" style="text-align:center;">
+    <div class="section-label" style="text-align:center;">Platform Summary</div>
+    <div class="stats-block">
+      <div><div class="stat-num">5</div><div class="stat-lbl">entry channels</div></div>
+      <div><div class="stat-num">8</div><div class="stat-lbl">API endpoint groups</div></div>
+      <div><div class="stat-num">2</div><div class="stat-lbl">agent tools</div></div>
+      <div><div class="stat-num">8</div><div class="stat-lbl">MongoDB collections</div></div>
+      <div><div class="stat-num">4</div><div class="stat-lbl">Docker services</div></div>
+    </div>
+  </div>
+
+  <div class="footer">Callstack AI · Architecture · callstack.x70.ai · Roman Antonov · April 2026</div>
+
+</div>
+</body>
+</html>
