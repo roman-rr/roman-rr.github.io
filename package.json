@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "proposal": "node scripts/build-proposal.mjs"
+    "proposal": "node scripts/build-proposal.mjs",
+    "proposal:starters": "node scripts/proposal-starters.mjs"
   },
   "type": "module",
   "dependencies": {

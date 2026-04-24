@@ -113,6 +113,24 @@ Answer line 2 with manual breaks.` },
 - **Short visual lines** (Part 2 Formatting Rules) apply inside the `coverLetter` and every `answer` field — manual breaks at ~60–70 char natural pauses.
 - **Don't regenerate without running the script.** If the input changes, re-run `node scripts/build-proposal.mjs …` to keep the HTML in sync.
 
+### Starter selection — qualitative, never algorithmic
+
+The opening (emoji + attention word) of every cover letter is a **qualitative decision** based on **two inputs only**:
+
+1. **The JOB POST itself** — its tone, its asks, its vocabulary, what the client signals matters most.
+2. **PLAYBOOK Part 2** — the emoji table (⚡ / ✅ / 🚀) + attention-word menu ("Not a Demo:" / "{Keyword} Solution:" / "In Production:" / "Real Solution:" / "{Name}," / "Here demo:") and the criteria for when each fits.
+
+That's it. Two inputs → one qualitative call.
+
+**Don't:**
+- Pick the same starter you used yesterday on autopilot.
+- Algorithmically rotate ("last was ⚡, so next must be ✅"). The decision is per-job, not a round-robin.
+- Use a hardcoded "suggest the next emoji" function in any tool.
+
+**Optional supplement:** `npm run proposal:starters` lists the openings of the last N proposals. Use it if you want to *avoid accidentally repeating the exact same combination*. Treat the output as data, not as instruction.
+
+**Future state:** once we've collected conversion data per starter (views → replies → hires), we'll narrow to the 1–2 winning openings and stop rotating for variety. Until then, the rotation is a **discovery experiment**, not a stylistic preference.
+
 ### Filename convention
 
 - Input:  `docs/sells/proposals/inputs/YYYY-MM-DD-<short-job-slug>.js`
@@ -366,6 +384,19 @@ Step 3 — PICK the TOP 1-2 strongest signals for the 250-char hook.
   The rest goes in links / closing hook / Q&A.
   Don't default to tech keywords — sometimes timezone or "I ship 
   production systems" hits harder than listing frameworks.
+
+Step 4 — SCAN for transferable proof BEFORE you decide to skip on domain.
+  Common under-weighted matches (don't miss these):
+  - Job is "fintech / lending / mortgage / banking"     → signals.x70.ai is FINTECH proof
+  - Job is "Document AI / IDP / OCR" (regulated docs)    → Microsoft Document Intelligence has prebuilt models for mortgage/insurance/tax/legal
+  - Job is "RAG over PDFs / regulated docs / compliance" → insurance Q&A chatbot work = chunking-strategy expertise
+  - Job is "voice / IVR / call center"                   → callstack.x70.ai live demo
+  - Job is "Claude Code / MCP / multi-agent SDLC"        → Monster Pack (claude-setup)
+  - Job is "embeddable widget / sales chatbot"           → callstack.x70.ai (popup + sidebar modes)
+  - Job is "real-time / Kafka / event-driven"            → PT Emails (RedPanda, 7 topics + 6 DLQs)
+  - Job is "n8n / workflow orchestration"                → PT Calls (16 steps every 15 min)
+  Before stamping a job SKIP because "domain doesn't match",
+  check this list. Tool/keyword absence ≠ proof absence.
 ```
 
 **Example — same job, different hooks based on what you prioritize:**
@@ -1233,6 +1264,26 @@ if the job is heavier on vector-DB internals (sharding, namespaces, tuning).
 → callstack.x70.ai (talk to it right now — no signup, no waiting)
 ```
 
+**If job mentions Document AI / IDP / OCR (mortgage, lending, insurance, legal, healthcare, regulated docs) / Ocrolus / Docsumo / Textract / Form Recognizer:**
+```
+→ Microsoft 365 / Azure Document Intelligence (PRIMARY — prebuilt mortgage/insurance/tax models, tunable for edge cases)
+→ Insurance Q&A chatbot (chunking-strategy expertise for long regulated PDFs)
+→ PT Emails (98% AI classification accuracy on real-world email flows — proves "production document AI, not basic OCR")
+Frame: "Microsoft Document Intelligence has prebuilt models for X" — disqualifies
+generic-OCR competitors immediately. Mention chunking-strategy nuance — separates
+"shipped Document AI" from "wrapped a Tesseract call".
+```
+
+**If job mentions fintech / lending / mortgage / banking / insurance / regulated financial data:**
+```
+→ signals.x70.ai (own fintech SaaS — multi-source AI consensus on regulated financial data, real-money stakes)
+→ Microsoft 365 / Azure AI (Document Intelligence has fintech-vertical templates)
+→ PT Agents (financial revenue analysis, HubSpot deal analytics)
+Frame: don't pretend you've shipped at a top-5 lender, but DO surface signals as
+fintech proof, MS Document Intelligence as mortgage-doc tooling, and insurance
+Q&A as regulated-document RAG experience.
+```
+
 **If job mentions Claude Code / MCP / agent hooks / skills / slash commands / agentic dev tooling / code intelligence:**
 ```
 → claude-setup (GitNexus + Serena + Beads — 27+ MCP tools, 8 hooks, 11+ skills, 2 dashboards, $0 cloud deps)
@@ -1285,7 +1336,8 @@ Numbers to use in Q&A answers. Pick the ONE most relevant.
 ### Microsoft 365 + Azure AI
 - Graph API, Service Bus + KEDA (scale-to-zero), Cosmos DB
 - Azure AI Search RAG, Copilot Studio, Fabric + Power BI, Bicep IaC
-- **Use when:** Azure, Microsoft 365, Copilot Studio, SharePoint, enterprise
+- **Azure Document Intelligence** (formerly Form Recognizer) — prebuilt models including mortgage industry templates: 1003 forms, paystubs, bank statements, tax forms. Tunable for edge cases.
+- **Use when:** Azure, Microsoft 365, Copilot Studio, SharePoint, enterprise. **Also use when:** Document AI / IDP / OCR-with-understanding for fintech/lending/insurance/legal/regulated docs (Document Intelligence is the canonical Azure tool for this — competes directly with Ocrolus, Docsumo, AWS Textract).
 
 ### Monster Pack — Claude Code + MCP Infrastructure
 - 3 intelligence systems (GitNexus + Serena + Beads), 27+ MCP tools, 8 hooks, 11+ skills, 2 dashboards, 0 cloud deps
@@ -1294,17 +1346,23 @@ Numbers to use in Q&A answers. Pick the ONE most relevant.
 - Auto-routing rules in CLAUDE.md; status line with context pressure bar
 - **Use when:** Claude Code setup, MCP server work, agent hooks, skills/slash commands, agentic dev tooling, code intelligence, LSP/graph-aware refactoring. This is the "I'm a Claude Code ninja" proof.
 
-### Signals — AI Trading Intelligence (Own Product)
+### Signals — AI Trading Intelligence (Own Product, FINTECH)
 - 17 data dimensions, 3 AI experts, 50+ coins, auto-verification every minute
 - 53 academic citations, 44 scientific methods, transmission chains
 - Web3/TON payments, Python async, Docker
-- **Use when:** Trading, crypto, MCP, Web3, AI SaaS
+- **Use when:** Trading, crypto, MCP, Web3, AI SaaS. **Also use as fintech proof** for any job involving regulated financial data, real-money stakes, multi-source consensus, or financial-services domain (lending/mortgage/insurance/banking-adjacent jobs). Don't auto-skip a fintech-flavored job thinking you have no fintech proof — signals IS fintech.
 
 ### CartGenie — E-commerce SaaS (Laravel)
 - 671 hours, $21,461 earned, 5-star review
 - Laravel + Livewire + Alpine.js, 90% frontend + internal backend
 - Client: "Roman is highly communicative. He works hard and was a good contributor."
 - **Use when:** Laravel, e-commerce, Livewire, full-stack
+
+### Insurance Q&A Chatbot — RAG over regulated policy documents
+- Multi-tenant Q&A pattern (Callstack tenant model) over insurance product docs
+- **Significant time spent on chunking strategy** — sentence-window vs. recursive vs. semantic chunking, overlap tuning, page-aware splits for long policy PDFs
+- Embedding choice + retrieval tuning for high-accuracy answers on regulated/compliance-sensitive content
+- **Use when:** RAG over long regulated documents (insurance, legal, mortgage, healthcare, compliance), chunking-strategy expertise, document-AI accuracy beyond basic OCR. The chunking nuances transfer directly to any regulated-document domain.
 
 ### Open Source — Cupertino Pane
 - 1K+ GitHub stars, 600K+ downloads
