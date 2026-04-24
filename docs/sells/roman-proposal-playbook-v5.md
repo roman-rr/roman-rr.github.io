@@ -8,61 +8,126 @@
 
 ## WORKFLOW — drafting a proposal
 
-When drafting any proposal from this playbook, **do not write it into chat as prose**. Save it as a self-contained HTML file under `docs/sells/proposals/` and open in the browser. This gives Roman a visual, block-by-block copy-paste surface instead of forcing him to parse chat output.
+Proposals are **generated from data**, not hand-written HTML. An input `.js` file holds the pure content; a Node script fills the frozen `_template.html` and opens the result in the browser. This is the only supported flow.
 
-### How to start a new draft (do this, every time)
-
-**1. Duplicate an existing proposal — never rebuild the HTML from scratch.**
+### One-command draft (do this, every time)
 
 ```bash
-# Pick the most recent file in docs/sells/proposals/ (or use _template.html if one exists)
-cp docs/sells/proposals/<most-recent-proposal>.html \
-   docs/sells/proposals/YYYY-MM-DD-<new-job-slug>.html
+# 1. Copy the most recent input file and rename with today's date + job slug
+cp docs/sells/proposals/inputs/<most-recent>.js \
+   docs/sells/proposals/inputs/YYYY-MM-DD-<new-job-slug>.js
+
+# 2. Edit ONLY the exported object (title, coverLetter, bid, qa, reasoning…)
+#    — no HTML, no CSS, no layout. Pure data.
+
+# 3. Build + open in browser
+node scripts/build-proposal.mjs docs/sells/proposals/inputs/YYYY-MM-DD-<new-job-slug>.js
 ```
 
-**2. Open the new file and replace ONLY the content inside each section.**
+The script writes `docs/sells/proposals/YYYY-MM-DD-<new-job-slug>.html` and opens it. Done.
 
-Do NOT touch:
-- The `<head>` block
-- The `<style>` block
-- The outer section / block / class structure
-- The CSS classes on any element
+### What goes in the input `.js` file
 
-These are the frozen template. Reusing them keeps every proposal visually consistent and saves tokens (no re-styling on each draft).
+Single default export. Every field is pure text/data — no HTML tags required (though `<strong>`, `<em>`, `<code>` are fine where needed for inline emphasis).
 
-**3. Rewrite these content areas only:**
+```js
+export default {
+  // optional — browser tab title; defaults to h1
+  title: 'Senior AI Engineer for SaaS (LangChain + RAG)',
 
-- `<title>` tag — new job title
-- Header `<h1>`, `.eyebrow`, `.meta`, `.verdict` text
-- Section 1 — Cover Letter body (inside `.copyable.cover-letter`)
-- Section 2 — Bid rate value + note
-- Section 3 — Connects/Boost value + note
-- Section 4 — Attachments `<ul>` items
-- Section 5 — Screening Q&A content (or keep stub if no questions on the post)
-- Section 6 — Playbook Reasoning bullets (map each choice → playbook rule)
-- Section 7 — Submit Checklist items
+  // required — main heading (full job title)
+  h1: 'Senior AI Engineer for SaaS Platform (LangChain + RAG)',
 
-**4. Open in browser:** `open docs/sells/proposals/YYYY-MM-DD-<new-job-slug>.html`
+  // required — one-line meta (rate band, duration, client signals, freshness)
+  meta: 'Hourly · $25–$47/hr · Expert · 8–12 weeks · Client: US, 5.0⭐ · 50+ proposals · Fresh (40s)',
+
+  // required — verdict paragraph (HTML allowed for <strong>/<code>)
+  verdict: '<strong>Verdict: APPLY.</strong> Gold-tier title, perfect scope match, top-tier client.',
+
+  // required — the actual proposal text, multi-line, preserves line breaks
+  coverLetter: `⚡ Here demo: https://callstack.x70.ai — hook line.
+Second line with manual break at ~70 chars.
+
+Thank you for interest, write me to start work.
+
+– https://callstack.x70.ai - Live AI agent demo
+– https://roman.x70.ai/ai-agents - Multi-agent platform, 611 evals
+– https://roman.x70.ai - My portfolio
+– https://github.com/roman-rr/ - My Github, 700+ stars
+
+Proposed approach (first sprint):
+
+Phase 1 — Title
+Short 1-2 line description.
+
+Want me to send the full roadmap with hours?`,
+
+  // required — bid / boost (value + justification)
+  bid:   { value: '$47/hr',                     note: 'Top of their range. See Part 9 pricing.' },
+  boost: { value: '21 Connects + Boost 5–10',   note: '50+ proposals in, fresh. Submit fast.' },
+
+  // optional — attachments from attachment-library.md (max 3)
+  attachments: {
+    hint: 'max 3 — picked per attachment-library.md',   // optional
+    list: [
+      { path: 'public/cases/<...>.mp4', note: 'Why this file matches.' },
+    ],
+    note: 'Optional explanatory note below the list.',   // optional
+  },
+
+  // optional — screening questions (when the job has them)
+  qa: {
+    hint: '3 questions — triple-click each answer → paste',  // optional
+    list: [
+      { label: 'Q1.', question: 'Full question text?',
+        answer: `Answer line 1.
+Answer line 2 with manual breaks.` },
+    ],
+    note: 'Optional bonus note below Q&A.',  // optional
+    // If no screening questions: omit `list` and put the "None visible..." note in `note`.
+  },
+
+  // required — playbook rule → decision mapping (for retro analysis)
+  reasoning: [
+    { part: 'Part 2', text: '<strong>Hook:</strong> "Here demo:" starter chosen because…' },
+    { part: 'Part 4', text: '<strong>Links:</strong> 3 project + 2 anchors = 5 total…' },
+    // …
+  ],
+
+  // required — submit checklist (4–6 actionable items)
+  checklist: [
+    'Paste cover letter from block 1',
+    'Set bid to <strong>$47/hr</strong>',
+    'Boost 5–10 connects',
+    'Attach <code>callstack-demo-2.mp4</code>',
+    'Submit within 30 minutes',
+  ],
+};
+```
+
+### Rules
+
+- **Never hand-write HTML for a proposal.** Always go through the input → build flow.
+- **Never edit `_template.html` mid-session** unless you're intentionally redesigning across all proposals (rare; coordinate with Roman first).
+- **Always commit both** the input `.js` and the generated `.html` (history + browsable rendered output).
+- **Short visual lines** (Part 2 Formatting Rules) apply inside the `coverLetter` and every `answer` field — manual breaks at ~60–70 char natural pauses.
+- **Don't regenerate without running the script.** If the input changes, re-run `node scripts/build-proposal.mjs …` to keep the HTML in sync.
 
 ### Filename convention
 
-`docs/sells/proposals/YYYY-MM-DD-<short-job-slug>.html`
-(one file per proposal, history preserved for retro analysis).
+- Input:  `docs/sells/proposals/inputs/YYYY-MM-DD-<short-job-slug>.js`
+- Output: `docs/sells/proposals/YYYY-MM-DD-<short-job-slug>.html` (auto-generated)
 
-### Required HTML sections (already in the template — don't reorder)
+### Required HTML sections (already baked into the template)
 
-1. **Header** — job title, one-line verdict ("APPLY" / "SKIP" + reason), key meta (rate band, duration, freshness, client rating, proposal count).
-2. **Cover Letter** — the full proposal text in a monospace block that preserves manual line breaks. This is the only thing that goes into Upwork's cover-letter field. Triple-click selectable.
-3. **Bid Rate** — recommended hourly rate or fixed-price amount + one-line justification (Part 9 pricing + Part 12 SEO layer).
-4. **Connects & Boost** — connects cost + recommended boost based on freshness / proposal count.
-5. **Attachments** — 1–3 files from `attachment-library.md`, each with path + one-line "why this file".
-6. **Screening Questions** — stub; fill in Q&A answers if the job has them (style per Part 1 Gold Standard Q&A).
-7. **Playbook Reasoning** — bullet list mapping each decision to its playbook rule. Useful for retro analysis.
-8. **Submit Checklist** — 4–6 checkboxes Roman ticks as he submits.
-
-### Style is frozen
-
-Dark theme, minimal, monospace copy-paste blocks, clear section boundaries. **Do not redesign per proposal.** If a style change is ever needed, update ALL proposal files in `docs/sells/proposals/` together (or migrate to a shared stylesheet if the volume grows).
+1. **Header** — job title, verdict, meta.
+2. **Cover Letter** — copyable monospace block, the thing pasted into Upwork.
+3. **Bid Rate** — value + justification.
+4. **Connects & Boost** — value + justification.
+5. **Attachments** — 1–3 files from `attachment-library.md`.
+6. **Screening Questions** — Q&A blocks OR stub note.
+7. **Playbook Reasoning** — decision → rule mapping.
+8. **Submit Checklist** — 4–6 actionable items.
 
 ---
 
