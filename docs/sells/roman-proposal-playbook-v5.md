@@ -84,50 +84,76 @@ Line 7-9: Links with descriptions            ← Proof. The pages sell, not the 
 
 ---
 
-### SILVER STANDARD — 2.5% conversion (40:1 hire ratio)
+### PLATINUM STANDARD — the client wrote first (phase-breakdown winner)
 
-This proposal is weaker but still converts. Study what's different.
+This proposal triggered the client to initiate the interview — they messaged
+first, no back-and-forth needed. The preview hook did its job (got the click),
+and the phase breakdown **below the fold** converted view → reply → interview.
 
-```
-Hey 👋 What type of documents will using for RAG?
-How about Azure Container App to deploy LLM Pipelines ?
-
-I have solid programming experience 15+ years, with all recently released LLM features.
-Happy to join your team.
-
-To prove my expertise in relevant works:
-✔️ My own LLM toolset: https://github.com/roman-rr/LLM-toolchain
-✔️ My Github with 700+ stars: https://github.com/roman-rr
-✔️ My academic research over LLM models: https://www.researchgate.net/profile/Roman-Antonov-3
-
-By the way, I'm willing to work 40+ hrs/week ❗️
-
-Best regards,
-Roman.
-```
-
-**Q&A (same job):**
+This is the reference template when the job allows a concrete roadmap.
 
 ```
-Describe your recent experience with similar projects
-I have my own LLM-chain (based on Langchain) toolset that support all:
+✅ LLM Audit Solution: Fine-tuned LLMs on H100 (VAST) with production data,
+611 function-calling evaluations across 36 tools.
 
-* Retrieval-augmented generation (RAG)
-* Structured Data Retrieval (SDR)
-* Fine-tuning models
-* Documents loaders
-* Embeddings
-* Various vector stores
+LoRA or full FT on the 1×H100 constraint?
 
-And I utilize it to connect with Telegram Bot with all latest features: Vision, Structured output, Rag, Fine-tuning.
+Thank you for interest, write me to start work.
+
+– https://roman.x70.ai/ai-agents - 36 tools, 611 evals, function calling
+– https://signals.x70.ai - My AI SaaS, LLM pipelines
+– https://github.com/roman-rr/ - My Github, 700+ stars
+
+Proposed audit breakdown (10-12 hrs):
+
+Phase 1 — Scripts & Architecture Review (2hr)
+Read all training, serving, eval scripts. Map the full pipeline.
+
+Phase 2 — Model & Fine-Tuning Review (2hr)
+Base model justification, FT method vs H100 constraints, VRAM budget,
+data formatting, eval splits, overfitting checks.
+
+Phase 3 — Inference Stack Review (2hr)
+Serving framework choice, quantization settings, batching,
+KV cache sizing at 16-32 concurrency, OOM risk analysis.
+
+Phase 4 — BFCL Benchmark Integrity (2hr)
+Compare eval scripts against official BFCL repo.
+AST-matching validation, leakage detection, shortcut checks.
+
+Phase 5 — Performance & Red Flags Report (2hr)
+TTFT/latency plausibility at concurrency target.
+Written 2-4 page report: risks, concerns, recommendations.
+
+Phase 6 — Walkthrough Call (30min + prep)
+Walk through findings, answer questions, final recommendations.
 ```
 
-**WHY THIS CONVERTS LOWER:**
-- No CTA ("Happy to join your team" is passive, not action-oriented)
-- No timezone/availability signal upfront
-- "Best regards" is formal and generic
-- Two opening questions instead of one (less focused)
-- Still works because: concise, confident, good link formatting with ✔️
+**WHY THIS CONVERTS AT "CLIENT WRITES FIRST" LEVEL — ANATOMY:**
+
+```
+Line 1-3: Emoji + attention word + proof hook + tech question
+          ← preview stays under 250 chars, gets the click
+Line 5:   CTA — "write me to start work" (strongest CTA)
+Line 7-9: Links with descriptions (3-5 rule, portfolio + github anchors)
+Line 11:  Phase breakdown header with total hours estimate
+          ← signals "I've already thought this through"
+Line 13+: 6 phases, each with title + hours + 1-2 lines of specifics
+          ← scannable, demonstrates depth without being a wall of text
+Final:    Walkthrough / review call as the closing phase
+          ← implies "when we work together" not "if we work together"
+```
+
+**KEY PATTERNS THAT MADE THE CLIENT WRITE FIRST:**
+- Specific numbers in the hook (611 evals, 36 tools) build credibility fast
+- One pointed technical question (LoRA vs full FT) shows expertise
+- Phase breakdown removes the client's biggest risk: "does this person understand what I'm asking for?"
+- Hours per phase shown → client can mentally calculate cost, no surprises
+- Phase 6 is a walkthrough call — frames the engagement as collaborative, not transactional
+- Total hours upfront (10–12 hrs) — transparent, no hidden scope
+
+**When to use this pattern:** see PART 2 "PHASE BREAKDOWN" subsection for
+the full rules (Modes A/B/C and when to tease vs go full detail).
 
 ---
 
@@ -143,6 +169,8 @@ Every proposal follows this exact flow. No exceptions.
 {LINKS: 3-5 total. Last 2 ALWAYS = roman.x70.ai + github.com/roman-rr. First 1-3 = most relevant project links. Most-relevant first, anchors last.}
 
 {OPTIONAL CLOSING HOOK — second pain point, availability, or attention grabber}
+
+{OPTIONAL PHASE BREAKDOWN — below-the-fold content that converts view → reply/interview. See "PHASE BREAKDOWN" subsection below.}
 ```
 
 ### THE 250-CHARACTER RULE (CRITICAL)
@@ -324,6 +352,202 @@ monotone.
 - Don't force it when Callstack isn't a genuine fit. "Here demo:" with an irrelevant link reads worse than a proof hook.
 - After 10–20 proposals, track views/replies/hires vs baseline. Keep if it beats "Not a Demo:"; drop if not.
 
+### FORWARD BRIDGE (experimental tail — A/B vs pure-proof hooks)
+
+Current hooks lean hard on past-tense proof: *"Built X"*, *"Production Y"*,
+*"Shipped Z"*. That reads as **fact** — strong for credibility — but can leave
+the client to *infer* "and you'll do it for me". Infer isn't zero-work.
+
+The Forward Bridge adds a 2–6-word tail that explicitly pivots from
+self-proof to client-commitment **without losing the 250-char punch or
+trading fact for promise**.
+
+**When to use:**
+- When the hook is strong proof-heavy and you want it to pivot client-facing.
+- When you sense the client needs reassurance the past work applies to
+  their specific case (signals: "we're different", "not off-the-shelf",
+  "bespoke").
+
+**When NOT to use:**
+- If the 2-line hook is already at budget — don't sacrifice the question
+  for a tail.
+- If "Here demo:" starter is in play (the link + question already provide
+  forward framing).
+
+**Three bridge variants — rotate across proposals:**
+
+```
+VARIANT A — "same stack for yours" (most direct)
+⚡ Not a Demo: LangGraph platform, 6/36/611 — same stack for yours.
+Agents sharing state centrally or between nodes?
+
+VARIANT B — "ready to adapt for your use case" (consultative)
+✅ Shipped & running: LangGraph platform, 6 agents, 36 tools — ready to
+adapt for your use case. Which CRM should it sync into?
+
+VARIANT C — "reshaping it for you" (tailored framing)
+🚀 In Production: LangChain platform behind every channel — reshaping
+it for your domain. How many tenants to start with?
+```
+
+All three keep past-tense proof as the anchor, append a 3–6 word
+forward-commitment tail, then land the question. Character cost: roughly
+4–8 chars vs a no-bridge hook — manageable.
+
+**A/B measurement plan:**
+
+1. Run the current pure-proof style on 50% of eligible proposals.
+2. Run bridge variants (A/B/C rotating) on the other 50% for the same
+   job types.
+3. After ~30 proposals per arm, compare views/replies/hires.
+4. **Keep** if the bridge lifts reply rate or hire rate by >20%. **Drop**
+   if it's flat or negative.
+5. Don't mix with "Here demo:" starter in the same proposal — keep arms
+   clean so the measurement isolates the bridge effect.
+
+**Important:** The bridge is *added* to an existing proof hook, not a
+replacement. Never drop to *"I will build for you based on my same
+stack"* alone — that reverts fact to promise and loses the credibility
+advantage.
+
+### PHASE BREAKDOWN (below-the-fold conversion block)
+
+The 250-char preview gets the click. The phase breakdown **converts the click
+into a reply**. See Part 1 PLATINUM STANDARD — that LLM Audit proposal
+triggered the client to initiate the interview, driven almost entirely by
+the phase breakdown below the fold.
+
+**Why phases convert:** the client's biggest risk is *"does this person
+understand what I'm asking for?"*. A scannable 3–6 phase plan with specific
+sub-tasks removes that doubt faster than any amount of self-description.
+
+**Three modes — pick the one that fits the job:**
+
+#### MODE A — FULL phases (all phases exposed)
+- When the scope is clearly bounded AND you can reasonably estimate
+  end-to-end (fixed-price projects, typically $500–$5k)
+- 3–6 phases total, each with: title + optional hours + 1–2 lines of specifics
+- Final phase is often a walkthrough/review call (30min + prep)
+- Implies: "I've already thought this through — here's the plan."
+
+#### MODE B — TEASE (2–3 phases + closing question) ← default experiment
+- When scope is unclear, long/ongoing, or deliberately under-specified by
+  client; OR when even on a clear small project you want to force a reply
+- Show 2–3 phases with just enough specificity to prove you understand
+- End with a closing question inviting the client to ask for the full plan
+- Goal: don't expose everything upfront — keep curiosity + require a reply
+  to unlock the rest
+- **This is the recommended default for early experimentation** — it has
+  higher reply-generation leverage than full phases in most cases
+
+#### MODE C — SKIP phases entirely
+- Pure hourly team-augmentation with no fixed scope ("need Python dev 20hr/
+  week ongoing", "ongoing LangChain help")
+- When the client is looking for a dev to embed on their team, not a
+  consultant with a plan
+
+---
+
+#### Mode A template (full phases)
+
+```
+Proposed {scope} breakdown ({total hours}, or just "— roadmap"):
+
+Phase 1 — {Title} ({hours, optional})
+{1–2 lines of specific activities, scannable, no sentences > 12 words}
+
+Phase 2 — {Title} ({hours, optional})
+{1–2 lines}
+
+Phase 3 — {Title} ({hours, optional})
+{1–2 lines}
+
+...
+
+Phase N — {Walkthrough / Review Call} ({30min + prep})
+{Walk through findings, answer questions, final recommendations}
+```
+
+#### Mode B template (tease + closing question)
+
+```
+Early approach (2–3 phases, more to follow):
+
+Phase 1 — {Title}
+{1–2 lines of specific activities}
+
+Phase 2 — {Title}
+{1–2 lines}
+
+Phase 3 — {Title, optional}
+{1–2 lines — if you include this third, the tease is stronger but so is
+the commitment}
+
+{Closing question — invite the client to ask for the full plan}
+```
+
+---
+
+#### Closing-question options for Mode B (rotate per proposal)
+
+```
+OPTION 1 (default, neutral):
+Want me to send the full phase-by-phase roadmap with hours?
+
+OPTION 2 (offers a deliverable, confident):
+Happy to draft the complete breakdown as a 2-page roadmap — useful?
+
+OPTION 3 (structured, best for enterprise / larger jobs):
+Should I prepare the full roadmap with hours + deliverables per phase?
+
+OPTION 4 (softest, removes friction):
+I can send the complete phase plan if helpful — just say the word.
+
+OPTION 5 (implies you've started, puts ball in their court):
+Ready to spec phases 4+ in detail when you confirm scope.
+```
+
+Default: **Option 1**. Use Option 3 for enterprise/larger jobs. Rotate
+2/4 occasionally. Option 5 when they gave you partial scope already.
+
+---
+
+#### Formatting rules
+
+- **Blank line between phases** — matches the double-line-break discipline
+  from Part 1 Gold Standard. Scannable, not a wall of text.
+- **Phase title format:** `Phase N — {Title} ({hours})` where hours is
+  **optional**. Include hours when budget is exposed and client benefits
+  from transparency. Omit when fixed-price with deliverables-over-hours
+  framing, or when you don't yet know.
+- **1–2 lines per phase.** Maximum 12 words per sentence. If a phase
+  description runs 3+ lines, you're saying too much — the phases are a
+  trailer, not the movie.
+- **Short visual lines (critical for phases).** Each rendered line must
+  fit in one glance — never fill the full container width. When a
+  description is longer than ~60–70 chars, **insert a manual break** at
+  the nearest comma or natural pause. See the general Formatting Rules
+  above for the WRONG/RIGHT example. This is the #1 readability rule
+  for the phase block.
+- **Parenthetical hour ranges are OK** (e.g., "2–3hr") when you want
+  flexibility without hiding it.
+- **Total hours in header** when disclosed — `Proposed breakdown (10–12 hrs):`.
+  Builds trust via transparency.
+- **Do not exceed 6 phases.** At 7+ the breakdown starts to look like
+  over-engineering. 3–5 is the comfort zone; 2–3 is the tease sweet spot.
+
+---
+
+#### When NOT to include phases
+
+- Mode C applies (pure hourly augmentation).
+- Preview + links already consume the client's attention budget — don't
+  add phases to an already-long proposal.
+- Job post says "we'll discuss scope on a call" — sometimes they want
+  the conversation, not the preview. Phases can feel presumptuous.
+- You genuinely don't know the stack / scope well enough to propose
+  even 2 phases — don't bluff. A strong preview alone beats weak phases.
+
 ### SEPARATOR RULES:
 
 Use `·` middle dot separator ~30% of the time for visual variety.
@@ -482,6 +706,26 @@ Proposal 6: 🚀 + "Not a Demo:" + combined hook + commas
 - No essays. No paragraphs. Statements only
 - Q&A answers: 1-3 lines per question. Lists when appropriate
 - Link ordering: most-relevant project link first (sniper punch); `roman.x70.ai` + `github.com/roman-rr` always last (brand anchors). Hard cap: 5 total.
+- **SHORT VISUAL LINES — manual line breaks.** No rendered line should fill
+  the container width. Upwork renders proposals in a narrow column; a sentence
+  that would wrap visually mid-phrase breaks the reader's rhythm. **Target
+  ~60–70 characters per line (roughly 10–12 words).** Only the very first
+  hook line may run longer (it reads as a header). When a description
+  approaches full width, **break it manually at the nearest natural pause**
+  — after a comma, before "and" / "with" / "via" / "for", between clauses.
+  Never let Upwork auto-wrap mid-sentence.
+
+  ```
+  WRONG — one long sentence that will wrap mid-phrase:
+  Base model justification, FT method vs H100 constraints, VRAM budget, data formatting, eval splits, overfitting checks.
+
+  RIGHT — manual break at the nearest comma pause, two short readable lines:
+  Base model justification, FT method vs H100 constraints,
+  VRAM budget, data formatting, eval splits, overfitting checks.
+  ```
+
+  Applies to: phase descriptions, closing hooks, link descriptions that
+  get long, Q&A answers — everywhere except the hook's first line.
 
 ---
 
@@ -592,6 +836,8 @@ Recently shipped [X] with all latest features.
 ---
 
 ## PART 4: LINK LIBRARY
+
+> **See also: `attachment-library.md`** — sister catalog of images/videos/PDFs to attach to proposals (Upwork supports attachments; 1–3 relevant files per proposal amplifies the hook and links below).
 
 ### The link structure — **max 5 links, no exceptions except rare multi-tech cases**
 
