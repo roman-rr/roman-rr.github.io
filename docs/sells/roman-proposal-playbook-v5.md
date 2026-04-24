@@ -6,6 +6,66 @@
 
 ---
 
+## WORKFLOW — drafting a proposal
+
+When drafting any proposal from this playbook, **do not write it into chat as prose**. Save it as a self-contained HTML file under `docs/sells/proposals/` and open in the browser. This gives Roman a visual, block-by-block copy-paste surface instead of forcing him to parse chat output.
+
+### How to start a new draft (do this, every time)
+
+**1. Duplicate an existing proposal — never rebuild the HTML from scratch.**
+
+```bash
+# Pick the most recent file in docs/sells/proposals/ (or use _template.html if one exists)
+cp docs/sells/proposals/<most-recent-proposal>.html \
+   docs/sells/proposals/YYYY-MM-DD-<new-job-slug>.html
+```
+
+**2. Open the new file and replace ONLY the content inside each section.**
+
+Do NOT touch:
+- The `<head>` block
+- The `<style>` block
+- The outer section / block / class structure
+- The CSS classes on any element
+
+These are the frozen template. Reusing them keeps every proposal visually consistent and saves tokens (no re-styling on each draft).
+
+**3. Rewrite these content areas only:**
+
+- `<title>` tag — new job title
+- Header `<h1>`, `.eyebrow`, `.meta`, `.verdict` text
+- Section 1 — Cover Letter body (inside `.copyable.cover-letter`)
+- Section 2 — Bid rate value + note
+- Section 3 — Connects/Boost value + note
+- Section 4 — Attachments `<ul>` items
+- Section 5 — Screening Q&A content (or keep stub if no questions on the post)
+- Section 6 — Playbook Reasoning bullets (map each choice → playbook rule)
+- Section 7 — Submit Checklist items
+
+**4. Open in browser:** `open docs/sells/proposals/YYYY-MM-DD-<new-job-slug>.html`
+
+### Filename convention
+
+`docs/sells/proposals/YYYY-MM-DD-<short-job-slug>.html`
+(one file per proposal, history preserved for retro analysis).
+
+### Required HTML sections (already in the template — don't reorder)
+
+1. **Header** — job title, one-line verdict ("APPLY" / "SKIP" + reason), key meta (rate band, duration, freshness, client rating, proposal count).
+2. **Cover Letter** — the full proposal text in a monospace block that preserves manual line breaks. This is the only thing that goes into Upwork's cover-letter field. Triple-click selectable.
+3. **Bid Rate** — recommended hourly rate or fixed-price amount + one-line justification (Part 9 pricing + Part 12 SEO layer).
+4. **Connects & Boost** — connects cost + recommended boost based on freshness / proposal count.
+5. **Attachments** — 1–3 files from `attachment-library.md`, each with path + one-line "why this file".
+6. **Screening Questions** — stub; fill in Q&A answers if the job has them (style per Part 1 Gold Standard Q&A).
+7. **Playbook Reasoning** — bullet list mapping each decision to its playbook rule. Useful for retro analysis.
+8. **Submit Checklist** — 4–6 checkboxes Roman ticks as he submits.
+
+### Style is frozen
+
+Dark theme, minimal, monospace copy-paste blocks, clear section boundaries. **Do not redesign per proposal.** If a style change is ever needed, update ALL proposal files in `docs/sells/proposals/` together (or migrate to a shared stylesheet if the volume grows).
+
+---
+
 ## PART 1: GROUND TRUTH PROPOSALS (PROVEN WINNERS)
 
 These are real proposals that won real jobs. Study the structure, spacing, and confidence.  
