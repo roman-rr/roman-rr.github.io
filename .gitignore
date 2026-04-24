@@ -52,3 +52,8 @@ dist-ssr
 # Playwright MCP artifacts & design iteration screenshots
 .playwright-mcp/
 /iter-*.png
+
+# Per-proposal drafts (local only — template + README stay tracked)
+/docs/sells/proposals/inputs/*.js
+/docs/sells/proposals/*.html
+!/docs/sells/proposals/_template.html
