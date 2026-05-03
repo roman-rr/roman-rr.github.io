@@ -1,38 +1,8 @@
-import { useEffect } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { ExternalLink } from 'lucide-react'
 
 const Header = () => {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://assets.calendly.com/assets/external/widget.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    const link = document.createElement('link');
-    link.href = 'https://assets.calendly.com/assets/external/widget.css';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-
-    return () => {
-      document.body.removeChild(script);
-      document.head.removeChild(link);
-    };
-  }, []);
-
-  const openCalendly = (e: React.MouseEvent) => {
-    e.preventDefault();
-    // @ts-ignore
-    if (window.Calendly) {
-      // @ts-ignore
-      window.Calendly.initPopupWidget({
-        url: 'https://calendly.com/romwtb/30min'
-      });
-      return false;
-    }
-  };
-
   return (
     <div className="max-w-6xl mx-auto px-[30px] py-8 bg-[#f9f9f9]">
       {/* Two-column: Left content + Right video (desktop) */}
@@ -68,15 +38,16 @@ const Header = () => {
 
           {/* CTA */}
           <a
-            href="#"
-            onClick={openCalendly}
+            href="https://upwork.com/freelancers/~016b923b0158ef81ae"
+            target="_blank"
+            rel="noopener noreferrer"
             className="h-[44px] ps-4 w-[320px] bg-[#222] text-white text-sm font-medium rounded hover:bg-[#333] transition-colors flex justify-start relative"
           >
             <div className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              Book a 30-minute strategy call
+              Hire me on Upwork
             </div>
             <div className="absolute right-[8px] top-[6px] bg-white/20 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center shadow-[inset_1px_1px_0px_rgba(255,255,255,0.15)]">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,7 +56,7 @@ const Header = () => {
             </div>
           </a>
           <p className="text-gray-600 text-xs mt-3">
-            Or view my <a href="https://upwork.com/freelancers/~016b923b0158ef81ae" target="_blank" rel="noopener noreferrer" className="font-semibold">Upwork profile <ExternalLink className="h-3 w-3 inline-block ml-0.5" /></a>
+            All communication and contracts via Upwork.
           </p>
         </div>
 
