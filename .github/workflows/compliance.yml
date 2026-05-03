@@ -1,0 +1,135 @@
+name: Upwork Compliance Scan
+
+# Blocks deploys that re-introduce contact info / chat widgets into roman.x70.ai.
+# Created 2026-05-03 after circumvention violation. See docs/sells/upwork-compliance-rules.md
+#
+# This is the server-side belt-and-suspenders check. The client-side check is
+# .git/hooks/pre-commit (which can be bypassed with --no-verify).
+#
+# Three pattern groups:
+#   A. Direct contact info (mailto:, calendly, social URLs, etc.) — text-pattern detection
+#   B. Chat widget JS globals (PixelwerkChat, Tawk_API, intercomSettings, etc.) — JS-variable detection
+#   C. Chat widget script loaders (<script src="...pixelwerk.../tawk.to/...">) — script-tag detection
+#
+# Pattern Group B/C is precise enough that mentions of these tools as TEXT in
+# case studies (e.g. "Intercom integration") will not trigger false positives —
+# only actual widget loading does.
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  scan:
+    name: Scan for banned contact patterns
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Group A — direct contact info
+        run: |
+          set +e
+          PATTERN="(romwtb|@gmail\.com|@yahoo\.com|@outlook\.com|@protonmail\.com|@icloud\.com|@hotmail\.com|mailto:|tel:\+|sms:\+|calendly\.com|cal\.com/[a-z]|savvycal|acuityscheduling|t\.me/[a-z]|wa\.me/[0-9]|telegram\.me/|whatsapp\.com/[a-z]|skype:|skype\?call|discord\.com/users|linkedin\.com/in/[a-z]|twitter\.com/[a-z]|x\.com/[a-z])"
+
+          MATCHES=$(grep -rnIiE "$PATTERN" \
+            --include='*.html' \
+            --include='*.tsx' \
+            --include='*.ts' \
+            --include='*.jsx' \
+            --include='*.js' \
+            --include='*.css' \
+            --include='*.json' \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=.git \
+            src/ index.html public/ 2>/dev/null || true)
+
+          if [ -n "$MATCHES" ]; then
+            echo "❌ COMPLIANCE FAIL — Group A (direct contact info) detected:"
+            echo ""
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "✅ Group A passed"
+
+      - name: Group B — chat widget JS globals
+        run: |
+          set +e
+          PATTERN="(PixelwerkChat|Tawk_API|tawk\.to/[a-z0-9]|intercomSettings|window\.intercomSettings|drift\.load|drift\.\\\$on|\\\$crisp|CRISP_WEBSITE_ID|tidioChatApi|window\.tidio|hubspotChatSettings|zE\\(|olark\(|freshChat|smartsupp\.|Smartsupp\\()"
+
+          MATCHES=$(grep -rnIE "$PATTERN" \
+            --include='*.html' \
+            --include='*.tsx' \
+            --include='*.ts' \
+            --include='*.jsx' \
+            --include='*.js' \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=.git \
+            src/ index.html public/ 2>/dev/null || true)
+
+          if [ -n "$MATCHES" ]; then
+            echo "❌ COMPLIANCE FAIL — Group B (chat widget JS globals) detected:"
+            echo ""
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "✅ Group B passed"
+
+      - name: Group C — chat widget script loaders
+        run: |
+          set +e
+          PATTERN="<script[^>]*src=[\"'][^\"']*(pixelwerk\.x70\.ai|embed\.tawk\.to|widget\.intercom\.io|js\.intercomcdn\.com|js\.driftt\.com|client\.crisp\.chat|code\.tidio\.co|js\.hs-scripts\.com|static\.zdassets\.com|olark\.com|wchat\.freshchat\.com|smartsuppchat\.com)"
+
+          MATCHES=$(grep -rnIiE "$PATTERN" \
+            --include='*.html' \
+            --include='*.tsx' \
+            --include='*.ts' \
+            --include='*.jsx' \
+            --include='*.js' \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=.git \
+            src/ index.html public/ 2>/dev/null || true)
+
+          if [ -n "$MATCHES" ]; then
+            echo "❌ COMPLIANCE FAIL — Group C (chat widget script loaders) detected:"
+            echo ""
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "✅ Group C passed"
+
+      - name: JSON-LD / Schema.org structured-data scan
+        run: |
+          set +e
+          MATCHES=$(grep -rnIE '"email"[[:space:]]*:|"telephone"[[:space:]]*:|"contactPoint"[[:space:]]*:' \
+            --include='*.html' \
+            --include='*.json' \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=.git \
+            index.html public/ 2>/dev/null || true)
+
+          if [ -n "$MATCHES" ]; then
+            echo "❌ COMPLIANCE FAIL — JSON-LD / structured data contains contact fields:"
+            echo ""
+            echo "$MATCHES"
+            echo ""
+            echo "Remove email/telephone/contactPoint from Schema.org structured data."
+            exit 1
+          fi
+
+          echo "✅ JSON-LD scan passed"
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "✅✅✅ All Upwork compliance checks passed"
+          echo ""
+          echo "Roman portfolio site is clean of banned contact patterns."
