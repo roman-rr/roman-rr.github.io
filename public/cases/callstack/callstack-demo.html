@@ -631,27 +631,10 @@
     <h1><span class="line-1 grad">Replace Your Call Center.</span></h1>
     <p class="sub">AI Voice Agent + <span class="kw">RAG</span> Chatbot on <span class="kw">LangGraph</span> and <span class="kw">Twilio</span> — inbound, outbound, chat, and embed from a single stack.</p>
     <div class="cta">
-      <a class="btn btn-primary" href="#aura" onclick="openCallstackChat(event)">Try the Live Demo &rarr;</a>
-      <a class="btn btn-secondary" href="https://roman.x70.ai/callstack-arch">See the Architecture</a>
+      <a class="btn btn-primary" href="https://roman.x70.ai/callstack-arch">See the Architecture &rarr;</a>
     </div>
   </div>
 </header>
-
-<section id="aura" aria-label="Chat with Callstack AI">
-  <div class="container">
-    <button class="aura-orb" type="button" aria-label="Tap to chat with the AI agent" onclick="openCallstackChat(event)">
-      <span class="aura-halo"></span>
-      <span class="aura-ring"></span>
-      <span class="aura-core"></span>
-      <span class="aura-specular"></span>
-    </button>
-    <div class="aura-caption">Tap the orb &mdash; talk to the AI right now</div>
-    <div class="mode-switch" role="tablist" aria-label="Chat widget mode">
-      <button type="button" role="tab" data-mode="popup" onclick="setChatMode('popup')">Popup</button>
-      <button type="button" role="tab" data-mode="sidebar" onclick="setChatMode('sidebar')">Sidebar</button>
-    </div>
-  </div>
-</section>
 
 <section id="description">
   <div class="container">
@@ -701,95 +684,6 @@
     </div>
   </div>
 </footer>
-
-<script>
-  (function () {
-    let stored = 'popup';
-    try {
-      const v = localStorage.getItem('callstack-chat-mode');
-      if (v === 'sidebar' || v === 'popup') stored = v;
-    } catch (_) {}
-
-    window.PixelwerkChat = {
-      apiKey: "cf7d5f903363fbd055d75460e42f8e",
-      server: "https://pixelwerk.x70.ai/api/embed",
-      mode: stored,
-      title: "CallStack AI Assistant",
-      placeholder: "Ask about features, pricing, or architecture..."
-    };
-
-    // Mark the active pill in the switcher as soon as DOM is ready.
-    function syncSwitch() {
-      document.querySelectorAll('.mode-switch button[data-mode]').forEach(btn => {
-        btn.setAttribute('aria-selected', btn.dataset.mode === stored ? 'true' : 'false');
-      });
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', syncSwitch);
-    } else {
-      syncSwitch();
-    }
-
-    window.setChatMode = function (mode) {
-      if (mode !== 'sidebar' && mode !== 'popup') return;
-      if (mode === stored) { openCallstackChat(); return; }
-      try { localStorage.setItem('callstack-chat-mode', mode); } catch (_) {}
-      location.reload();
-    };
-  })();
-</script>
-<script src="https://pixelwerk.x70.ai/api/embed/loader.js" defer></script>
-
-<script>
-  // Aura orb → open Pixelwerk chat widget.
-  // The loader is vendor JS, so we try several known entry points, then fall back
-  // to clicking the injected bubble, then dispatching a hint event.
-  function openCallstackChat(event) {
-    if (event) event.preventDefault();
-
-    const pw = window.PixelwerkChat;
-    if (pw) {
-      for (const fn of ['open', 'show', 'toggle', 'openChat']) {
-        if (typeof pw[fn] === 'function') { try { pw[fn](); return; } catch (_) {} }
-      }
-    }
-    if (typeof window.openPixelwerkChat === 'function') { window.openPixelwerkChat(); return; }
-
-    const selectors = [
-      '[data-pixelwerk-bubble]',
-      '[data-pixelwerk-trigger]',
-      '#pixelwerk-bubble',
-      '.pixelwerk-bubble',
-      '#pixelwerk-chat-bubble',
-      '.pixelwerk-launcher',
-      'button[aria-label*="chat" i][class*="pixelwerk" i]',
-      'iframe[src*="pixelwerk"]'
-    ];
-    for (const sel of selectors) {
-      const el = document.querySelector(sel);
-      if (el) {
-        if (el.tagName === 'IFRAME') { el.focus(); return; }
-        el.click();
-        return;
-      }
-    }
-    // Last-ditch: look for any fixed-position button the loader may have injected
-    const candidates = Array.from(document.querySelectorAll('button, [role="button"], div[class*="chat" i]'));
-    for (const el of candidates) {
-      const cs = getComputedStyle(el);
-      if (cs.position === 'fixed' && el !== document.querySelector('.aura-orb')) {
-        el.click();
-        return;
-      }
-    }
-    window.dispatchEvent(new CustomEvent('pixelwerk:open'));
-  }
-
-  // Auto-open the chat a moment after the loader boots.
-  window.addEventListener('load', () => {
-    setTimeout(() => openCallstackChat(), 5000);
-  });
-</script>
 
 </body>
 </html>
