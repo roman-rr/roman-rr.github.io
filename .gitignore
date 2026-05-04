@@ -52,6 +52,8 @@ dist-ssr
 # Playwright MCP artifacts & design iteration screenshots
 .playwright-mcp/
 /iter-*.png
+/loop-*.png
+/page-*.png
 
 # Sales playbook lives in a private sibling repo (roman-upwork-sells-playbook).
 # The folder is cloned in locally via `npm run sells:setup`. See docs/deployment.md.
