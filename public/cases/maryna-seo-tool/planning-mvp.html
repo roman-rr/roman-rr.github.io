@@ -3,531 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sprint 1 Plan — Automated Website Audit & PDF Report System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex, nofollow">
+<title>Planning archived</title>
 <style>
-  :root {
-    --bg: #FAFAF8;
-    --surface: #FFFFFF;
-    --text: #1A1A1A;
-    --text-secondary: #5A5A5A;
-    --text-muted: #8A8A8A;
-    --accent: #2DB87B;
-    --accent-light: #E8F7F0;
-    --accent-dark: #1E8A5A;
-    --border: #E8E8E4;
-    --phase-0: #2A2D35;
-    --phase-1: #34675C;
-    --phase-2: #2DB87B;
-    --phase-3: #5ECDA2;
-    --phase-4: #88DFB8;
-    --phase-5: #B5EDD4;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #1a1a1a;
+    color: #e7e7f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
-
-  /* ══════════════════════════════════
-     BASE — MOBILE (< 768px)
-     ══════════════════════════════════ */
-
-  .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
-
-  /* ── Header ── */
-  header { padding: 48px 0 36px; border-bottom: 1px solid var(--border); }
-  header .overline { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
-  header h1 { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; line-height: 1.2; color: var(--text); margin-bottom: 12px; }
-  header .subtitle { font-size: 15px; color: var(--text-secondary); }
-  header .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
-  header .meta-item { display: flex; flex-direction: column; gap: 2px; }
-  header .meta-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
-  header .meta-value { font-size: 14px; font-weight: 500; color: var(--text); }
-
-  /* ── Sections ── */
-  section { padding: 48px 0 0; }
-  .section-label { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-  section > .container > h2 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; margin-bottom: 8px; }
-  section > .container > p.section-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
-
-  /* ── Scope ── */
-  .scope-grid { display: flex; flex-direction: column; gap: 16px; }
-  .scope-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
-  .scope-box h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .scope-box ul { list-style: none; padding: 0; }
-  .scope-box ul li { font-size: 13.5px; color: var(--text-secondary); padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
-  .scope-box ul li::before { flex-shrink: 0; margin-top: 3px; }
-  .scope-in ul li::before { content: '✓'; color: var(--accent); font-weight: 700; }
-  .scope-out ul li::before { content: '—'; color: var(--text-muted); }
-
-  /* ── Timeline — vertical stack on mobile ── */
-  .timeline-bar { display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-  .timeline-segment { display: flex; align-items: center; gap: 12px; padding: 14px 18px; color: #fff; }
-  .timeline-segment .t-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; opacity: 0.85; min-width: 24px; }
-  .timeline-segment .t-name { font-size: 13px; font-weight: 600; line-height: 1.3; flex: 1; }
-  .timeline-segment .t-days { font-size: 12px; font-weight: 500; opacity: 0.8; white-space: nowrap; }
-  .seg-0 { background: var(--phase-0); }
-  .seg-1 { background: var(--phase-1); }
-  .seg-2 { background: var(--phase-2); }
-  .seg-3 { background: var(--phase-3); color: var(--text); }
-  .seg-4 { background: var(--phase-4); color: var(--text); }
-  .seg-5 { background: var(--phase-5); color: var(--text); }
-  .timeline-note { font-size: 12px; color: var(--text-muted); margin-bottom: 32px; }
-
-  /* ── Budget table ── */
-  .budget-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -20px; padding: 0 20px; }
-  .budget-table { width: 100%; min-width: 480px; border-collapse: collapse; margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-  .budget-table thead th { background: var(--bg); font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
-  .budget-table thead th:nth-child(3) { text-align: right; }
-  .budget-table tbody td { background: var(--surface); padding: 13px 14px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  .budget-table tbody td:first-child { font-weight: 700; width: 48px; }
-  .budget-table tbody td:nth-child(3) { text-align: right; }
-  .budget-table tfoot td { background: var(--surface); padding: 13px 14px; font-weight: 700; font-size: 13px; }
-  .budget-table tfoot td:nth-child(2) { text-align: right; }
-
-  .estimate-summary { margin-top: 16px; padding: 20px 24px; background: var(--accent-light); border: 1px solid var(--accent); border-radius: 12px; }
-  .estimate-summary .est-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; }
-  .estimate-summary .est-row.total { border-top: 1px solid rgba(46, 184, 123, 0.3); margin-top: 6px; padding-top: 12px; font-weight: 700; font-size: 16px; color: var(--accent-dark); }
-  .estimate-summary .est-label { color: var(--text-secondary); }
-  .estimate-summary .est-value { color: var(--text); font-weight: 600; font-family: 'DM Sans', sans-serif; }
-  .estimate-summary .est-row.total .est-value { color: var(--accent-dark); font-size: 18px; }
-
-  .budget-footnotes { font-size: 12px; color: var(--text-muted); margin-top: 14px; display: flex; flex-direction: column; gap: 4px; }
-  .budget-footnotes .sep { display: none; }
-
-  /* ── Phase cards ── */
-  .phase-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
-  .phase-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; }
-  .phase-card-body { padding: 24px; flex: 1; }
-  .phase-badge { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .phase-badge .badge-pill { background: var(--phase-0); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; }
-  .phase-badge .badge-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
-  .phase-card-body h3 { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; margin-bottom: 10px; }
-  .phase-card-body p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; }
-  .phase-card-sidebar { background: var(--accent-light); display: flex; align-items: center; justify-content: center; padding: 16px 24px; gap: 12px; }
-  .phase-card-sidebar .sidebar-hours { font-size: 22px; font-weight: 700; color: var(--text); }
-  .phase-card-sidebar .sidebar-hours-label { font-size: 12px; font-weight: 500; color: var(--accent-dark); }
-
-  /* ── Deliverables ── */
-  .gate-section { padding: 48px 0 0; }
-  .gate-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-  .gate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; position: relative; overflow: hidden; }
-  .gate-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent); border-radius: 4px 0 0 4px; }
-  .gate-card h4 { font-size: 13.5px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
-  .gate-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-
-  /* ── Roadmap ── */
-  .roadmap-list { display: flex; flex-direction: column; gap: 10px; }
-  .roadmap-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; }
-  .roadmap-num { font-size: 12px; font-weight: 700; color: var(--accent); background: var(--accent-light); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
-  .roadmap-text { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-  .roadmap-item .rm-name { font-size: 14px; font-weight: 600; color: var(--text); }
-  .roadmap-item .rm-desc { font-size: 12.5px; color: var(--text-muted); text-align: left; }
-  .roadmap-item .rm-hours { font-size: 12px; font-weight: 600; color: var(--accent-dark); white-space: nowrap; flex-shrink: 0; }
-
-  /* ── Footer ── */
-  footer { margin-top: 56px; padding: 24px 0; border-top: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--text-muted); }
-
-
-  /* ══════════════════════════════════
-     TABLET (≥ 768px)
-     ══════════════════════════════════ */
-  @media (min-width: 768px) {
-    .container { padding: 0 28px; }
-
-    header { padding: 64px 0 48px; }
-    header h1 { font-size: 36px; }
-    header .subtitle { font-size: 16px; }
-    header .meta { grid-template-columns: repeat(4, auto); gap: 28px; }
-
-    section { padding: 60px 0 0; }
-    section > .container > h2 { font-size: 30px; }
-    section > .container > p.section-desc { font-size: 15px; margin-bottom: 36px; }
-
-    .scope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .scope-box { padding: 28px; }
-
-    /* Timeline — horizontal bar */
-    .timeline-bar { flex-direction: row; }
-    .timeline-segment { flex-direction: column; align-items: center; justify-content: center; padding: 18px 8px; gap: 0; }
-    .timeline-segment .t-label { min-width: auto; text-align: center; }
-    .timeline-segment .t-name { text-align: center; margin-top: 2px; flex: none; }
-    .timeline-segment .t-days { margin-top: 4px; }
-    .seg-0 { flex: 1; } .seg-1 { flex: 3; } .seg-2 { flex: 4; }
-    .seg-3 { flex: 3; } .seg-4 { flex: 2; } .seg-5 { flex: 2; }
-
-    .budget-table-wrapper { overflow-x: visible; margin: 0; padding: 0; }
-    .budget-table { min-width: 0; }
-    .budget-table thead th, .budget-table tbody td, .budget-table tfoot td { padding: 14px 18px; font-size: 14px; }
-    .estimate-summary { padding: 24px 28px; }
-    .budget-footnotes { flex-direction: row; gap: 6px 16px; }
-    .budget-footnotes .sep { display: inline; }
-
-    /* Phase cards — horizontal */
-    .phase-card { flex-direction: row; }
-    .phase-card-body { padding: 28px; }
-    .phase-card-sidebar { flex-direction: column; align-items: center; justify-content: center; padding: 24px 32px; min-width: 130px; gap: 4px; }
-    .phase-card-body h3 { font-size: 21px; }
-    .phase-card-body p { font-size: 14px; }
-
-    .gate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-    .roadmap-item { align-items: center; }
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    text-align: center;
   }
-
-
-  /* ══════════════════════════════════
-     DESKTOP (≥ 960px)
-     ══════════════════════════════════ */
-  @media (min-width: 960px) {
-    .container { padding: 0 32px; }
-
-    header { padding: 80px 0 64px; }
-    header h1 { font-size: 42px; }
-    header .subtitle { font-size: 17px; max-width: 600px; }
-    header .meta { display: flex; gap: 32px; }
-    header .meta-label { font-size: 11px; }
-    header .meta-value { font-size: 15px; }
-
-    section { padding: 72px 0 0; }
-    .section-label { font-size: 11px; margin-bottom: 12px; }
-    section > .container > h2 { font-size: 34px; margin-bottom: 12px; }
-    section > .container > p.section-desc { font-size: 15px; max-width: 640px; margin-bottom: 48px; }
-
-    .scope-grid { gap: 24px; }
-    .scope-box { padding: 32px; }
-    .scope-box ul li { font-size: 14px; }
-
-    .timeline-segment { padding: 20px 8px; }
-    .timeline-segment .t-name { font-size: 13px; }
-
-    .budget-table thead th, .budget-table tbody td, .budget-table tfoot td { padding: 16px 20px; }
-
-    .phase-cards { gap: 20px; }
-    .phase-card-body { padding: 32px; }
-    .phase-card-body h3 { font-size: 22px; }
-    .phase-card-body p { font-size: 14.5px; max-width: 580px; }
-    .phase-card-sidebar { padding: 28px 36px; min-width: 140px; }
-    .phase-card-sidebar .sidebar-hours { font-size: 26px; }
-
-    .gate-section { padding: 72px 0 0; }
-    .gate-grid { gap: 20px; }
-    .gate-card { padding: 28px; }
-    .gate-card h4 { font-size: 14px; }
-    .gate-card p { font-size: 13.5px; }
-
-    .roadmap-item { padding: 18px 24px; }
-
-    footer { margin-top: 80px; padding: 32px 0; font-size: 13px; }
+  .badge {
+    display: inline-block;
+    background: rgba(255, 145, 110, 0.08);
+    border: 1px solid #5a3a32;
+    color: #ff916e;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 24px;
   }
-
-
-  /* ══════════════════════════════════
-     PRINT
-     ══════════════════════════════════ */
-  @media print {
-    body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    header { page-break-after: always; }
-    .phase-card { break-inside: avoid; page-break-inside: avoid; }
-    .gate-section { page-break-before: always; }
-    .gate-card { break-inside: avoid; }
-    .roadmap-list { break-inside: avoid; }
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+    color: #f5f5fa;
+  }
+  p {
+    font-size: 15px;
+    color: #b0b0c0;
+    margin-bottom: 14px;
+  }
+  .note {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid #2e2e2e;
+    font-size: 13px;
+    color: #6a6a82;
   }
 </style>
 </head>
 <body>
-
-<header>
-  <div class="container">
-    <div class="overline">Sprint 1 Plan · MVP</div>
-    <h1>Automated Website Audit<br>& PDF Report System</h1>
-    <p class="subtitle">Sprint 1 plan focused on the MVP scope — three SEO API integrations, rule-based issue analysis, PDF report generation, and a simple gated web form so the team can start using it immediately.</p>
-    <div class="meta">
-      <div class="meta-item"><span class="meta-label">Sprint Length</span><span class="meta-value">~6 working days</span></div>
-      <div class="meta-item"><span class="meta-label">Team</span><span class="meta-value">1 developer (solo)</span></div>
-      <div class="meta-item"><span class="meta-label">Stack</span><span class="meta-value">Python + FastAPI + Playwright</span></div>
-      <div class="meta-item"><span class="meta-label">Delivery</span><span class="meta-value">Hosted, ready to use</span></div>
-    </div>
+  <div class="wrap">
+    <div class="badge">Archived</div>
+    <h1>Planning document archived</h1>
+    <p>This planning document is no longer available — the engagement was closed without a contract due to budget mismatch on the full-scope option.</p>
+    <p>The architecture, sprint plan, hour estimates, and pricing breakdown that previously appeared on this page reflect senior-engineer-rate work tailored to a specific spec. They are not a generic template and are not intended to be reused as a reference for unrelated quotes.</p>
+    <div class="note">If you reached this page from a shared link expecting an SEO planning template, please request a fresh scope conversation rather than reusing this URL.</div>
   </div>
-</header>
-
-<!-- ═══════ SCOPE ═══════ -->
-<section>
-  <div class="container">
-    <div class="section-label">Section 01</div>
-    <h2>Scope</h2>
-    <p class="section-desc">Sprint 1 stays tight against your stated MVP scope. Anything from the sample PDF that wasn't in the MVP (charts, device renderings, Local SEO, Lighthouse data) is deferred to later sprints.</p>
-    <div class="scope-grid">
-      <div class="scope-box scope-in">
-        <h4>✅ Included in Sprint 1</h4>
-        <ul>
-          <li>Integration with SimilarWeb, SEMrush, SEOptimer APIs</li>
-          <li>SEOptimer as primary source for technical / UX data</li>
-          <li>Data normalization + filtering layer (top 10–15 issues)</li>
-          <li>Rule-based issue engine — severity (Low / Med / High) + impact range + recommendation per issue</li>
-          <li>Growth potential calculator (combined ranges)</li>
-          <li>HTML report template (functional, ready for visual polish in Sprint 2)</li>
-          <li>PDF generation pipeline (Playwright headless browser)</li>
-          <li>Lightweight database for report metadata + 24-hour URL idempotency cache (saves API costs on repeat audits)</li>
-          <li>Recent reports list with re-download links — every PDF stays accessible after generation</li>
-          <li>Configurable retention policy (default 30 days, archive after)</li>
-          <li>Simple web form: input URL → get PDF (no Postman / no curl needed)</li>
-          <li>Single shared password gate (multi-user login comes Sprint 3)</li>
-          <li>Hosted deployment (Cloud Run / Render — your preference)</li>
-          <li>Edge-case testing on 5–10 real client URLs</li>
-          <li>Demo walkthrough document</li>
-        </ul>
-      </div>
-      <div class="scope-box scope-out">
-        <h4>🔒 Deferred to Next Sprints</h4>
-        <ul>
-          <li>Chart.js charts (radar, score circles, gauges) — Sprint 2</li>
-          <li>Brand-fidelity HTML template polish to match SEO-Report (3).pdf — Sprint 2</li>
-          <li>Multi-user web UI with proper login + team accounts + past-reports list — Sprint 3</li>
-          <li>Cold-outreach email summary generation — Sprint 4</li>
-          <li>Bulk URL upload (CSV) — Sprint 4</li>
-          <li>Lighthouse / Google Core Web Vitals via Google PSI API — Sprint 5</li>
-          <li>Local SEO section (Google Business Profile + Reviews stars) — Sprint 5</li>
-          <li>Device rendering screenshots (mobile + tablet) — Sprint 5</li>
-          <li>MCP server wrapper (reusable Claude access for internal team) — Sprint 6</li>
-          <li>Automation + scheduled batch runs (n8n integration) — Sprint 7</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ PLANNING ═══════ -->
-<section>
-  <div class="container">
-    <div class="section-label">Section 02</div>
-    <h2>Planning</h2>
-    <p class="section-desc">Six phases run sequentially. Each phase delivers a clear output that the next builds on. Phase 2 (data processing + rule engine) carries the largest hour budget — it's the value-bearing layer.</p>
-    <div class="timeline-bar">
-      <div class="timeline-segment seg-0"><span class="t-label">P0</span><span class="t-name">Setup + Hosting + DB</span><span class="t-days">3 hrs</span></div>
-      <div class="timeline-segment seg-1"><span class="t-label">P1</span><span class="t-name">3 SEO API Integrations</span><span class="t-days">10 hrs</span></div>
-      <div class="timeline-segment seg-2"><span class="t-label">P2</span><span class="t-name">Data Processing + Rule Engine</span><span class="t-days">12 hrs</span></div>
-      <div class="timeline-segment seg-3"><span class="t-label">P3</span><span class="t-name">PDF Generation + Storage</span><span class="t-days">10 hrs</span></div>
-      <div class="timeline-segment seg-4"><span class="t-label">P4</span><span class="t-name">Web Form + Reports List</span><span class="t-days">6 hrs</span></div>
-      <div class="timeline-segment seg-5"><span class="t-label">P5</span><span class="t-name">Hardening + Demo</span><span class="t-days">8 hrs</span></div>
-    </div>
-    <p class="timeline-note">Working hours. Phases can be scheduled consecutively or with short gaps depending on availability. Hourly contract via Upwork — billed weekly per hours actually worked.</p>
-  </div>
-</section>
-
-<!-- ═══════ HOURS BREAKDOWN ═══════ -->
-<section>
-  <div class="container">
-    <div class="section-label">Section 03</div>
-    <h2>Hours Breakdown</h2>
-    <p class="section-desc">Estimated hours per phase. Hourly contract via Upwork — billed weekly. Total cost calculated below at the agreed $30/hr rate.</p>
-    <div class="budget-table-wrapper">
-      <table class="budget-table">
-        <thead><tr><th>Phase</th><th>Milestone</th><th>Hours</th></tr></thead>
-        <tbody>
-          <tr><td>P0</td><td>Setup + Hosting + Database Foundation</td><td>3</td></tr>
-          <tr><td>P1</td><td>3 SEO API Integrations (SimilarWeb, SEMrush, SEOptimer) + 24-hr Cache</td><td>10</td></tr>
-          <tr><td>P2</td><td>Data Processing + Rule-Based Issue Engine</td><td>12</td></tr>
-          <tr><td>P3</td><td>PDF Report Generation + Storage Layer</td><td>10</td></tr>
-          <tr><td>P4</td><td>Web Form + Password Gate + Recent Reports List</td><td>6</td></tr>
-          <tr><td>P5</td><td>Hardening + Edge-Case Testing + Retention + Demo</td><td>8</td></tr>
-        </tbody>
-        <tfoot><tr><td colspan="2"><strong>Total</strong></td><td><strong>49 hours</strong></td></tr></tfoot>
-      </table>
-    </div>
-
-    <div class="estimate-summary">
-      <div class="est-row">
-        <span class="est-label">Estimated total hours</span>
-        <span class="est-value">49 hours (range: 45–60 hrs)</span>
-      </div>
-      <div class="est-row">
-        <span class="est-label">Hourly rate</span>
-        <span class="est-value">$30 / hour</span>
-      </div>
-      <div class="est-row total">
-        <span class="est-label">Estimated Sprint 1 cost</span>
-        <span class="est-value">~$1,470 ($1,350 – $1,800 range)</span>
-      </div>
-    </div>
-
-    <div class="budget-footnotes">
-      <span>Hourly contract via Upwork (weekly billing)</span>
-      <span class="sep">·</span>
-      <span>You pay only for hours actually worked</span>
-      <span class="sep">·</span>
-      <span>Subsequent sprints quoted separately after Sprint 1 delivery</span>
-      <span class="sep">·</span>
-      <span>API service costs (SimilarWeb / SEMrush / SEOptimer subscriptions, hosting) billed at cost where applicable</span>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ PHASE DETAILS ═══════ -->
-<section>
-  <div class="container">
-    <div class="section-label">Section 04</div>
-    <h2>Phase Details</h2>
-    <p class="section-desc">Each phase has a clear objective and exit criteria. Nothing moves to the next phase until the gate conditions are met.</p>
-    <div class="phase-cards">
-
-      <div class="phase-card">
-        <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P0</span><span class="badge-label">Phase 0 · ~3 hours</span></div>
-          <h3>Setup + Hosting + Database Foundation</h3>
-          <p>Initialize the project repository with a clean structure (<em>api/</em>, <em>frontend/</em>, <em>docker/</em>) and commit the initial Python + FastAPI scaffold. Provision the hosting environment (Cloud Run, Render, or similar — your preference) plus a managed database for report metadata and idempotency cache. Environment variables locked in for the upcoming SEO API keys + shared password. I deploy and verify the foundation end-to-end before feature development starts — your team doesn't need to validate anything technical.</p>
-        </div>
-        <div class="phase-card-sidebar"><span class="sidebar-hours">3</span><span class="sidebar-hours-label">hours</span></div>
-      </div>
-
-      <div class="phase-card">
-        <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P1</span><span class="badge-label">Phase 1 · ~10 hours</span></div>
-          <h3>SimilarWeb + SEMrush + SEOptimer API Integrations</h3>
-          <p>Build clean Python clients for each of the three SEO services. Each client handles authentication, rate-limit awareness, error handling, and retries. SEOptimer is the primary source for technical / UX data (per your spec) — pulling the full audit response with all subsections. SimilarWeb handles traffic, sources, and engagement metrics. SEMrush handles keywords, rankings, visibility, and backlinks. A 24-hour cache layer prevents re-querying the same URL within that window — saves real API spend on repeat audits and powers idempotency.</p>
-        </div>
-        <div class="phase-card-sidebar"><span class="sidebar-hours">10</span><span class="sidebar-hours-label">hours</span></div>
-      </div>
-
-      <div class="phase-card">
-        <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P2</span><span class="badge-label">Phase 2 · ~12 hours</span></div>
-          <h3>Data Processing + Rule-Based Issue Engine</h3>
-          <p>This is the value-bearing layer. The three SEO APIs already detect their own issues — SEOptimer flags technical and UX problems, SEMrush surfaces keyword and backlink gaps, SimilarWeb shows engagement weaknesses. The processing layer combines all three into a unified structure, then runs a set of mapping and prioritization rules over the result:</p>
-          <ul style="list-style: none; padding-left: 0; margin-top: 10px; font-size: 13px; color: var(--text-secondary);">
-            <li style="padding: 4px 0;">• <strong>Normalize</strong> — every issue (regardless of source API) mapped to our standard schema: title, business-focused description, severity, impact range, recommendation</li>
-            <li style="padding: 4px 0;">• <strong>Rewrite</strong> — SEOptimer raw text rewritten into business-focused descriptions via templated phrasing (Sprint 4 upgrades this to LLM-driven rewriting)</li>
-            <li style="padding: 4px 0;">• <strong>Severity mapping</strong> — API severity → our Low / Med / High scale</li>
-            <li style="padding: 4px 0;">• <strong>Impact ranges</strong> — issue type mapped to estimated business impact (e.g. "Slow website → +10–25% conversion potential")</li>
-            <li style="padding: 4px 0;">• <strong>Priority scoring</strong> — severity × impact → priority score, used for ranking</li>
-            <li style="padding: 4px 0;">• <strong>Filter to top 10–15</strong> — only the most impactful issues kept; the report doesn't drown the reader</li>
-            <li style="padding: 4px 0;">• <strong>Total Growth Potential</strong> — individual impact ranges combined into a single headline metric</li>
-          </ul>
-          <p style="margin-top: 12px;">By the end of this phase, any URL run through the system produces a clean, structured JSON of business insights ready for PDF rendering.</p>
-        </div>
-        <div class="phase-card-sidebar"><span class="sidebar-hours">12</span><span class="sidebar-hours-label">hours</span></div>
-      </div>
-
-      <div class="phase-card">
-        <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P3</span><span class="badge-label">Phase 3 · ~10 hours</span></div>
-          <h3>PDF Report Generation + Storage Layer</h3>
-          <p>Build the HTML report template — clean, functional, structured to match your spec sections (cover page, executive summary, traffic analysis, SEO analysis, technical & UX, key problems, recommendations). Visual polish to match SEO-Report (3).pdf brand fidelity comes Sprint 2. Playwright runs headless to convert the HTML (with injected data) to PDF in real time. Generated PDFs are saved to storage with metadata (URL, generation date, business type) so they're available for re-download anytime — no need to regenerate.</p>
-        </div>
-        <div class="phase-card-sidebar"><span class="sidebar-hours">10</span><span class="sidebar-hours-label">hours</span></div>
-      </div>
-
-      <div class="phase-card">
-        <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P4</span><span class="badge-label">Phase 4 · ~6 hours</span></div>
-          <h3>Web Form + Password Gate + Recent Reports List</h3>
-          <p>Single web page with a URL input, optional business-type dropdown, and "Generate Report" button. Single shared password protects access — your team uses one password to log in. After clicking generate: a loading state appears (5–30 seconds depending on API responses), then the PDF downloads automatically. A "recent reports" list shows the last N generated PDFs with URL, date, and re-download links. Multi-user login + per-user access control comes Sprint 3.</p>
-        </div>
-        <div class="phase-card-sidebar"><span class="sidebar-hours">6</span><span class="sidebar-hours-label">hours</span></div>
-      </div>
-
-      <div class="phase-card">
-        <div class="phase-card-body">
-          <div class="phase-badge"><span class="badge-pill">P5</span><span class="badge-label">Phase 5 · ~8 hours</span></div>
-          <h3>Hardening + Edge-Case Testing + Retention + Demo</h3>
-          <p>Run 5–10 real client URLs through the full flow end-to-end. Catch and fix edge cases — large sites, sites with SEOptimer errors, invalid URLs, API timeouts, duplicate submissions. Polish error messages so non-technical users see helpful messages, not technical traces. Configurable retention policy locked in (default 30 days, PDFs auto-archive after that). Production deployment with environment variables verified. A short demo walkthrough document so anyone on your team is productive after a 5-minute read. Final sign-off marks Sprint 1 close.</p>
-        </div>
-        <div class="phase-card-sidebar"><span class="sidebar-hours">8</span><span class="sidebar-hours-label">hours</span></div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ DELIVERABLES ═══════ -->
-<section class="gate-section">
-  <div class="container">
-    <div class="section-label">Section 05</div>
-    <h2>Final Deliverables</h2>
-    <p class="section-desc">What you receive at the end of Sprint 1.</p>
-    <div class="gate-grid">
-      <div class="gate-card"><h4>Working Audit System</h4><p>Type any website URL into the form, get back a content-correct PDF report with 10–15 prioritized business-focused issues. The full pipeline runs end-to-end in 5–30 seconds per audit.</p></div>
-      <div class="gate-card"><h4>Three SEO API Integrations</h4><p>SimilarWeb, SEMrush, SEOptimer wired in with authentication, rate-limit handling, error retries, and a 24-hour cache to avoid re-querying same URLs.</p></div>
-      <div class="gate-card"><h4>Rule-Based Issue Engine</h4><p>10–15 issues per audit, each with severity (Low / Med / High), business-focused description, impact range, and a clear recommendation. Growth potential calculator headlines the report.</p></div>
-      <div class="gate-card"><h4>PDF Report Template</h4><p>Clean HTML template covering all sections from your spec — cover page, executive summary, traffic, SEO, technical & UX, key problems, recommendations. Functional in Sprint 1; visual polish to match SEO-Report (3).pdf brand fidelity comes Sprint 2.</p></div>
-      <div class="gate-card"><h4>Gated Web Form</h4><p>Single page with URL input + optional business-type dropdown + "Generate Report" button. Single shared password protects access. Loading state, automatic PDF download, simple past-reports list.</p></div>
-      <div class="gate-card"><h4>Hosted + Deployed</h4><p>Live and accessible at a URL your team can bookmark. Deployed to Cloud Run / Render (your preference). Environment variables configured, hosting provider credentials handed over.</p></div>
-      <div class="gate-card"><h4>Source Code in Your Repository</h4><p>All source code committed to your GitHub repository. You own the IP completely. Clean monorepo structure with README and deployment guide.</p></div>
-      <div class="gate-card"><h4>Demo Walkthrough Doc</h4><p>5-minute read explaining how to use the system, run an audit, share the PDF, and add new team members to the password gate. Anyone on your team is productive after reading.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ NEXT SPRINTS ═══════ -->
-<section>
-  <div class="container">
-    <div class="section-label">Section 06</div>
-    <h2>In the Next Sprints</h2>
-    <p class="section-desc">Once Sprint 1 (MVP) is live and validated with real audit runs, here's the natural expansion path. Each sprint is quoted separately after the prior delivers — you fund only what's worth building next.</p>
-    <div class="roadmap-list">
-      <div class="roadmap-item">
-        <span class="roadmap-num">2</span>
-        <div class="roadmap-text">
-          <span class="rm-name">LLM-Driven Analysis Layer</span>
-          <span class="rm-desc">Replace the templated rewrites with an LLM that processes raw API output into business-focused insights — richer, more natural language, dynamic per-audit. Each issue's description, "why it matters" framing, and recommendation get rewritten by the LLM with full context (not from static templates). The rule-based scoring + filtering stays; the LLM owns the narrative layer.</span>
-        </div>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-num">3</span>
-        <div class="roadmap-text">
-          <span class="rm-name">Charts + Brand-Fidelity Template Polish</span>
-          <span class="rm-desc">Chart.js server-side rendering — radar chart, score circles, gauges, traffic-source breakdowns, performance graphs (per your spec's Charts and Visualization section). Visual polish across the HTML template to match SEO-Report (3).pdf brand fidelity.</span>
-        </div>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-num">4</span>
-        <div class="roadmap-text">
-          <span class="rm-name">Cold-Outreach Email Summary + Bulk CSV Upload</span>
-          <span class="rm-desc">LLM-generated 2–3 key-issue summary text per audit, ready to paste into cold outreach emails (per your Email Summary Output spec). Optional CSV upload for batch generating reports across a list of URLs at once.</span>
-        </div>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-num">5</span>
-        <div class="roadmap-text">
-          <span class="rm-name">Multi-User Web UI + Auth</span>
-          <span class="rm-desc">Replace the single shared password with proper login + team accounts + role-based access. Per-user past-reports list, admin panel for managing team members, audit-history filtering and search.</span>
-        </div>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-num">6</span>
-        <div class="roadmap-text">
-          <span class="rm-name">Sample-PDF Extras (confirm with you)</span>
-          <span class="rm-desc">Items visible in your sample SEO-Report (3).pdf but not in your written spec — Lighthouse / Core Web Vitals (Google PSI API), Local SEO (Google Business Profile + Reviews stars), device rendering screenshots (mobile + tablet viewports). Worth confirming whether you want these.</span>
-        </div>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-num">7</span>
-        <div class="roadmap-text">
-          <span class="rm-name">MCP Server Wrapper</span>
-          <span class="rm-desc">Same backend exposed as Claude MCP tools — internal ad-hoc audit queries from Claude Desktop / Claude Code / Smithery. Reusable layer per your original ask. Production cold-outreach work continues using the web UI; MCP is for internal team flexibility.</span>
-        </div>
-      </div>
-      <div class="roadmap-item">
-        <span class="roadmap-num">8</span>
-        <div class="roadmap-text">
-          <span class="rm-name">Automation + Scheduled Batch Runs</span>
-          <span class="rm-desc">n8n integration for scheduled audits (e.g. "audit these 100 URLs every Monday"), automatic email delivery of generated reports to a defined recipient list, monitoring + logging dashboards for pipeline health.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="container">Confidential planning document · Pricing valid for 30 days · Roman Antonov</div>
-</footer>
-
 </body>
 </html>
