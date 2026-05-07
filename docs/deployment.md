@@ -128,9 +128,8 @@ roman-rr.github.io/              ← PUBLIC repo (roman-rr/roman-rr.github.io)
     └── sells/                   ← PRIVATE nested repo (roman-rr/roman-upwork-sells-playbook)
         ├── .git/                ← sells repo's own git metadata (separate history)
         ├── .gitignore           ← ignores .DS_Store only
-        ├── roman-proposal-playbook-v5.md
-        ├── upwork-feed-strategy-v2.md
-        ├── upwork-market-analysis-v2.md
+        ├── proposal-composition-playbook/  ← split 2026-05-07 (was roman-proposal-playbook-v5.md)
+        ├── upwork-strategy.md       ← merged 2026-05-07 (was feed + market + algorithm)
         ├── attachment-library.md
         └── proposals/
             ├── README.md
