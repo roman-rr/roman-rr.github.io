@@ -68,7 +68,7 @@ const SkillsTabs = () => {
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-[5px] flex-shrink-0"></span>
-                    <span>Chatbot, Telegram API, WhatsApp API, Instagram API</span>
+                    <span>Chatbot Development, AI Agent Development, Messaging APIs</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-[5px] flex-shrink-0"></span>
@@ -104,7 +104,7 @@ const SkillsTabs = () => {
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-[5px] flex-shrink-0"></span>
-                    <span>Slack, Microsoft Teams, Discord API</span>
+                    <span>Team Collaboration APIs, Real-time Messaging Integrations</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-[5px] flex-shrink-0"></span>
