@@ -3,6 +3,8 @@
 Step-by-step improvements for roman-rr.github.io.
 Each item includes context, affected files, and acceptance criteria.
 
+> 🚨 **COMPLIANCE LOCK (2026-05-05):** Roman has 1 active circumvention violation, appeal denied + final. **STRICT MODE locked for at least 1 year (until ~mid-2027).** This site MUST NOT contain any contact-extraction elements. Banned categories from this site for the next year: booking widgets, live chat widgets, contact-input forms, direct-message links, phone numbers, social-media handles, "Schedule a call" CTAs. The ONLY hire CTA allowed is "Hire me on Upwork" pointing to Roman's Upwork profile. See `docs/sells/upwork-compliance-rules.md` for the full named-tool list.
+
 ---
 
 ## Architecture Reference
@@ -53,9 +55,9 @@ Each item includes context, affected files, and acceptance criteria.
 
 ### 2.7 Add closing CTA (Call-to-Action) panel
 - **Priority**: Medium-High
-- **Why**: No final push to convert. A visitor who scrolled the entire page is highly engaged — perfect moment for a booking CTA.
+- **Why**: No final push to convert. A visitor who scrolled the entire page is highly engaged — perfect moment for the Upwork hire CTA.
 - **File**: New `src/components/ClosingCTA.tsx`, update `src/App.tsx`
-- **Action**: Prominent panel before Footer with Calendly button, secondary Upwork/email link, and reassurance line ("NDA-ready, GDPR-compliant, available for immediate start").
+- **Action**: Prominent panel before Footer with a single "Hire me on Upwork" button (links to Roman's Upwork profile) + reassurance line ("NDA-ready, GDPR-compliant, available for immediate start"). 🚨 NO booking widget / no direct-message link / no contact form — compliance lock active.
 - [ ] Done
 
 ---
@@ -94,14 +96,12 @@ Each item includes context, affected files, and acceptance criteria.
 - **Action**: Prepare 3-5 headline variants. Test with different ad groups.
 - [ ] Done
 
-### 4.2 Connect tawk.to live chat
-- **Priority**: Future
-- **Action**: Add tawk.to widget script with business hours and auto-greeting.
-- [ ] Done
+### 4.2 ~~Live chat widget~~ — REMOVED 2026-05-05
+- **Status**: 🚨 PERMANENTLY DROPPED from roadmap. Any live-chat widget that routes messages directly to Roman = circumvention risk per Upwork T&S. Even outside the strict-mode window, a chat widget on the portfolio site invites the same crawl-chain trigger that fired the original violation. Do not re-add. See `docs/sells/upwork-compliance-rules.md` for the full banned-channel list.
 
 ### 4.3 Connect Google Analytics (GA4)
 - **Priority**: Future
-- **Action**: Add GA4 tag, set up conversion events (Calendly click, video play, FAQ expansion).
+- **Action**: Add GA4 tag, set up conversion events (Upwork-CTA click, video play, FAQ expansion). 🚨 Do NOT track booking-widget clicks or contact-form submissions — those features are banned from the site.
 - [ ] Done
 
 ### 4.4 Google Ads campaign — $100 test budget
